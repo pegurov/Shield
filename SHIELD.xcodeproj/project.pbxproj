@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F0A6F0FE19A234BD00D976BA /* DeviceController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F0FD19A234BD00D976BA /* DeviceController.m */; };
+		F0A6F10019A2356D00D976BA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */; };
 		F0D7E2E619A1F99200F78ED1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2E519A1F99200F78ED1 /* main.m */; };
 		F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2E819A1F99200F78ED1 /* AppDelegate.m */; };
 		F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2EA19A1F99200F78ED1 /* SHIELD.xcdatamodeld */; };
@@ -28,6 +30,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F0A6F0FC19A234BD00D976BA /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
+		F0A6F0FD19A234BD00D976BA /* DeviceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceController.m; sourceTree = "<group>"; };
+		F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		F0D7E2E019A1F99200F78ED1 /* SHIELD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SHIELD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D7E2E419A1F99200F78ED1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0D7E2E519A1F99200F78ED1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -50,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0A6F10019A2356D00D976BA /* CoreBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,11 +95,14 @@
 				F0D7E2ED19A1F99200F78ED1 /* ViewController.h */,
 				F0D7E2EE19A1F99200F78ED1 /* ViewController.m */,
 				F0D7E2F019A1F99200F78ED1 /* Main.storyboard */,
+				F0A6F0FC19A234BD00D976BA /* DeviceController.h */,
+				F0A6F0FD19A234BD00D976BA /* DeviceController.m */,
 				F0D7E30919A1FC1900F78ED1 /* BTManager.h */,
 				F0D7E30A19A1FC1900F78ED1 /* BTManager.m */,
 				F0D7E2F319A1F99200F78ED1 /* Images.xcassets */,
 				F0D7E2EA19A1F99200F78ED1 /* SHIELD.xcdatamodeld */,
 				F0D7E2E319A1F99200F78ED1 /* Supporting Files */,
+				F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */,
 			);
 			path = SHIELD;
 			sourceTree = "<group>";
@@ -224,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */,
+				F0A6F0FE19A234BD00D976BA /* DeviceController.m in Sources */,
 				F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */,
 				F0D7E2EF19A1F99200F78ED1 /* ViewController.m in Sources */,
 				F0D7E30B19A1FC1900F78ED1 /* BTManager.m in Sources */,
