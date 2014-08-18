@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F0A6F0FE19A234BD00D976BA /* DeviceController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F0FD19A234BD00D976BA /* DeviceController.m */; };
 		F0A6F10019A2356D00D976BA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */; };
+		F0A6F10719A2384D00D976BA /* BTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10219A2384D00D976BA /* BTManager.m */; };
+		F0A6F10819A2384D00D976BA /* DeviceController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10419A2384D00D976BA /* DeviceController.m */; };
+		F0A6F10919A2384D00D976BA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10619A2384D00D976BA /* ViewController.m */; };
 		F0D7E2E619A1F99200F78ED1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2E519A1F99200F78ED1 /* main.m */; };
 		F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2E819A1F99200F78ED1 /* AppDelegate.m */; };
 		F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2EA19A1F99200F78ED1 /* SHIELD.xcdatamodeld */; };
-		F0D7E2EF19A1F99200F78ED1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2EE19A1F99200F78ED1 /* ViewController.m */; };
 		F0D7E2F219A1F99200F78ED1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0D7E2F019A1F99200F78ED1 /* Main.storyboard */; };
 		F0D7E2F419A1F99200F78ED1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F0D7E2F319A1F99200F78ED1 /* Images.xcassets */; };
 		F0D7E30019A1F99200F78ED1 /* SHIELDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2FF19A1F99200F78ED1 /* SHIELDTests.m */; };
-		F0D7E30B19A1FC1900F78ED1 /* BTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E30A19A1FC1900F78ED1 /* BTManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,24 +30,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		F0A6F0FC19A234BD00D976BA /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
-		F0A6F0FD19A234BD00D976BA /* DeviceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceController.m; sourceTree = "<group>"; };
 		F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		F0A6F10119A2384D00D976BA /* BTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTManager.h; sourceTree = "<group>"; };
+		F0A6F10219A2384D00D976BA /* BTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTManager.m; sourceTree = "<group>"; };
+		F0A6F10319A2384D00D976BA /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
+		F0A6F10419A2384D00D976BA /* DeviceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceController.m; sourceTree = "<group>"; };
+		F0A6F10519A2384D00D976BA /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		F0A6F10619A2384D00D976BA /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		F0D7E2E019A1F99200F78ED1 /* SHIELD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SHIELD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D7E2E419A1F99200F78ED1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0D7E2E519A1F99200F78ED1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F0D7E2E719A1F99200F78ED1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F0D7E2E819A1F99200F78ED1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		F0D7E2EB19A1F99200F78ED1 /* SHIELD.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SHIELD.xcdatamodel; sourceTree = "<group>"; };
-		F0D7E2ED19A1F99200F78ED1 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		F0D7E2EE19A1F99200F78ED1 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		F0D7E2F119A1F99200F78ED1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F0D7E2F319A1F99200F78ED1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F0D7E2F919A1F99200F78ED1 /* SHIELDTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SHIELDTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D7E2FE19A1F99200F78ED1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0D7E2FF19A1F99200F78ED1 /* SHIELDTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SHIELDTests.m; sourceTree = "<group>"; };
-		F0D7E30919A1FC1900F78ED1 /* BTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTManager.h; sourceTree = "<group>"; };
-		F0D7E30A19A1FC1900F78ED1 /* BTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,13 +92,13 @@
 			children = (
 				F0D7E2E719A1F99200F78ED1 /* AppDelegate.h */,
 				F0D7E2E819A1F99200F78ED1 /* AppDelegate.m */,
-				F0D7E2ED19A1F99200F78ED1 /* ViewController.h */,
-				F0D7E2EE19A1F99200F78ED1 /* ViewController.m */,
 				F0D7E2F019A1F99200F78ED1 /* Main.storyboard */,
-				F0A6F0FC19A234BD00D976BA /* DeviceController.h */,
-				F0A6F0FD19A234BD00D976BA /* DeviceController.m */,
-				F0D7E30919A1FC1900F78ED1 /* BTManager.h */,
-				F0D7E30A19A1FC1900F78ED1 /* BTManager.m */,
+				F0A6F10519A2384D00D976BA /* ViewController.h */,
+				F0A6F10619A2384D00D976BA /* ViewController.m */,
+				F0A6F10319A2384D00D976BA /* DeviceController.h */,
+				F0A6F10419A2384D00D976BA /* DeviceController.m */,
+				F0A6F10119A2384D00D976BA /* BTManager.h */,
+				F0A6F10219A2384D00D976BA /* BTManager.m */,
 				F0D7E2F319A1F99200F78ED1 /* Images.xcassets */,
 				F0D7E2EA19A1F99200F78ED1 /* SHIELD.xcdatamodeld */,
 				F0D7E2E319A1F99200F78ED1 /* Supporting Files */,
@@ -232,12 +232,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0A6F10919A2384D00D976BA /* ViewController.m in Sources */,
 				F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */,
-				F0A6F0FE19A234BD00D976BA /* DeviceController.m in Sources */,
+				F0A6F10819A2384D00D976BA /* DeviceController.m in Sources */,
 				F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */,
-				F0D7E2EF19A1F99200F78ED1 /* ViewController.m in Sources */,
-				F0D7E30B19A1FC1900F78ED1 /* BTManager.m in Sources */,
 				F0D7E2E619A1F99200F78ED1 /* main.m in Sources */,
+				F0A6F10719A2384D00D976BA /* BTManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

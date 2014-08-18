@@ -15,12 +15,13 @@
 @end
 
 @implementation DeviceController {
-    
+    UInt16 min, max;
 }
+
+static NSString *identifier = @"DeviceAxisCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     UInt8 buf[1] = {0x01};
     NSData *data = [[NSData alloc] initWithBytes:buf length:1];
     [[BTManager sharedInstance] writeValue:data];
