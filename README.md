@@ -1,1 +1,1 @@
-SHIELD Experimental outwear iOS APP
+SHIELD Experimental outwear iOS APP.
