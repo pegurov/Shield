@@ -6,11 +6,10 @@
 //  Copyright (c) 2014 Andrey Ogrenich. All rights reserved.
 //
 
-#import "ViewController.h"
-#import "DeviceController.h"
+#import "BTTestsViewController.h"
 #import "BTManager.h"
 
-@interface ViewController ()
+@interface BTTestsViewController ()
 
 @property (weak, nonatomic) IBOutlet UITableView *table;
 @property (strong, nonatomic) NSArray *devices;
@@ -18,7 +17,7 @@
 
 @end
 
-@implementation ViewController
+@implementation BTTestsViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -78,11 +77,11 @@
     [self performSegueWithIdentifier:@"device" sender:device];
 }
 
-- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"device"]) {
-        DeviceController *c = segue.destinationViewController;
-        c.device = sender;
-    }
-}
+//- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+//    if ([segue.identifier isEqualToString:@"device"]) {
+//        DeviceController *c = segue.destinationViewController;
+//        c.device = sender;
+//    }
+//}
 
 @end

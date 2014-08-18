@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "BTManager.h"
 
-@interface ViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, BTManagerDelegate>
+@interface BTTestsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, BTManagerDelegate>
 
 @end
