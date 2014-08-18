@@ -13,30 +13,116 @@
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="295" translatesAutoresizingMaskIntoConstraints="NO" id="a6m-KM-bTQ">
-                                <rect key="frame" x="13" y="80" width="295" height="76"/>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DOK-iX-jdf" userLabel="View - labels">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <string key="text">INTERFACE UNDER 
-CONSTRUCTION</string>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sDE-9m-h3X" userLabel="Label - heat">
+                                        <rect key="frame" x="27" y="15" width="266" height="60"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <attributedString key="attributedText">
+                                            <fragment content="heat 53%">
+                                                <attributes>
+                                                    <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                    <font key="NSFont" size="55" name="HelveticaNeue-UltraLight"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rHV-HZ-gqC" userLabel="Label - use">
+                                        <rect key="frame" x="27" y="76" width="266" height="60"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <attributedString key="attributedText">
+                                            <fragment content="use 2:43">
+                                                <attributes>
+                                                    <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                    <font key="NSFont" size="55" name="HelveticaNeue-UltraLight"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Battery: 30%" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h5F-l0-kS2" userLabel="Label - Battery">
+                                        <rect key="frame" x="27" y="527" width="263" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="21" id="DYT-AP-El6"/>
+                                            <constraint firstAttribute="width" constant="263" id="ZxW-67-lFI"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="15"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="0.40000000000000002" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="h5F-l0-kS2" secondAttribute="bottom" constant="20" id="udc-ss-Xc0"/>
+                                    <constraint firstItem="h5F-l0-kS2" firstAttribute="leading" secondItem="DOK-iX-jdf" secondAttribute="leading" constant="27" id="z75-EL-nNs"/>
+                                </constraints>
+                            </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KBS-yH-uPF" userLabel="Image View - blurred labels">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="QGR-Hg-lbX" userLabel="Image View - side indicator">
+                                <rect key="frame" x="0.0" y="0.0" width="8" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="8" id="Cvi-DK-Szv"/>
+                                </constraints>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Ellipse" translatesAutoresizingMaskIntoConstraints="NO" id="OVs-zy-fqh">
+                                <rect key="frame" x="16" y="219" width="260" height="190"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="DOK-iX-jdf" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="6EI-JW-w95"/>
+                            <constraint firstItem="KBS-yH-uPF" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="6uk-RV-07G"/>
+                            <constraint firstAttribute="trailing" secondItem="DOK-iX-jdf" secondAttribute="trailing" id="Mwd-rM-2di"/>
+                            <constraint firstItem="QGR-Hg-lbX" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="Rts-Le-QYc"/>
+                            <constraint firstAttribute="trailing" secondItem="KBS-yH-uPF" secondAttribute="trailing" id="S08-NJ-nEw"/>
+                            <constraint firstItem="KBS-yH-uPF" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="X9p-JF-iuX"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="KBS-yH-uPF" secondAttribute="bottom" id="ZSD-34-vTp"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="QGR-Hg-lbX" secondAttribute="bottom" id="fLF-wt-kUU"/>
+                            <constraint firstItem="QGR-Hg-lbX" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="o2S-Pp-R2W"/>
+                            <constraint firstItem="DOK-iX-jdf" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="qP5-zm-zWJ"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="DOK-iX-jdf" secondAttribute="bottom" id="uMk-O7-0HU"/>
+                        </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="AnN-3b-ygT" appends="YES" id="PAM-NY-hJP"/>
+                        </connections>
                     </view>
+                    <connections>
+                        <outlet property="imageViewEllipse" destination="OVs-zy-fqh" id="QjX-os-YLb"/>
+                        <outlet property="panGR" destination="AnN-3b-ygT" id="HpK-7D-3Gy"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="AnN-3b-ygT">
+                    <connections>
+                        <action selector="viewPanned:" destination="vXZ-lx-hvc" id="Qcv-Nx-E7S"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="323" y="-53"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Ellipse" width="246" height="187"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
 </document>
