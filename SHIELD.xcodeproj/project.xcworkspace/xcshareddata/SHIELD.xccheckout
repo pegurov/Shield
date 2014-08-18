@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>1B8C2906-3D5D-4417-A2EB-0E40E0E7A4CE</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SHIELD</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>E034ACCBE4931BC73E7ECAC280D7061BFC71D87A</key>
+		<string>https://github.com/ogrenich/shield.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>SHIELD.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>E034ACCBE4931BC73E7ECAC280D7061BFC71D87A</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/ogrenich/shield.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E034ACCBE4931BC73E7ECAC280D7061BFC71D87A</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E034ACCBE4931BC73E7ECAC280D7061BFC71D87A</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SHIELD</string>
+		</dict>
+	</array>
+</dict>
+</plist>
