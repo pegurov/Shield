@@ -38,7 +38,7 @@
                                         <rect key="frame" x="27" y="76" width="266" height="60"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <attributedString key="attributedText">
-                                            <fragment content="use 2:43">
+                                            <fragment content="use 4:40">
                                                 <attributes>
                                                     <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                     <font key="NSFont" size="55" name="HelveticaNeue-UltraLight"/>
@@ -67,7 +67,7 @@
                                     <constraint firstItem="h5F-l0-kS2" firstAttribute="leading" secondItem="DOK-iX-jdf" secondAttribute="leading" constant="27" id="z75-EL-nNs"/>
                                 </constraints>
                             </view>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KBS-yH-uPF" userLabel="Image View - blurred labels">
+                            <imageView userInteractionEnabled="NO" alpha="0.29999999999999999" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KBS-yH-uPF" userLabel="Image View - blurred labels">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
@@ -93,7 +93,7 @@
                                 </constraints>
                             </imageView>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VcH-i2-hei" userLabel="View - indicator darkener">
-                                <rect key="frame" x="0.0" y="0.0" width="8" height="568"/>
+                                <rect key="frame" x="0.0" y="0.0" width="8" height="250"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
@@ -123,12 +123,14 @@
                         </connections>
                     </view>
                     <connections>
+                        <outlet property="imageViewBlurredLabels" destination="KBS-yH-uPF" id="yth-ud-ENb"/>
                         <outlet property="imageViewEllipse" destination="OVs-zy-fqh" id="QjX-os-YLb"/>
                         <outlet property="imageViewHeatIndicator" destination="QGR-Hg-lbX" id="r2o-Xe-jyV"/>
                         <outlet property="labelSetHeatPercent" destination="hGU-B9-Y2p" id="uOm-tV-lay"/>
                         <outlet property="labelSetTime" destination="Srh-6I-DyY" id="XVw-TK-i1q"/>
                         <outlet property="panGR" destination="AnN-3b-ygT" id="HpK-7D-3Gy"/>
                         <outlet property="viewIndicatorDarkener" destination="VcH-i2-hei" id="Ube-Tj-Uq8"/>
+                        <outlet property="viewLabels" destination="DOK-iX-jdf" id="IwK-xA-LP7"/>
                         <outlet property="viewLine" destination="oPC-uQ-pmf" id="BVn-Hu-IcW"/>
                     </connections>
                 </viewController>

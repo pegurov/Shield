@@ -7,10 +7,15 @@
 //
 
 #import "ShieldViewController.h"
+#import "UIImage+ImageEffects.h"
+#import "GeneralHelper.h"
 
 @interface ShieldViewController ()
 @property (nonatomic) CGPoint initialPanCenter;
 @property (nonatomic) CGPoint currentPanCenter;
+
+@property (weak, nonatomic) IBOutlet UIView *viewLabels;
+@property (weak, nonatomic) IBOutlet UIImageView *imageViewBlurredLabels;
 
 @property (weak, nonatomic) IBOutlet UILabel *labelSetHeatPercent;
 @property (weak, nonatomic) IBOutlet UILabel *labelSetTime;
@@ -28,8 +33,27 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self showEllipse:NO animated:NO];
 }
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    CGSize imageSize = CGSizeMake(self.viewLabels.bounds.size.width, self.viewLabels.bounds.size.height);
+    UIGraphicsBeginImageContext(imageSize);
+    [self.viewLabels.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    UIColor *tintColor = [UIColor clearColor]; //[UIColor colorWithWhite:0.11 alpha:0.73];
+    UIImage *blurredImage = [viewImage applyBlurWithRadius:5 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:nil];
+    
+    [self.imageViewBlurredLabels setImage:blurredImage];
+    [self showEllipse:NO animated:NO];
+    
+    [self setCurrentPanCenter:CGPointMake(100, 100)];
+}
+
 
 //---------------------------------------------------------------------------
 #pragma mark - Setters
@@ -50,7 +74,8 @@
     [self.viewLine setFrame:lineFrame];
     
     CGRect indicatorDarkenerFrame = self.viewIndicatorDarkener.frame;
-    indicatorDarkenerFrame.size = CGSizeMake(8, currentPanCenter.y);
+    indicatorDarkenerFrame.origin = CGPointMake(0, 0);
+    indicatorDarkenerFrame.size = CGSizeMake(8, currentPanCenter.y-2);
     [self.viewIndicatorDarkener setFrame:indicatorDarkenerFrame];
     
     CGRect labelSetHeatFrame = self.labelSetHeatPercent.frame;
@@ -61,6 +86,13 @@
     labelSetTimeFrame.origin = CGPointMake(15, currentPanCenter.y );
     [self.labelSetTime setFrame:labelSetTimeFrame];
     
+    // set labels with values
+    CGFloat percent = currentPanCenter.y / self.view.frame.size.height;
+    CGFloat heat = 100 * (1-percent);
+    NSInteger time = (int)(10*60 * percent); // minutes
+    
+    [self.labelSetHeatPercent setText:[NSString stringWithFormat:@"h %d\%%",(int)heat]];
+    [self.labelSetTime setText:[NSString stringWithFormat:@"t %d:%2d",(int)(floorf(time/60)), (int)(time%60)]];
 }
 
 //---------------------------------------------------------------------------
@@ -114,6 +146,9 @@
         self.viewLine.alpha = alpha;
         self.labelSetHeatPercent.alpha = alpha;
         self.labelSetTime.alpha = alpha;
+        
+        [self.imageViewBlurredLabels setAlpha:alpha/4.];
+        [self.viewLabels setAlpha:(1-alpha)];
     }];
 }
 

@@ -10,6 +10,8 @@
 		03739D1D87104B65AAE71C36 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DDDF33E91F43DE951701B4 /* libPods.a */; };
 		C41EB76019A246FF00641436 /* CommonViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB75F19A246FF00641436 /* CommonViewController.m */; };
 		C41EB76319A2475000641436 /* ShieldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76219A2475000641436 /* ShieldViewController.m */; };
+		C41EB76619A392D000641436 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76519A392D000641436 /* UIImage+ImageEffects.m */; };
+		C41EB76919A3ABCC00641436 /* GeneralHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76819A3ABCC00641436 /* GeneralHelper.m */; };
 		F0A6F10019A2356D00D976BA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */; };
 		F0A6F10719A2384D00D976BA /* BTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10219A2384D00D976BA /* BTManager.m */; };
 		F0A6F10919A2384D00D976BA /* BTTestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10619A2384D00D976BA /* BTTestsViewController.m */; };
@@ -38,6 +40,10 @@
 		C41EB75F19A246FF00641436 /* CommonViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonViewController.m; sourceTree = "<group>"; };
 		C41EB76119A2475000641436 /* ShieldViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShieldViewController.h; sourceTree = "<group>"; };
 		C41EB76219A2475000641436 /* ShieldViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShieldViewController.m; sourceTree = "<group>"; };
+		C41EB76419A392D000641436 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		C41EB76519A392D000641436 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
+		C41EB76719A3ABCC00641436 /* GeneralHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralHelper.h; sourceTree = "<group>"; };
+		C41EB76819A3ABCC00641436 /* GeneralHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralHelper.m; sourceTree = "<group>"; };
 		F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		F0A6F10119A2384D00D976BA /* BTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTManager.h; sourceTree = "<group>"; };
 		F0A6F10219A2384D00D976BA /* BTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTManager.m; sourceTree = "<group>"; };
@@ -121,8 +127,12 @@
 		C41EB75A19A2464600641436 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				C41EB76419A392D000641436 /* UIImage+ImageEffects.h */,
+				C41EB76519A392D000641436 /* UIImage+ImageEffects.m */,
 				F0A6F10119A2384D00D976BA /* BTManager.h */,
 				F0A6F10219A2384D00D976BA /* BTManager.m */,
+				C41EB76719A3ABCC00641436 /* GeneralHelper.h */,
+				C41EB76819A3ABCC00641436 /* GeneralHelper.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -350,10 +360,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C41EB76619A392D000641436 /* UIImage+ImageEffects.m in Sources */,
 				F0A6F10919A2384D00D976BA /* BTTestsViewController.m in Sources */,
 				F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */,
 				C41EB76319A2475000641436 /* ShieldViewController.m in Sources */,
 				F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */,
+				C41EB76919A3ABCC00641436 /* GeneralHelper.m in Sources */,
 				F0D7E2E619A1F99200F78ED1 /* main.m in Sources */,
 				F0A6F10719A2384D00D976BA /* BTManager.m in Sources */,
 				C41EB76019A246FF00641436 /* CommonViewController.m in Sources */,

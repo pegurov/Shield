@@ -15,8 +15,10 @@
 @implementation AppDelegate
             
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    [UIApplication sharedApplication].statusBarHidden = YES;
+
     return YES;
 }
 
