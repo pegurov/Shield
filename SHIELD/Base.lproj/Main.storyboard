@@ -67,34 +67,54 @@
                                     <constraint firstItem="h5F-l0-kS2" firstAttribute="leading" secondItem="DOK-iX-jdf" secondAttribute="leading" constant="27" id="z75-EL-nNs"/>
                                 </constraints>
                             </view>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KBS-yH-uPF" userLabel="Image View - blurred labels">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KBS-yH-uPF" userLabel="Image View - blurred labels">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="QGR-Hg-lbX" userLabel="Image View - side indicator">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="t 2:43" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Srh-6I-DyY">
+                                <rect key="frame" x="27" y="331" width="55" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="15"/>
+                                <color key="textColor" red="1" green="0.53725492949999998" blue="0.0" alpha="1" colorSpace="deviceRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="h 53%" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hGU-B9-Y2p">
+                                <rect key="frame" x="27" y="256" width="55" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="15"/>
+                                <color key="textColor" red="1" green="0.53725492949999998" blue="0.0" alpha="1" colorSpace="deviceRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="heat_indicator" translatesAutoresizingMaskIntoConstraints="NO" id="QGR-Hg-lbX" userLabel="Image View - side indicator">
                                 <rect key="frame" x="0.0" y="0.0" width="8" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="8" id="Cvi-DK-Szv"/>
+                                    <constraint firstAttribute="width" constant="8" id="Vtx-Ps-eSF"/>
                                 </constraints>
                             </imageView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VcH-i2-hei" userLabel="View - indicator darkener">
+                                <rect key="frame" x="0.0" y="0.0" width="8" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Ellipse" translatesAutoresizingMaskIntoConstraints="NO" id="OVs-zy-fqh">
-                                <rect key="frame" x="16" y="219" width="260" height="190"/>
+                                <rect key="frame" x="67" y="211" width="187" height="187"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oPC-uQ-pmf" userLabel="View - line">
+                                <rect key="frame" x="40" y="299" width="101" height="11"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="0.5372549295425415" blue="0.0" alpha="1" colorSpace="deviceRGB"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
                         <constraints>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="QGR-Hg-lbX" secondAttribute="bottom" id="2Xz-Lq-y0B"/>
                             <constraint firstItem="DOK-iX-jdf" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="6EI-JW-w95"/>
-                            <constraint firstItem="KBS-yH-uPF" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="6uk-RV-07G"/>
                             <constraint firstAttribute="trailing" secondItem="DOK-iX-jdf" secondAttribute="trailing" id="Mwd-rM-2di"/>
-                            <constraint firstItem="QGR-Hg-lbX" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="Rts-Le-QYc"/>
-                            <constraint firstAttribute="trailing" secondItem="KBS-yH-uPF" secondAttribute="trailing" id="S08-NJ-nEw"/>
-                            <constraint firstItem="KBS-yH-uPF" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="X9p-JF-iuX"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="KBS-yH-uPF" secondAttribute="bottom" id="ZSD-34-vTp"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="QGR-Hg-lbX" secondAttribute="bottom" id="fLF-wt-kUU"/>
-                            <constraint firstItem="QGR-Hg-lbX" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="o2S-Pp-R2W"/>
+                            <constraint firstItem="QGR-Hg-lbX" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="obL-Yn-TBG"/>
+                            <constraint firstItem="QGR-Hg-lbX" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="pNx-l7-od8"/>
                             <constraint firstItem="DOK-iX-jdf" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="qP5-zm-zWJ"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="DOK-iX-jdf" secondAttribute="bottom" id="uMk-O7-0HU"/>
                         </constraints>
@@ -104,7 +124,12 @@
                     </view>
                     <connections>
                         <outlet property="imageViewEllipse" destination="OVs-zy-fqh" id="QjX-os-YLb"/>
+                        <outlet property="imageViewHeatIndicator" destination="QGR-Hg-lbX" id="r2o-Xe-jyV"/>
+                        <outlet property="labelSetHeatPercent" destination="hGU-B9-Y2p" id="uOm-tV-lay"/>
+                        <outlet property="labelSetTime" destination="Srh-6I-DyY" id="XVw-TK-i1q"/>
                         <outlet property="panGR" destination="AnN-3b-ygT" id="HpK-7D-3Gy"/>
+                        <outlet property="viewIndicatorDarkener" destination="VcH-i2-hei" id="Ube-Tj-Uq8"/>
+                        <outlet property="viewLine" destination="oPC-uQ-pmf" id="BVn-Hu-IcW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -114,11 +139,12 @@
                     </connections>
                 </panGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="323" y="-53"/>
+            <point key="canvasLocation" x="318" y="-61"/>
         </scene>
     </scenes>
     <resources>
-        <image name="Ellipse" width="246" height="187"/>
+        <image name="Ellipse" width="187" height="187"/>
+        <image name="heat_indicator" width="8" height="567"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

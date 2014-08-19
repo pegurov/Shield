@@ -3,12 +3,12 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "Ellipse.png"
+      "filename" : "heat_indicator.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "Ellipse@2x.png"
+      "filename" : "heat_indicator@2x.png"
     }
   ],
   "info" : {

@@ -12,6 +12,11 @@
 @property (nonatomic) CGPoint initialPanCenter;
 @property (nonatomic) CGPoint currentPanCenter;
 
+@property (weak, nonatomic) IBOutlet UILabel *labelSetHeatPercent;
+@property (weak, nonatomic) IBOutlet UILabel *labelSetTime;
+@property (weak, nonatomic) IBOutlet UIImageView *imageViewHeatIndicator;
+@property (weak, nonatomic) IBOutlet UIView *viewIndicatorDarkener;
+@property (weak, nonatomic) IBOutlet UIView *viewLine;
 @property (strong, nonatomic) IBOutlet UIPanGestureRecognizer *panGR;
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageViewEllipse;
@@ -23,7 +28,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     [self showEllipse:NO animated:NO];
 }
 
@@ -37,9 +41,27 @@
     // adjust position of the ellipse
     CGPoint ellipseCenter = self.imageViewEllipse.center;
     ellipseCenter.y = currentPanCenter.y;
+    ellipseCenter.x = currentPanCenter.x;
     [self.imageViewEllipse setCenter:ellipseCenter];
-}
+    
+    CGRect lineFrame = self.viewLine.frame;
+    lineFrame.origin = CGPointMake(15, currentPanCenter.y-2);
+    lineFrame.size = CGSizeMake(currentPanCenter.x-15, 1);
+    [self.viewLine setFrame:lineFrame];
+    
+    CGRect indicatorDarkenerFrame = self.viewIndicatorDarkener.frame;
+    indicatorDarkenerFrame.size = CGSizeMake(8, currentPanCenter.y);
+    [self.viewIndicatorDarkener setFrame:indicatorDarkenerFrame];
+    
+    CGRect labelSetHeatFrame = self.labelSetHeatPercent.frame;
+    labelSetHeatFrame.origin = CGPointMake(15, currentPanCenter.y - 25);
+    [self.labelSetHeatPercent setFrame:labelSetHeatFrame];
 
+    CGRect labelSetTimeFrame = self.labelSetTime.frame;
+    labelSetTimeFrame.origin = CGPointMake(15, currentPanCenter.y );
+    [self.labelSetTime setFrame:labelSetTimeFrame];
+    
+}
 
 //---------------------------------------------------------------------------
 #pragma mark - User actions
@@ -89,6 +111,9 @@
     
     [UIView animateWithDuration:duration animations:^{
         self.imageViewEllipse.alpha = alpha;
+        self.viewLine.alpha = alpha;
+        self.labelSetHeatPercent.alpha = alpha;
+        self.labelSetTime.alpha = alpha;
     }];
 }
 
