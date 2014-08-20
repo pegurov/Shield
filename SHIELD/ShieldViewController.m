@@ -10,6 +10,8 @@
 #import "UIImage+ImageEffects.h"
 #import "GeneralHelper.h"
 
+#define ELLIPSE_RIGHT_OFFSET 170.
+
 @interface ShieldViewController ()
 @property (nonatomic) CGPoint initialPanCenter;
 @property (nonatomic) CGPoint currentPanCenter;
@@ -65,12 +67,12 @@
     // adjust position of the ellipse
     CGPoint ellipseCenter = self.imageViewEllipse.center;
     ellipseCenter.y = currentPanCenter.y;
-    ellipseCenter.x = currentPanCenter.x;
+    ellipseCenter.x = ELLIPSE_RIGHT_OFFSET; //currentPanCenter.x;
     [self.imageViewEllipse setCenter:ellipseCenter];
     
     CGRect lineFrame = self.viewLine.frame;
     lineFrame.origin = CGPointMake(15, currentPanCenter.y-2);
-    lineFrame.size = CGSizeMake(currentPanCenter.x-15, 1);
+    lineFrame.size = CGSizeMake(ELLIPSE_RIGHT_OFFSET-15, 1);
     [self.viewLine setFrame:lineFrame];
     
     CGRect indicatorDarkenerFrame = self.viewIndicatorDarkener.frame;
