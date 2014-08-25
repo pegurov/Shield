@@ -16,15 +16,23 @@
 @property (nonatomic) CGPoint initialPanCenter;
 @property (nonatomic) CGPoint currentPanCenter;
 
+@property (weak, nonatomic) IBOutlet UIView *viewBlack;
 @property (weak, nonatomic) IBOutlet UIView *viewLabels;
 @property (weak, nonatomic) IBOutlet UIImageView *imageViewBlurredLabels;
 
 @property (weak, nonatomic) IBOutlet UILabel *labelSetHeatPercent;
 @property (weak, nonatomic) IBOutlet UILabel *labelSetTime;
+
+@property (weak, nonatomic) IBOutlet UILabel *labelHeatPercent;
+@property (weak, nonatomic) IBOutlet UILabel *labelTime;
+
 @property (weak, nonatomic) IBOutlet UIImageView *imageViewHeatIndicator;
 @property (weak, nonatomic) IBOutlet UIView *viewIndicatorDarkener;
 @property (weak, nonatomic) IBOutlet UIView *viewLine;
 @property (strong, nonatomic) IBOutlet UIPanGestureRecognizer *panGR;
+
+@property (nonatomic) BOOL isUpdatingImage;
+@property (nonatomic) BOOL imageNeedsUpdate;
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageViewEllipse;
 - (IBAction)viewPanned:(UIPanGestureRecognizer *)sender;
@@ -40,20 +48,45 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self updateBlurredImage];
+
     
-    CGSize imageSize = CGSizeMake(self.viewLabels.bounds.size.width, self.viewLabels.bounds.size.height);
-    UIGraphicsBeginImageContext(imageSize);
-    [self.viewLabels.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    UIColor *tintColor = [UIColor clearColor]; //[UIColor colorWithWhite:0.11 alpha:0.73];
-    UIImage *blurredImage = [viewImage applyBlurWithRadius:5 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:nil];
-    
-    [self.imageViewBlurredLabels setImage:blurredImage];
     [self showEllipse:NO animated:NO];
-    
     [self setCurrentPanCenter:CGPointMake(100, 100)];
+}
+
+- (void)updateBlurredImage
+{
+    if (!self.isUpdatingImage) {
+        self.isUpdatingImage = YES;
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            CGSize imageSize = CGSizeMake(self.viewLabels.bounds.size.width, self.viewLabels.bounds.size.height);
+            UIGraphicsBeginImageContext(imageSize);
+            [self.viewLabels.layer renderInContext:UIGraphicsGetCurrentContext()];
+            UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            UIColor *tintColor = [UIColor clearColor];
+            UIImage *blurredImage = [viewImage applyBlurWithRadius:5 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:nil];
+
+            // return to main queue
+            dispatch_sync(dispatch_get_main_queue(), ^{
+
+                self.isUpdatingImage = NO;
+                [self.imageViewBlurredLabels setImage:blurredImage];
+                
+                if (self.imageNeedsUpdate) {
+                    [self updateBlurredImage];
+                    self.imageNeedsUpdate = NO;
+                }
+            });
+        });
+    }
+    else {
+        self.imageNeedsUpdate = YES;
+    }
 }
 
 
@@ -95,6 +128,11 @@
     
     [self.labelSetHeatPercent setText:[NSString stringWithFormat:@"h %d\%%",(int)heat]];
     [self.labelSetTime setText:[NSString stringWithFormat:@"t %d:%02d",(int)(floorf(time/60)), (int)(time%60)]];
+    
+    [self.labelHeatPercent setText:[NSString stringWithFormat:@"heat %d\%%",(int)heat]];
+    [self.labelTime setText:[NSString stringWithFormat:@"use %d:%02d",(int)(floorf(time/60)), (int)(time%60)]];
+    
+    [self updateBlurredImage];
 }
 
 //---------------------------------------------------------------------------
@@ -146,6 +184,8 @@
 // pass YES to show, NO to hide
 - (void)showEllipse:(BOOL)show animated:(BOOL)animated
 {
+    [self updateBlurredImage];
+    
     CGFloat duration = animated ? 0.1 : 0;
     CGFloat alpha = show? 1 : 0;
     
@@ -156,7 +196,7 @@
         self.labelSetTime.alpha = alpha;
         
         [self.imageViewBlurredLabels setAlpha:alpha/4.];
-        [self.viewLabels setAlpha:(1-alpha)];
+        [self.viewBlack setAlpha:alpha];
     }];
 }
 

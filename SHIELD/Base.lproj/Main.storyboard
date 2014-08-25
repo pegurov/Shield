@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.8" systemVersion="14A329f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
         <!--Shield View Controller-->
@@ -64,6 +64,11 @@
                                     <constraint firstItem="h5F-l0-kS2" firstAttribute="leading" secondItem="DOK-iX-jdf" secondAttribute="leading" constant="27" id="z75-EL-nNs"/>
                                 </constraints>
                             </view>
+                            <view userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hrp-iL-zLv" userLabel="View - black">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
+                            </view>
                             <imageView userInteractionEnabled="NO" alpha="0.29999999999999999" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KBS-yH-uPF" userLabel="Image View - blurred labels">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                             </imageView>
@@ -101,12 +106,16 @@
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="QGR-Hg-lbX" secondAttribute="bottom" id="2Xz-Lq-y0B"/>
+                            <constraint firstItem="Hrp-iL-zLv" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="5In-ej-i7l"/>
                             <constraint firstItem="DOK-iX-jdf" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="6EI-JW-w95"/>
+                            <constraint firstAttribute="trailing" secondItem="Hrp-iL-zLv" secondAttribute="trailing" id="FGv-Cf-h9a"/>
                             <constraint firstAttribute="trailing" secondItem="DOK-iX-jdf" secondAttribute="trailing" id="Mwd-rM-2di"/>
+                            <constraint firstItem="Hrp-iL-zLv" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Pax-IB-oYc"/>
                             <constraint firstItem="QGR-Hg-lbX" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="obL-Yn-TBG"/>
                             <constraint firstItem="QGR-Hg-lbX" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="pNx-l7-od8"/>
                             <constraint firstItem="DOK-iX-jdf" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="qP5-zm-zWJ"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="DOK-iX-jdf" secondAttribute="bottom" id="uMk-O7-0HU"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="Hrp-iL-zLv" secondAttribute="bottom" id="vpd-r3-FGS"/>
                         </constraints>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="AnN-3b-ygT" appends="YES" id="PAM-NY-hJP"/>
@@ -116,9 +125,12 @@
                         <outlet property="imageViewBlurredLabels" destination="KBS-yH-uPF" id="yth-ud-ENb"/>
                         <outlet property="imageViewEllipse" destination="OVs-zy-fqh" id="QjX-os-YLb"/>
                         <outlet property="imageViewHeatIndicator" destination="QGR-Hg-lbX" id="r2o-Xe-jyV"/>
+                        <outlet property="labelHeatPercent" destination="sDE-9m-h3X" id="vxF-lE-Mhl"/>
                         <outlet property="labelSetHeatPercent" destination="hGU-B9-Y2p" id="uOm-tV-lay"/>
                         <outlet property="labelSetTime" destination="Srh-6I-DyY" id="XVw-TK-i1q"/>
+                        <outlet property="labelTime" destination="rHV-HZ-gqC" id="rjn-bk-u01"/>
                         <outlet property="panGR" destination="AnN-3b-ygT" id="HpK-7D-3Gy"/>
+                        <outlet property="viewBlack" destination="Hrp-iL-zLv" id="JUd-9a-fEW"/>
                         <outlet property="viewIndicatorDarkener" destination="VcH-i2-hei" id="Ube-Tj-Uq8"/>
                         <outlet property="viewLabels" destination="DOK-iX-jdf" id="IwK-xA-LP7"/>
                         <outlet property="viewLine" destination="oPC-uQ-pmf" id="BVn-Hu-IcW"/>
@@ -141,9 +153,6 @@
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4">
-            <size key="portraitSize" width="320" height="568"/>
-            <size key="landscapeSize" width="568" height="320"/>
-        </simulatedScreenMetrics>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
 </document>
