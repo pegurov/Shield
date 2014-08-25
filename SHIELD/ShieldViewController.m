@@ -91,10 +91,10 @@
     // set labels with values
     CGFloat percent = currentPanCenter.y / self.view.frame.size.height;
     CGFloat heat = 100 * (1-percent);
-    NSInteger time = (int)(10*60 * percent); // minutes
+    NSInteger time = (int)(67.5*60 * percent) + (4.5*60); // minutes
     
     [self.labelSetHeatPercent setText:[NSString stringWithFormat:@"h %d\%%",(int)heat]];
-    [self.labelSetTime setText:[NSString stringWithFormat:@"t %d:%2d",(int)(floorf(time/60)), (int)(time%60)]];
+    [self.labelSetTime setText:[NSString stringWithFormat:@"t %d:%02d",(int)(floorf(time/60)), (int)(time%60)]];
 }
 
 //---------------------------------------------------------------------------
@@ -131,7 +131,13 @@
     
     CGFloat translationY = [sender translationInView:self.view].y;
     CGFloat translationX = [sender translationInView:self.view].x;
-    self.currentPanCenter = CGPointMake(self.initialPanCenter.x + translationX, self.initialPanCenter.y + translationY);
+    
+    
+    CGPoint currentPanCenter = CGPointMake(self.initialPanCenter.x + translationX, self.initialPanCenter.y + translationY);
+    currentPanCenter.y = (currentPanCenter.y > 0)? currentPanCenter.y : 0;
+    currentPanCenter.y = (currentPanCenter.y < self.view.frame.size.height)? currentPanCenter.y : self.view.frame.size.height;
+    
+    self.currentPanCenter = currentPanCenter;
 }
 
 //---------------------------------------------------------------------------
