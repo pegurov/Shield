@@ -10,4 +10,6 @@
 
 @interface ShieldViewController : CommonViewController
 
+@property (strong, nonatomic) CBPeripheral *device;
+
 @end

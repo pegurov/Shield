@@ -12,9 +12,11 @@
 		C41EB76319A2475000641436 /* ShieldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76219A2475000641436 /* ShieldViewController.m */; };
 		C41EB76619A392D000641436 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76519A392D000641436 /* UIImage+ImageEffects.m */; };
 		C41EB76919A3ABCC00641436 /* GeneralHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76819A3ABCC00641436 /* GeneralHelper.m */; };
+		C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9A919C62E5000126086 /* CommonTableViewCell.m */; };
+		C46CE9AD19C62E6100126086 /* DeviceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9AC19C62E6100126086 /* DeviceCell.m */; };
 		F0A6F10019A2356D00D976BA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */; };
 		F0A6F10719A2384D00D976BA /* BTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10219A2384D00D976BA /* BTManager.m */; };
-		F0A6F10919A2384D00D976BA /* BTTestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10619A2384D00D976BA /* BTTestsViewController.m */; };
+		F0A6F10919A2384D00D976BA /* BTDevicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10619A2384D00D976BA /* BTDevicesViewController.m */; };
 		F0D7E2E619A1F99200F78ED1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2E519A1F99200F78ED1 /* main.m */; };
 		F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2E819A1F99200F78ED1 /* AppDelegate.m */; };
 		F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F0D7E2EA19A1F99200F78ED1 /* SHIELD.xcdatamodeld */; };
@@ -44,11 +46,16 @@
 		C41EB76519A392D000641436 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		C41EB76719A3ABCC00641436 /* GeneralHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralHelper.h; sourceTree = "<group>"; };
 		C41EB76819A3ABCC00641436 /* GeneralHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralHelper.m; sourceTree = "<group>"; };
+		C46CE9A819C62E5000126086 /* CommonTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonTableViewCell.h; sourceTree = "<group>"; };
+		C46CE9A919C62E5000126086 /* CommonTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonTableViewCell.m; sourceTree = "<group>"; };
+		C46CE9AB19C62E6100126086 /* DeviceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceCell.h; sourceTree = "<group>"; };
+		C46CE9AC19C62E6100126086 /* DeviceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceCell.m; sourceTree = "<group>"; };
+		C46CE9AE19C62F2600126086 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		F0A6F10119A2384D00D976BA /* BTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTManager.h; sourceTree = "<group>"; };
 		F0A6F10219A2384D00D976BA /* BTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTManager.m; sourceTree = "<group>"; };
-		F0A6F10519A2384D00D976BA /* BTTestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTTestsViewController.h; sourceTree = "<group>"; };
-		F0A6F10619A2384D00D976BA /* BTTestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTTestsViewController.m; sourceTree = "<group>"; };
+		F0A6F10519A2384D00D976BA /* BTDevicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTDevicesViewController.h; sourceTree = "<group>"; };
+		F0A6F10619A2384D00D976BA /* BTDevicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTDevicesViewController.m; sourceTree = "<group>"; };
 		F0D7E2E019A1F99200F78ED1 /* SHIELD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SHIELD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D7E2E419A1F99200F78ED1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0D7E2E519A1F99200F78ED1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -102,6 +109,7 @@
 		C41EB75719A2463500641436 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C46CE9A519C62D4100126086 /* TV cells */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -111,7 +119,7 @@
 			children = (
 				C41EB75D19A246E000641436 /* Common */,
 				C41EB75C19A246B600641436 /* Shield */,
-				C41EB75B19A246AA00641436 /* BT Tests */,
+				C41EB75B19A246AA00641436 /* BT Devices */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -127,23 +135,20 @@
 		C41EB75A19A2464600641436 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				C41EB76419A392D000641436 /* UIImage+ImageEffects.h */,
-				C41EB76519A392D000641436 /* UIImage+ImageEffects.m */,
-				F0A6F10119A2384D00D976BA /* BTManager.h */,
-				F0A6F10219A2384D00D976BA /* BTManager.m */,
-				C41EB76719A3ABCC00641436 /* GeneralHelper.h */,
-				C41EB76819A3ABCC00641436 /* GeneralHelper.m */,
+				C46CE9A219C6256E00126086 /* BTManager */,
+				C46CE9A319C6258300126086 /* UIImage+ImageEffects */,
+				C46CE9A419C6258A00126086 /* GeneralHelper */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
 		};
-		C41EB75B19A246AA00641436 /* BT Tests */ = {
+		C41EB75B19A246AA00641436 /* BT Devices */ = {
 			isa = PBXGroup;
 			children = (
-				F0A6F10519A2384D00D976BA /* BTTestsViewController.h */,
-				F0A6F10619A2384D00D976BA /* BTTestsViewController.m */,
+				F0A6F10519A2384D00D976BA /* BTDevicesViewController.h */,
+				F0A6F10619A2384D00D976BA /* BTDevicesViewController.m */,
 			);
-			name = "BT Tests";
+			name = "BT Devices";
 			sourceTree = "<group>";
 		};
 		C41EB75C19A246B600641436 /* Shield */ = {
@@ -162,6 +167,60 @@
 				C41EB75F19A246FF00641436 /* CommonViewController.m */,
 			);
 			name = Common;
+			sourceTree = "<group>";
+		};
+		C46CE9A219C6256E00126086 /* BTManager */ = {
+			isa = PBXGroup;
+			children = (
+				F0A6F10119A2384D00D976BA /* BTManager.h */,
+				F0A6F10219A2384D00D976BA /* BTManager.m */,
+			);
+			name = BTManager;
+			sourceTree = "<group>";
+		};
+		C46CE9A319C6258300126086 /* UIImage+ImageEffects */ = {
+			isa = PBXGroup;
+			children = (
+				C41EB76419A392D000641436 /* UIImage+ImageEffects.h */,
+				C41EB76519A392D000641436 /* UIImage+ImageEffects.m */,
+			);
+			name = "UIImage+ImageEffects";
+			sourceTree = "<group>";
+		};
+		C46CE9A419C6258A00126086 /* GeneralHelper */ = {
+			isa = PBXGroup;
+			children = (
+				C41EB76719A3ABCC00641436 /* GeneralHelper.h */,
+				C41EB76819A3ABCC00641436 /* GeneralHelper.m */,
+			);
+			name = GeneralHelper;
+			sourceTree = "<group>";
+		};
+		C46CE9A519C62D4100126086 /* TV cells */ = {
+			isa = PBXGroup;
+			children = (
+				C46CE9A719C62D4A00126086 /* Device */,
+				C46CE9A619C62D4600126086 /* Common */,
+			);
+			name = "TV cells";
+			sourceTree = "<group>";
+		};
+		C46CE9A619C62D4600126086 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				C46CE9A819C62E5000126086 /* CommonTableViewCell.h */,
+				C46CE9A919C62E5000126086 /* CommonTableViewCell.m */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
+		C46CE9A719C62D4A00126086 /* Device */ = {
+			isa = PBXGroup;
+			children = (
+				C46CE9AB19C62E6100126086 /* DeviceCell.h */,
+				C46CE9AC19C62E6100126086 /* DeviceCell.m */,
+			);
+			name = Device;
 			sourceTree = "<group>";
 		};
 		F0D7E2D719A1F99200F78ED1 = {
@@ -205,6 +264,7 @@
 			children = (
 				F0D7E2E419A1F99200F78ED1 /* Info.plist */,
 				F0D7E2E519A1F99200F78ED1 /* main.m */,
+				C46CE9AE19C62F2600126086 /* PrefixHeader.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -361,8 +421,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C46CE9AD19C62E6100126086 /* DeviceCell.m in Sources */,
 				C41EB76619A392D000641436 /* UIImage+ImageEffects.m in Sources */,
-				F0A6F10919A2384D00D976BA /* BTTestsViewController.m in Sources */,
+				F0A6F10919A2384D00D976BA /* BTDevicesViewController.m in Sources */,
+				C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */,
 				F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */,
 				C41EB76319A2475000641436 /* ShieldViewController.m in Sources */,
 				F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */,
@@ -489,6 +551,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Shield/PrefixHeader.pch;
 				INFOPLIST_FILE = SHIELD/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -505,6 +569,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Shield/PrefixHeader.pch;
 				INFOPLIST_FILE = SHIELD/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

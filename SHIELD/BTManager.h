@@ -7,20 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreBluetooth/CoreBluetooth.h>
+
+typedef NS_ENUM(NSInteger, BTManagerState) {
+    BTManagerStateIsDoingNothing = 0,
+    BTManagerStateIsLooking
+};
 
 typedef void (^bDataErrorBlock)(NSData *, NSError *);
-
-@protocol BTManagerDelegate <NSObject>
-
-@required
-- (void) didUpdateState:(BOOL)active;
-- (void) discoveredChanged:(NSMutableArray *)discovered;
-- (void) connectedChanged:(NSMutableArray *)connected;
-
-- (void) errorOccured:(NSError *)error;
-
-@end
+@protocol BTManagerDelegate;
 
 @interface BTManager : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 
@@ -29,8 +23,18 @@ typedef void (^bDataErrorBlock)(NSData *, NSError *);
 
 + (BTManager *) sharedInstance;
 
-- (void) start;
-- (void) stop;
-- (void) writeValue:(NSData *)data;
+- (void)startScanning;
+- (void)connectToDevice:(CBPeripheral *)device;
 
+//- (void)writeValue:(NSData *)data;
+
+@end
+
+@protocol BTManagerDelegate <NSObject>
+
+@required
+- (void)didUpdateState:(BTManagerState)state;
+- (void)discoveredChanged:(NSMutableArray *)discovered;
+- (void)connectedChanged:(CBPeripheral *)connected;
+- (void)errorOccured:(NSError *)error;
 @end

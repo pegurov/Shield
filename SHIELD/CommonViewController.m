@@ -14,36 +14,18 @@
 
 @implementation CommonViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+// navigation activity indicator
+- (void)addActivityIndicatorToNavigationBar
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
+    self.activityIndicatorNavigation = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [self.activityIndicatorNavigation setHidesWhenStopped:YES];
+    [self.activityIndicatorNavigation setColor:[UIColor whiteColor]];
+    
+    UIView *placeholder = [[UIView alloc] initWithFrame:CGRectMake(0., 0., 44, 44)];
+    [placeholder addSubview:self.activityIndicatorNavigation];
+    [self.activityIndicatorNavigation setCenter:CGPointMake(placeholder.frame.size.width/2., placeholder.frame.size.height/2.)];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:placeholder];
 }
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

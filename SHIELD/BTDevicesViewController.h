@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BTManager.h"
 
-@interface BTTestsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, BTManagerDelegate>
+@interface BTDevicesViewController : CommonViewController
+
+@property (strong, nonatomic) CBPeripheral *selectedDevice;
 
 @end

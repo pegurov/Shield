@@ -63,7 +63,6 @@
     [super viewWillAppear:animated];
     [self updateBlurredImage];
 
-    
     [self showEllipse:NO animated:NO];
     [self setCurrentPanCenter:CGPointMake(100, 100)];
 }
