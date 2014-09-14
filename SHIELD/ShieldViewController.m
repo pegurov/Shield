@@ -31,6 +31,19 @@
 @property (weak, nonatomic) IBOutlet UIView *viewLine;
 @property (strong, nonatomic) IBOutlet UIPanGestureRecognizer *panGR;
 
+
+// constraints
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraintEllipseOriginX;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraintEllipseOriginY;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraintLineWidth;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraintLineOriginY;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraintLabelHeatOriginY;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraintLabelTemperatureOriginY;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraintIndicatorDarkenerHeight;
+
+
 @property (nonatomic) BOOL isUpdatingImage;
 @property (nonatomic) BOOL imageNeedsUpdate;
 
@@ -95,31 +108,25 @@
 
 - (void)setCurrentPanCenter:(CGPoint)currentPanCenter
 {
+    NSLog(@"%@", NSStringFromCGPoint(currentPanCenter));
+    
     _currentPanCenter = currentPanCenter;
     
     // adjust position of the ellipse
-    CGPoint ellipseCenter = self.imageViewEllipse.center;
-    ellipseCenter.y = currentPanCenter.y;
-    ellipseCenter.x = currentPanCenter.x;
-    [self.imageViewEllipse setCenter:ellipseCenter];
+    self.constraintEllipseOriginX.constant = currentPanCenter.x - (self.imageViewEllipse.frame.size.width/2.);
+    self.constraintEllipseOriginY.constant = currentPanCenter.y - (self.imageViewEllipse.frame.size.height/2.);
     
-    CGRect lineFrame = self.viewLine.frame;
-    lineFrame.origin = CGPointMake(15, currentPanCenter.y-2);
-    lineFrame.size = CGSizeMake(currentPanCenter.x-15, 1);
-    [self.viewLine setFrame:lineFrame];
+    // adjust position of the line
+    self.constraintLineOriginY.constant = currentPanCenter.y-2;
+    self.constraintLineWidth.constant = currentPanCenter.x-15;
     
-    CGRect indicatorDarkenerFrame = self.viewIndicatorDarkener.frame;
-    indicatorDarkenerFrame.origin = CGPointMake(0, 0);
-    indicatorDarkenerFrame.size = CGSizeMake(8, currentPanCenter.y-2);
-    [self.viewIndicatorDarkener setFrame:indicatorDarkenerFrame];
+    // labels
+    self.constraintLabelTemperatureOriginY.constant = currentPanCenter.y;
+    self.constraintLabelHeatOriginY.constant = currentPanCenter.y - 25;
     
-    CGRect labelSetHeatFrame = self.labelSetHeatPercent.frame;
-    labelSetHeatFrame.origin = CGPointMake(15, currentPanCenter.y - 25);
-    [self.labelSetHeatPercent setFrame:labelSetHeatFrame];
-
-    CGRect labelSetTimeFrame = self.labelSetTime.frame;
-    labelSetTimeFrame.origin = CGPointMake(15, currentPanCenter.y );
-    [self.labelSetTime setFrame:labelSetTimeFrame];
+    // darkener
+    self.constraintIndicatorDarkenerHeight.constant = currentPanCenter.y-2;
+    
     
     // set labels with values
     CGFloat percent = currentPanCenter.y / self.view.frame.size.height;
