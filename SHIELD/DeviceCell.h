@@ -10,7 +10,6 @@
 
 @interface DeviceCell : CommonTableViewCell
 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-- (void)setDevice:(CBPeripheral *)device;
+- (void)setDevice:(Shield *)device;
 
 @end

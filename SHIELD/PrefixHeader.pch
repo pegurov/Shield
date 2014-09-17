@@ -12,5 +12,6 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "GeneralHelper.h"
 #import "CommonViewController.h"
+#import "Shield.h"
 
 #endif

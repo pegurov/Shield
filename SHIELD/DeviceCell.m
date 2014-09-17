@@ -10,15 +10,38 @@
 
 @interface DeviceCell()
 @property (weak, nonatomic) IBOutlet UILabel *labelName;
-@property (strong, nonatomic) CBPeripheral *device;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+
+@property (strong, nonatomic) Shield *device;
 @end
 
 @implementation DeviceCell
 
-- (void)setDevice:(CBPeripheral *)device
+- (void)setDevice:(Shield *)device
 {
     _device = device;
-    [self.labelName setText:device.name];
+
+    [self.activityIndicator stopAnimating];
+    [self.labelName setTextColor:[UIColor blackColor]];
+    
+    if (device.peripheral.state == CBPeripheralStateConnected) {
+
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        [self.labelName setTextColor:[UIColor lightGrayColor]];
+        [self.activityIndicator stopAnimating];
+    }
+    if (device.peripheral.state == CBPeripheralStateConnecting) {
+        
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        [self.labelName setTextColor:[UIColor lightGrayColor]];
+        [self.activityIndicator startAnimating];
+    }
+    else { // DISCONNECTED
+        
+        self.selectionStyle = UITableViewCellSelectionStyleDefault;
+    }
+
+    [self.labelName setText:device.peripheral.name];
 }
 
 @end

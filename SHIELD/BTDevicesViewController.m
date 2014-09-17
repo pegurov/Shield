@@ -13,12 +13,8 @@
 
 @interface BTDevicesViewController () <UITableViewDataSource, UITableViewDelegate, BTManagerDelegate>
 
-@property (strong, nonatomic) NSArray *devices;
-- (void)startLookingForDevices;
-
 // IBOutlets
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-
 @end
 
 @implementation BTDevicesViewController
@@ -26,11 +22,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.title = @"Devices";
     [self addActivityIndicatorToNavigationBar];
     
     // BT manager
     [[BTManager sharedInstance] setDelegate:self];
-    [[BTManager sharedInstance] startScanning];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -48,31 +44,38 @@
 //------------------------------------------------------------------------------------
 #pragma mark - BTManagerDelegate
 
--(void)didUpdateState:(BTManagerState)state
+- (void)btManagerDidStartScanningForShields:(BTManager *)manager
 {
-    if (state == BTManagerStateIsLooking) {
-        [self.activityIndicatorNavigation startAnimating];
-    }
-    else {
-        [self.activityIndicatorNavigation stopAnimating];
-    }
+    [self.activityIndicatorNavigation startAnimating];
 }
 
-- (void)discoveredChanged:(NSMutableArray *)discovered
+- (void)btManagerDidEndScanningForShields:(BTManager *)manager
 {
-    self.devices = discovered;
+    [self.activityIndicatorNavigation stopAnimating];
+}
+
+- (void)btManagerUpdatedDiscoveredShields:(BTManager *)manager
+{
     [self.tableView reloadData];
 }
 
-- (void)connectedChanged:(NSMutableArray *)connected
+- (void)btManagerDidConnectToShield:(BTManager *)manager
 {
-    [self.tableView reloadData];
+    
+}
+
+- (void)btManager:(BTManager *)manager errorOccured:(NSError *)error
+{
+    
 }
 
 - (void)errorOccured:(NSError *)error
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"BTLE" message:@"Error occured" delegate:nil
-                                          cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"BTLE"
+                                                    message:[NSString stringWithFormat:@"Error %@ occured", @(error.code)]
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
     [alert show];
 }
 
@@ -81,33 +84,25 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.devices count];
+    return [[BTManager sharedInstance] discoveredShields].count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CBPeripheral *device = [self.devices objectAtIndex:indexPath.row];
+    Shield *device = [[[BTManager sharedInstance] discoveredShields] objectAtIndex:indexPath.row];
     DeviceCell *cell = [tableView dequeueReusableCellWithIdentifier:[DeviceCell cellIdentifier] forIndexPath:indexPath];
     [cell setDevice:device];
-    
-    
-    if (device.state == CBPeripheralStateConnected) {
-        cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-    }
-    else if (device.state == CBPeripheralStateConnecting) {
-        cell.accessoryType = UITableViewCellAccessoryNone;
-    }
-    else if (device.state == CBPeripheralStateDisconnected) {
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    }
-    
+        
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    [[BTManager sharedInstance] connectToDevice:[self.devices objectAtIndex:indexPath.row]];
+    Shield *selectedShield = [[[BTManager sharedInstance] discoveredShields] objectAtIndex:indexPath.row];
+    [[BTManager sharedInstance] connectToShield:selectedShield];
+    
+    [self.tableView reloadData];
     
 //    self.selectedDevice = [self.devices objectAtIndex:indexPath.row];
 //    [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
