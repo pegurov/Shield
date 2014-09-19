@@ -10,18 +10,5 @@
 
 @implementation Shield
 
-- (BOOL)isEqual:(id)object
-{
-    if (![object isKindOfClass:[Shield class]]) {
-        return NO;
-    }
-    
-    return [self isEqualToShield:object];
-}
-
-- (BOOL)isEqualToShield:(Shield *)shield
-{
-    return [self.peripheral isEqual:shield.peripheral];
-}
 
 @end

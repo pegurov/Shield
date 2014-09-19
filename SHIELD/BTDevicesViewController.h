@@ -10,6 +10,4 @@
 
 @interface BTDevicesViewController : CommonViewController
 
-@property (strong, nonatomic) CBPeripheral *selectedDevice;
-
 @end

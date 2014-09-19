@@ -61,7 +61,7 @@
 
 - (void)btManagerDidConnectToShield:(BTManager *)manager
 {
-    
+    [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:manager.connectedShield];
 }
 
 - (void)btManager:(BTManager *)manager errorOccured:(NSError *)error
@@ -103,17 +103,13 @@
     [[BTManager sharedInstance] connectToShield:selectedShield];
     
     [self.tableView reloadData];
-    
-//    self.selectedDevice = [self.devices objectAtIndex:indexPath.row];
-//    [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:SEGUE_ID_DEVICE_DETAIL]) {
         ShieldViewController *nextVC = segue.destinationViewController;
-        BTDevicesViewController *currentVC = segue.sourceViewController;
-        nextVC.device = currentVC.selectedDevice;
+        nextVC.shield = sender;
     }
 }
 

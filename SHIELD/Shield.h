@@ -12,6 +12,4 @@
 
 @property (strong, nonatomic) CBPeripheral *peripheral;
 
-- (BOOL)isEqualToShield:(Shield *)shield;
-
 @end
