@@ -202,24 +202,6 @@
     }
 }
 
-//- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
-//{
-//    
-//    NSLog(@"");
-//    if (!error)
-//    {
-//        //        printf("Updated notification state for characteristic with UUID %s on service with  UUID %s on peripheral with UUID %s\r\n",[self CBUUIDToString:characteristic.UUID],[self CBUUIDToString:characteristic.service.UUID],[self UUIDToString:peripheral.UUID]);
-//    }
-//    else
-//    {
-//        NSLog(@"Error in setting notification state for characteristic with UUID %@ on service with UUID %@ on peripheral with UUID %@",
-//              [self CBUUIDToString:characteristic.UUID],
-//              [self CBUUIDToString:characteristic.service.UUID],
-//              peripheral.identifier.UUIDString);
-//        
-//        NSLog(@"Error code was %s", [[error description] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
-//    }
-//}
 
 // ------------------------------------------------------------------------------
 #pragma mark - Notifications
@@ -246,7 +228,9 @@
 
                 if (len >= 64)
                 {
-                    [[self delegate] btManager:self didReceiveData:buf length:len];
+                    if ([self.delegate respondsToSelector:@selector(btManager:didReceiveData:length:)]) {
+                        [[self delegate] btManager:self didReceiveData:buf length:len];
+                    }
                     len = 0;
                 }
             }
@@ -255,7 +239,9 @@
                 memcpy(&buf[len], data, data_len);
                 len += data_len;
 
-                [[self delegate] btManager:self didReceiveData:buf length:len];
+                if ([self.delegate respondsToSelector:@selector(btManager:didReceiveData:length:)]) {
+                    [[self delegate] btManager:self didReceiveData:buf length:len];
+                }
                 len = 0;
             }
         }

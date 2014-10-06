@@ -8,25 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
-//typedef NS_ENUM(NSInteger, BTManagerState) {
-//    BTManagerStateIsDoingNothing = 0,
-//    BTManagerStateIsLooking
-//};
-//typedef void (^bDataErrorBlock)(NSData *, NSError *);
-
-//@property (nonatomic, copy) bDataErrorBlock onNewData;
-//- (void)writeValue:(NSData *)data;
-
-//- (void)didUpdateState:(BTManagerState)state;
-//- (void)discoveredChanged:(NSMutableArray *)discovered;
-//- (void)connectedChanged:(CBPeripheral *)connected;
 
 #define SHIELD_MAIN_SERVICE_UUID        @"713D0000-503E-4C75-BA94-3148F18D941E"
+
+// this was in RBL Shield
 #define SHIELD_CHAR_TX_UUID             @"713D0002-503E-4C75-BA94-3148F18D941E"
+
+#warning - REPLACE THE NAME OF RX CHAR HERE for HMSoft
 #define SHIELD_CHAR_RX_UUID             @"713D0003-503E-4C75-BA94-3148F18D941E"
 
 
-#define SHIELD_NAME_REQUIRED_PREFIX     @"SHIELD"
+#define SHIELD_NAME_REQUIRED_PREFIX     @"" // none
 
 #define BT_ERRORS_DOMAIN @"com.ogrenich.shield:BTERRORS"
 #define ERROR_CODE_BT_UNAVAILABLE 1
@@ -59,7 +51,6 @@
 - (void)btManagerDidEndScanningForShields:(BTManager *)manager;
 - (void)btManagerDidConnectToShield:(BTManager *)manager;
 - (void)btManager:(BTManager *)manager errorOccured:(NSError *)error;
-@required
 - (void)btManager:(BTManager *)manager didReceiveData:(unsigned char *)data length:(int)length;
 @end
 

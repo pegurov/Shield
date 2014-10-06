@@ -10,23 +10,10 @@
 #import "UIImage+ImageEffects.h"
 #import "GeneralHelper.h"
 #import "BTManager.h"
-#import "RBLProtocol.h"
 
 #define ELLIPSE_RIGHT_OFFSET 170.
 
-uint8_t total_pin_count  = 0;
-uint8_t pin_mode[128]    = {0};
-uint8_t pin_cap[128]     = {0};
-uint8_t pin_digital[128] = {0};
-uint16_t pin_analog[128]  = {0};
-uint8_t pin_pwm[128]     = {0};
-uint8_t pin_servo[128]   = {0};
-
-uint8_t init_done = 0;
-
-@interface ShieldViewController () <BTManagerDelegate, RBLProtocolDelegate>
-
-@property (strong, nonatomic) RBLProtocol *protocol;
+@interface ShieldViewController () <BTManagerDelegate>
 
 @property (nonatomic) CGPoint initialPanCenter;
 @property (nonatomic) CGPoint currentPanCenter;
@@ -45,6 +32,9 @@ uint8_t init_done = 0;
 @property (weak, nonatomic) IBOutlet UIView *viewIndicatorDarkener;
 @property (weak, nonatomic) IBOutlet UIView *viewLine;
 @property (strong, nonatomic) IBOutlet UIPanGestureRecognizer *panGR;
+
+
+@property (strong, nonatomic) NSTimer *updateTimer;
 
 
 // constraints
@@ -74,9 +64,6 @@ uint8_t init_done = 0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.protocol = [[RBLProtocol alloc] init];
-    self.protocol.delegate = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -88,15 +75,11 @@ uint8_t init_done = 0;
     [self setCurrentPanCenter:CGPointMake(100, 100)];
     
     [[BTManager sharedInstance] setDelegate:self];
-//    [self.protocol queryProtocolVersion];
-    
-    [self.protocol setPinMode:7 Mode:SERVO];
 }
 
 -(void)viewDidDisappear:(BOOL)animated
 {
-    total_pin_count = 0;
-    init_done = 0;
+    [super viewDidDisappear:animated];
 }
 
 - (void)updateBlurredImage
@@ -170,43 +153,10 @@ uint8_t init_done = 0;
     
     [self updateBlurredImage];
     
-//    uint8_t pin = 9;
-//    uint8_t value = 180 * percent;
-
-    self.sliderValue = 180 * percent;
+    self.sliderValue = percent;
     
-//    if (pin_mode[pin] == PWM) {
-//        pin_pwm[pin] = value; // for updating the GUI
-//    }
-//    else {
-//        pin_servo[pin] = value;
-//    }
-    
-
 }
 
-//- (IBAction)sliderChange:(id)sender
-//{
-//}
-//
-//- (IBAction)sliderTouchUp:(id)sender
-//{
-//    uint8_t pin = [sender tag];
-//    UISlider *sld = (UISlider *) sender;
-//    uint8_t value = sld.value;
-//    NSLog(@"Slider, pin id: %d, value: %d", pin, value);
-//    
-//    if (pin_mode[pin] == PWM)
-//    {
-//        pin_pwm[pin] = value;
-//        
-//    }
-//    else
-//    {
-//        pin_servo[pin] = value;
-//        [protocol servoWrite:pin Value:value];
-//    }
-//}
 
 //---------------------------------------------------------------------------
 #pragma mark - User actions
@@ -219,13 +169,14 @@ uint8_t init_done = 0;
         self.currentPanCenter = [someTouch locationInView:self.view];
         [self showEllipse:YES animated:YES];
     }
+
+    [self writeToShield];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [self showEllipse:NO animated:YES];
-    
-
+    [self writeToShield];
 }
 
 - (IBAction)viewPanned:(UIPanGestureRecognizer *)sender
@@ -234,6 +185,12 @@ uint8_t init_done = 0;
         
         self.initialPanCenter = [sender locationInView:self.view];
         [self showEllipse:YES animated:YES];
+        
+        self.updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
+                                                            target:self
+                                                          selector:@selector(writeToShield)
+                                                          userInfo:nil
+                                                           repeats:YES];
     }
     
     if (sender.state == UIGestureRecognizerStateEnded ||
@@ -243,10 +200,8 @@ uint8_t init_done = 0;
         
         
         // WRITE TO SHIELD
-        uint8_t pin = 7;
-        uint8_t value = (uint8_t)self.sliderValue;
-        [self.protocol servoWrite:pin Value:value];
-
+        [self.updateTimer invalidate];
+        [self writeToShield];
     }
     
     CGFloat translationY = [sender translationInView:self.view].y;
@@ -258,6 +213,12 @@ uint8_t init_done = 0;
     currentPanCenter.y = (currentPanCenter.y < self.view.frame.size.height)? currentPanCenter.y : self.view.frame.size.height;
     
     self.currentPanCenter = currentPanCenter;
+}
+
+- (void)writeToShield
+{
+    unsigned char mydata = (self.sliderValue > 0.5)? 1 : 0;
+    [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&mydata length:sizeof(mydata)]];
 }
 
 //---------------------------------------------------------------------------
@@ -287,78 +248,81 @@ uint8_t init_done = 0;
 
 - (void)btManager:(BTManager *)manager didReceiveData:(unsigned char *)data length:(int)length
 {
-    [self.protocol parseData:data length:length];
-}
-
-// ---------------------------------------------------------------------------
-#pragma mark - RBLProtocolDelegate
-
-- (void)protocolDidReceiveProtocolVersion:(uint8_t)major Minor:(uint8_t)minor Bugfix:(uint8_t)bugfix
-{
-    uint8_t buf[] = {'B', 'L', 'E'};
-    [self.protocol sendCustomData:buf Length:3];
-    [self.protocol queryTotalPinCount];
-}
-
-- (void)protocolDidReceiveTotalPinCount:(UInt8) count
-{
-    total_pin_count = count;
-    [self.protocol queryPinAll];
-}
-
-- (void)protocolDidReceivePinCapability:(uint8_t)pin Value:(uint8_t)value
-{
-    if (value == 0)
-        NSLog(@" - Nothing");
-    else
-    {
-        if (value & PIN_CAPABILITY_DIGITAL)
-            NSLog(@" - DIGITAL (I/O)");
-        if (value & PIN_CAPABILITY_ANALOG)
-            NSLog(@" - ANALOG");
-        if (value & PIN_CAPABILITY_PWM)
-            NSLog(@" - PWM");
-        if (value & PIN_CAPABILITY_SERVO)
-            NSLog(@" - SERVO");
-    }
+    NSLog(@" MANAGER DID RECEIVE DATA %s", data);
     
-    pin_cap[pin] = value;
+//    [self.protocol parseData:data length:length];
 }
 
-- (void)protocolDidReceivePinData:(uint8_t)pin Mode:(uint8_t)mode Value:(uint8_t)value
-{
-    uint8_t _mode = mode & 0x0F;
-    
-    pin_mode[pin] = _mode;
-    if ((_mode == INPUT) || (_mode == OUTPUT))
-        pin_digital[pin] = value;
-    else if (_mode == ANALOG)
-        pin_analog[pin] = ((mode >> 4) << 8) + value;
-    else if (_mode == PWM)
-        pin_pwm[pin] = value;
-    else if (_mode == SERVO)
-        pin_servo[pin] = value;
-}
 
-- (void)protocolDidReceivePinMode:(uint8_t)pin Mode:(uint8_t)mode
-{
-    if (mode == INPUT)
-        NSLog(@" Pin %d Mode: INPUT", pin);
-    else if (mode == OUTPUT)
-        NSLog(@" Pin %d Mode: OUTPUT", pin);
-    else if (mode == PWM)
-        NSLog(@" Pin %d Mode: PWM", pin);
-    else if (mode == SERVO)
-        NSLog(@" Pin %d Mode: SERVO", pin);
-    
-    pin_mode[pin] = mode;
-}
-
-- (void)protocolDidReceiveCustomData:(UInt8 *)data length:(UInt8)length
-{
-    for (int i = 0; i< length; i++)
-        printf("0x%2X ", data[i]);
-    printf("\n");
-}
+//// ---------------------------------------------------------------------------
+//#pragma mark - RBLProtocolDelegate
+//
+//- (void)protocolDidReceiveProtocolVersion:(uint8_t)major Minor:(uint8_t)minor Bugfix:(uint8_t)bugfix
+//{
+//    uint8_t buf[] = {'B', 'L', 'E'};
+//    [self.protocol sendCustomData:buf Length:3];
+//    [self.protocol queryTotalPinCount];
+//}
+//
+//- (void)protocolDidReceiveTotalPinCount:(UInt8) count
+//{
+//    total_pin_count = count;
+//    [self.protocol queryPinAll];
+//}
+//
+//- (void)protocolDidReceivePinCapability:(uint8_t)pin Value:(uint8_t)value
+//{
+//    if (value == 0)
+//        NSLog(@" - Nothing");
+//    else
+//    {
+//        if (value & PIN_CAPABILITY_DIGITAL)
+//            NSLog(@" - DIGITAL (I/O)");
+//        if (value & PIN_CAPABILITY_ANALOG)
+//            NSLog(@" - ANALOG");
+//        if (value & PIN_CAPABILITY_PWM)
+//            NSLog(@" - PWM");
+//        if (value & PIN_CAPABILITY_SERVO)
+//            NSLog(@" - SERVO");
+//    }
+//    
+//    pin_cap[pin] = value;
+//}
+//
+//- (void)protocolDidReceivePinData:(uint8_t)pin Mode:(uint8_t)mode Value:(uint8_t)value
+//{
+//    uint8_t _mode = mode & 0x0F;
+//    
+//    pin_mode[pin] = _mode;
+//    if ((_mode == INPUT) || (_mode == OUTPUT))
+//        pin_digital[pin] = value;
+//    else if (_mode == ANALOG)
+//        pin_analog[pin] = ((mode >> 4) << 8) + value;
+//    else if (_mode == PWM)
+//        pin_pwm[pin] = value;
+//    else if (_mode == SERVO)
+//        pin_servo[pin] = value;
+//}
+//
+//- (void)protocolDidReceivePinMode:(uint8_t)pin Mode:(uint8_t)mode
+//{
+//    if (mode == INPUT)
+//        NSLog(@" Pin %d Mode: INPUT", pin);
+//    else if (mode == OUTPUT)
+//        NSLog(@" Pin %d Mode: OUTPUT", pin);
+//    else if (mode == PWM)
+//        NSLog(@" Pin %d Mode: PWM", pin);
+//    else if (mode == SERVO)
+//        NSLog(@" Pin %d Mode: SERVO", pin);
+//    
+//    pin_mode[pin] = mode;
+//}
+//
+//- (void)protocolDidReceiveCustomData:(UInt8 *)data length:(UInt8)length
+//{
+//    for (int i = 0; i< length; i++)
+//        printf("0x%2X ", data[i]);
+//    printf("\n");
+//}
 
 @end

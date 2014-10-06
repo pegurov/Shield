@@ -234,10 +234,26 @@
 		C47BC79119CC4C3000C19E62 /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
+				C4AD526919E2B5CE00DA12CB /* HM */,
+				C4AD526A19E2B5D400DA12CB /* RBL */,
+			);
+			name = Protocol;
+			sourceTree = "<group>";
+		};
+		C4AD526919E2B5CE00DA12CB /* HM */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = HM;
+			sourceTree = "<group>";
+		};
+		C4AD526A19E2B5D400DA12CB /* RBL */ = {
+			isa = PBXGroup;
+			children = (
 				C47BC79219CC4C4B00C19E62 /* RBLProtocol.h */,
 				C47BC79319CC4C4B00C19E62 /* RBLProtocol.m */,
 			);
-			name = Protocol;
+			name = RBL;
 			sourceTree = "<group>";
 		};
 		C4EA89E219CA341700E90942 /* Managed */ = {
