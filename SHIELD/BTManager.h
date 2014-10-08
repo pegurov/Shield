@@ -9,16 +9,16 @@
 #import <Foundation/Foundation.h>
 
 
-#define SHIELD_MAIN_SERVICE_UUID        @"713D0000-503E-4C75-BA94-3148F18D941E"
+#define SHIELD_MAIN_SERVICE_UUID        @"FFE0"
 
 // this was in RBL Shield
 #define SHIELD_CHAR_TX_UUID             @"713D0002-503E-4C75-BA94-3148F18D941E"
 
 #warning - REPLACE THE NAME OF RX CHAR HERE for HMSoft
-#define SHIELD_CHAR_RX_UUID             @"713D0003-503E-4C75-BA94-3148F18D941E"
+#define SHIELD_CHAR_RX_UUID             @"FFE1"
 
 
-#define SHIELD_NAME_REQUIRED_PREFIX     @"" // none
+#define SHIELD_NAME_REQUIRED_PREFIX     @"AnyFlite"
 
 #define BT_ERRORS_DOMAIN @"com.ogrenich.shield:BTERRORS"
 #define ERROR_CODE_BT_UNAVAILABLE 1

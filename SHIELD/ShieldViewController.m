@@ -170,7 +170,7 @@
         [self showEllipse:YES animated:YES];
     }
 
-    [self writeToShield];
+//    [self writeToShield];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -186,11 +186,6 @@
         self.initialPanCenter = [sender locationInView:self.view];
         [self showEllipse:YES animated:YES];
         
-        self.updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
-                                                            target:self
-                                                          selector:@selector(writeToShield)
-                                                          userInfo:nil
-                                                           repeats:YES];
     }
     
     if (sender.state == UIGestureRecognizerStateEnded ||
@@ -217,7 +212,7 @@
 
 - (void)writeToShield
 {
-    unsigned char mydata = (self.sliderValue > 0.5)? 1 : 0;
+    unsigned char mydata = (self.sliderValue > 0.5)? 0 : 1;
     [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&mydata length:sizeof(mydata)]];
 }
 
