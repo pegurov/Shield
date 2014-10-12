@@ -212,8 +212,18 @@
 
 - (void)writeToShield
 {
-    unsigned char mydata = (self.sliderValue > 0.5)? 0 : 1;
-    [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&mydata length:sizeof(mydata)]];
+    // we need to write 2 times
+    // first is command, then value
+    
+    unsigned char setHeatCommand = 0x66;
+    unsigned char valueCommand = 0x65 * (1-self.sliderValue);
+    
+    [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&setHeatCommand length:sizeof(setHeatCommand)]];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&valueCommand length:sizeof(valueCommand)]];
+    });
+    
 }
 
 //---------------------------------------------------------------------------

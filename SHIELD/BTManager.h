@@ -41,6 +41,7 @@
 
 - (void)readFromConnectedShield;
 - (void)writeToConecttedShield:(NSData *)data;
+- (void)setHeatLevelToConnectedShield:(NSInteger)heatLevel; // 0 to 100
 
 @end
 

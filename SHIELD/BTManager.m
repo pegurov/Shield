@@ -6,10 +6,6 @@
 //  Copyright (c) 2014 Andrey Ogrenich. All rights reserved.
 //
 
-//@property (nonatomic, strong) NSMutableArray *discovered;
-//@property (nonatomic, strong) CBPeripheral *connectedPeripheral;
-//@property (nonatomic, strong) CBCharacteristic *characteristic;
-
 
 #import "BTManager.h"
 
@@ -57,7 +53,6 @@
         }
     }
     else {
-        
         [self stopScanningForShields];
     }
 }
@@ -92,7 +87,6 @@
 - (void)disconnectFromConnectedShield
 {
     if (self.connectedShield) {
-        
         [self.centralBTManager cancelPeripheralConnection:self.connectedShield.peripheral];
     }
 }
@@ -121,7 +115,7 @@
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral
       advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
 {
-    if (![self.discoveredShields containsObject:peripheral] && [peripheral.name hasPrefix:SHIELD_NAME_REQUIRED_PREFIX]) {
+    if (![self.discoveredShields containsObject:peripheral]) {
         
         Shield *newDevice = [[Shield alloc] init];
         newDevice.peripheral = peripheral;
@@ -280,12 +274,17 @@
 // ------------------------------------------------------------------------------
 #pragma mark - Writing
 
+- (void)setHeatLevelToConnectedShield:(NSInteger)heatLevel
+{
+    
+}
+
 - (void)writeToConecttedShield:(NSData *)data
 {
     CBUUID *mainServiceUUID = [CBUUID UUIDWithString:SHIELD_MAIN_SERVICE_UUID];
     CBUUID *rxCharUUID = [CBUUID UUIDWithString:SHIELD_CHAR_RX_UUID];
     
-    NSLog(@"%@", data);
+    NSLog(@"writing %@ to shield", data);
     
     [self writeValueToPeripheral:self.connectedShield.peripheral serviceUUID:mainServiceUUID characteristicUUID:rxCharUUID data:data];
 }
