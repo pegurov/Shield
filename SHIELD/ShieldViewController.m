@@ -12,6 +12,8 @@
 #import "BTManager.h"
 
 #define ELLIPSE_RIGHT_OFFSET 170.
+#define MAXIMUM_OFFSET 30.
+
 
 @interface ShieldViewController () <BTManagerDelegate>
 
@@ -24,6 +26,8 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *labelSetHeatPercent;
 @property (weak, nonatomic) IBOutlet UILabel *labelSetTime;
+@property (weak, nonatomic) IBOutlet UILabel *labelCurrentBatteryLevel;
+
 
 @property (weak, nonatomic) IBOutlet UILabel *labelHeatPercent;
 @property (weak, nonatomic) IBOutlet UILabel *labelTime;
@@ -53,7 +57,8 @@
 @property (nonatomic) BOOL imageNeedsUpdate;
 
 @property (nonatomic) CGFloat sliderValue;
-
+@property (nonatomic) NSInteger batteryLevel;
+@property (nonatomic) BOOL isCharging;
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageViewEllipse;
 - (IBAction)viewPanned:(UIPanGestureRecognizer *)sender;
@@ -75,11 +80,6 @@
     [self setCurrentPanCenter:CGPointMake(100, 100)];
     
     [[BTManager sharedInstance] setDelegate:self];
-}
-
--(void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
 }
 
 - (void)updateBlurredImage
@@ -141,9 +141,19 @@
     
     
     // set labels with values
-    CGFloat percent = currentPanCenter.y / self.view.frame.size.height;
-    CGFloat heat = 100 * (1-percent);
-    NSInteger time = (int)(67.5*60 * percent) + (4.5*60); // minutes
+    self.sliderValue = (currentPanCenter.y - MAXIMUM_OFFSET) / (self.view.frame.size.height - MAXIMUM_OFFSET*2);
+    self.sliderValue = (self.sliderValue < 0) ? 0 : self.sliderValue;
+    self.sliderValue = (self.sliderValue > 1) ? 1 : self.sliderValue;
+    
+    
+    [self updateLabels];
+    [self updateBlurredImage];
+}
+
+- (void)updateLabels
+{
+    CGFloat heat = 100 * (1-self.sliderValue);
+    NSInteger time = (heat == 0)? 240*60*(self.batteryLevel/100.) : (int)(8*60*(self.batteryLevel/100.));
     
     [self.labelSetHeatPercent setText:[NSString stringWithFormat:@"h %d\%%",(int)heat]];
     [self.labelSetTime setText:[NSString stringWithFormat:@"t %d:%02d",(int)(floorf(time/60)), (int)(time%60)]];
@@ -151,12 +161,10 @@
     [self.labelHeatPercent setText:[NSString stringWithFormat:@"heat %d\%%",(int)heat]];
     [self.labelTime setText:[NSString stringWithFormat:@"use %d:%02d",(int)(floorf(time/60)), (int)(time%60)]];
     
-    [self updateBlurredImage];
     
-    self.sliderValue = percent;
-    
+    NSString *isChargingString = self.isCharging? @", charging" : @"";
+    [self.labelCurrentBatteryLevel setText:[NSString stringWithFormat:@"battery: %@%%%@", @(self.batteryLevel), isChargingString]];
 }
-
 
 //---------------------------------------------------------------------------
 #pragma mark - User actions
@@ -215,8 +223,8 @@
     // we need to write 2 times
     // first is command, then value
     
-    unsigned char setHeatCommand = 0x66;
-    unsigned char valueCommand = 0x65 * (1-self.sliderValue);
+    unsigned char setHeatCommand = 0x65;
+    unsigned char valueCommand = 0x64 * (1-self.sliderValue);
     
     [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&setHeatCommand length:sizeof(setHeatCommand)]];
     
@@ -251,11 +259,39 @@
 // ---------------------------------------------------------------------------
 #pragma mark - BTManagerDelegate
 
-- (void)btManager:(BTManager *)manager didReceiveData:(unsigned char *)data length:(int)length
+- (void)btManager:(BTManager *)manager didReceiveData:(NSData *)data
 {
-    NSLog(@" MANAGER DID RECEIVE DATA %s", data);
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSScanner *scanner = [NSScanner scannerWithString:dataString];
+
+    NSCharacterSet *digitsSet = [NSCharacterSet decimalDigitCharacterSet];
+    NSCharacterSet *scanUpToSet = [[NSCharacterSet decimalDigitCharacterSet] invertedSet];
+    NSMutableArray *scannedStrings = [NSMutableArray array];
     
-//    [self.protocol parseData:data length:length];
+    while (!scanner.isAtEnd) {
+        
+        NSString *scannedString = @"";
+        [scanner scanUpToCharactersFromSet:scanUpToSet intoString:&scannedString];
+        [scannedStrings addObject:scannedString];
+        [scanner scanUpToCharactersFromSet:digitsSet intoString:nil];
+    }
+    
+    NSLog(@"%@", scannedStrings);
+    
+    if (scannedStrings.count == 2) {
+        
+        NSInteger commandByte = [scannedStrings[0] integerValue];
+        NSInteger valueByte = [scannedStrings[1] integerValue];
+        
+        if (commandByte == COMMAND_BATTERY_UPDATED) {
+            self.batteryLevel = valueByte;
+        }
+        else if (commandByte == COMMAND_IS_CHARGING_UPDATED) {
+            self.isCharging = (valueByte == 1) ? YES : NO;
+        }
+    }
+    
+    [self updateLabels];
 }
 
 

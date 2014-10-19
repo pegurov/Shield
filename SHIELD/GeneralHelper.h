@@ -12,6 +12,7 @@
 // SEGUE IDS
 #define SEGUE_ID_DEVICE_DETAIL @"SEGUE_ID_DEVICE_DETAIL"
 
+
 @interface GeneralHelper : NSObject
 
 + (void)showFrameOfView:(UIView *)view withColor:(UIColor *)color;

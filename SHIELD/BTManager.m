@@ -202,48 +202,52 @@
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
-    unsigned char data[20];
 
-    static unsigned char buf[512];
-    static int len = 0;
-    NSInteger data_len;
-
-    if (!error)
-    {
-        if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:SHIELD_CHAR_TX_UUID]])
-        {
-            data_len = characteristic.value.length;
-            [characteristic.value getBytes:data length:data_len];
-
-            if (data_len == 20)
-            {
-                memcpy(&buf[len], data, 20);
-                len += data_len;
-
-                if (len >= 64)
-                {
-                    if ([self.delegate respondsToSelector:@selector(btManager:didReceiveData:length:)]) {
-                        [[self delegate] btManager:self didReceiveData:buf length:len];
-                    }
-                    len = 0;
-                }
-            }
-            else if (data_len < 20)
-            {
-                memcpy(&buf[len], data, data_len);
-                len += data_len;
-
-                if ([self.delegate respondsToSelector:@selector(btManager:didReceiveData:length:)]) {
-                    [[self delegate] btManager:self didReceiveData:buf length:len];
-                }
-                len = 0;
-            }
-        }
-    }
-    else
-    {
-        NSLog(@"updateValueForCharacteristic failed!");
-    }
+    [[self delegate] btManager:self didReceiveData:characteristic.value];
+    
+    
+//    unsigned char data[20];
+//
+//    static unsigned char buf[512];
+//    static int len = 0;
+//    NSInteger data_len;
+//
+//    if (!error)
+//    {
+//        if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:SHIELD_CHAR_TX_UUID]])
+//        {
+//            data_len = characteristic.value.length;
+//            [characteristic.value getBytes:data length:data_len];
+//
+//            if (data_len == 20)
+//            {
+//                memcpy(&buf[len], data, 20);
+//                len += data_len;
+//
+//                if (len >= 64)
+//                {
+//                    if ([self.delegate respondsToSelector:@selector(btManager:didReceiveData:length:)]) {
+//                        [[self delegate] btManager:self didReceiveData:buf length:len];
+//                    }
+//                    len = 0;
+//                }
+//            }
+//            else if (data_len < 20)
+//            {
+//                memcpy(&buf[len], data, data_len);
+//                len += data_len;
+//
+//                if ([self.delegate respondsToSelector:@selector(btManager:didReceiveData:length:)]) {
+//                    
+//                }
+//                len = 0;
+//            }
+//        }
+//    }
+//    else
+//    {
+//        NSLog(@"updateValueForCharacteristic failed!");
+//    }
 }
 
 

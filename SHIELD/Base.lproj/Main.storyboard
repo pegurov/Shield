@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="9mu-gV-kb4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="9mu-gV-kb4">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -116,7 +116,7 @@
                                         </attributedString>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="battery: 30%" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h5F-l0-kS2" userLabel="Label - battery">
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h5F-l0-kS2" userLabel="Label - battery">
                                         <rect key="frame" x="27" y="527" width="263" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="DYT-AP-El6"/>
@@ -233,6 +233,7 @@
                         <outlet property="imageViewBlurredLabels" destination="KBS-yH-uPF" id="yth-ud-ENb"/>
                         <outlet property="imageViewEllipse" destination="OVs-zy-fqh" id="QjX-os-YLb"/>
                         <outlet property="imageViewHeatIndicator" destination="QGR-Hg-lbX" id="r2o-Xe-jyV"/>
+                        <outlet property="labelCurrentBatteryLevel" destination="h5F-l0-kS2" id="R07-JP-LsW"/>
                         <outlet property="labelHeatPercent" destination="sDE-9m-h3X" id="vxF-lE-Mhl"/>
                         <outlet property="labelSetHeatPercent" destination="hGU-B9-Y2p" id="uOm-tV-lay"/>
                         <outlet property="labelSetTime" destination="Srh-6I-DyY" id="XVw-TK-i1q"/>

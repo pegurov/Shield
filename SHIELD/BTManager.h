@@ -24,6 +24,9 @@
 #define ERROR_CODE_BT_UNAVAILABLE 1
 #define ERROR_CODE_COULD_NOT_CONNECT_TO_DEVICE 2
 
+// PROTOCOL DEFINES
+#define COMMAND_BATTERY_UPDATED 102
+#define COMMAND_IS_CHARGING_UPDATED 103
 
 @protocol BTManagerDelegate;
 
@@ -52,7 +55,7 @@
 - (void)btManagerDidEndScanningForShields:(BTManager *)manager;
 - (void)btManagerDidConnectToShield:(BTManager *)manager;
 - (void)btManager:(BTManager *)manager errorOccured:(NSError *)error;
-- (void)btManager:(BTManager *)manager didReceiveData:(unsigned char *)data length:(int)length;
+- (void)btManager:(BTManager *)manager didReceiveData:(NSData *)data;
 @end
 
 
