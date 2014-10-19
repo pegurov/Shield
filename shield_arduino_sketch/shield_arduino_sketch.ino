@@ -16,8 +16,8 @@
  А6 — сигнал "подключена зарядка" если зарядка подключена приходит напряжение 4V.
  
  Цифровые PIN:
- 12 — управление логотипом
- 11 — управление нагревом
+ 10 — управление логотипом
+ 12 — управление нагревом
  */
 
 #include <SoftwareSerial.h>
@@ -28,8 +28,8 @@ const int CHANGING_HEAT_LEVEL = 102;
 int whatWereDoingByte = 255;
 int valueByte = 255;
 
-int logo = 12;
-int heat = 11;
+int logo = 10;
+int heat = 12;
 int charge = 13; // Индикатор зарядки SHIELD от внешней сети
 int incomingbyte = 0;
 
@@ -41,19 +41,23 @@ float batteryAverage = 0;
 int batteryLevel = 0;
 float charging = 0;
 
-const float battery0coeff = 0.00785567010309;
+const float battery0coeff = 0.00746003898635;
 const float battery1coeff = 0.00372434017595;
 const float battery2coeff = 0.00374389051808;
-const float battery3coeff = 0.00525555555556;
+const float battery3coeff = 0.00587635239567;
+
+int batteryAverageOverTime = 0;
 const float BATTERY_MINIMUM_V = 3.5;
 
-int battery_levels_in_time[1000];
+const int writeChargeValueOnceInLoops = 100;
+int batteryLevelsOverTimeSum = 0;
 int batteryCounter = 0;
 
 int currentShieldHeatValue = 0;
 
 void setup() {
-  Serial.begin(115200);
+
+  Serial.begin(115200);  
   mySerial.begin(115200);
 
   pinMode(logo, OUTPUT);
@@ -63,16 +67,21 @@ void setup() {
   digitalWrite(heat, LOW);
   digitalWrite(charge, LOW);
 
-
+  delay(1000);
   Serial.println("SHEILD IS HERE"); 
 }
 
 void loop() {
 
+//  Serial.print("battery counter = "); 
+//  Serial.println(batteryCounter); 
+
+  delay(50);
+  
   /* BATTERIES 
    
    BATTERY 0 VOLTAGE
-   485.00  3,810  0.00785567010309
+   513,00  3,827  0.00746003898635
    
    BATTERY 1 VOLTAGE
    1023.00  3.810  0.00372434017595
@@ -81,9 +90,10 @@ void loop() {
    1023.00  3.830  0.00374389051808
    
    BATTERY 3 VOLTAGE 
-   720.00  3.784 0.00525555555556
+   647.00  3,802   0.00587635239567
    
-   */
+  */ 
+
   battery0 = analogRead(A0) * battery0coeff;
   battery1 = analogRead(A1) * battery1coeff;
   battery2 = analogRead(A2) * battery2coeff;
@@ -92,22 +102,14 @@ void loop() {
   batteryAverage = (battery0 + battery1 + battery2 + battery3) / 4;
   batteryLevel = (batteryAverage - BATTERY_MINIMUM_V) * 2 * 100;
 
-
-
-  if (batteryCounter > 999) {
-    
-    batteryCounter = 0; 
-
-    int batteryAverageOverTime = 0;
-    for (int i = 0; i < 1000; i++) {
-      batteryAverageOverTime += battery_levels_in_time[i];
-    }
-    batteryAverageOverTime = batteryAverageOverTime / 1000;
+  if (batteryCounter >= writeChargeValueOnceInLoops) {
 
     Serial.print("BATTERIES CHARGE PERCENT = ");
-    Serial.println(batteryLevel);
-
-
+    Serial.println(batteryLevelsOverTimeSum/writeChargeValueOnceInLoops);
+    
+    batteryLevelsOverTimeSum = 0; 
+    batteryCounter = 0; 
+    
 
 //    if (battery0 <= 3.5)  {
 //      digitalWrite(heat, LOW);
@@ -129,26 +131,27 @@ void loop() {
 //      digitalWrite(logo, LOW);
 //      Serial.println("SHIELD IS TURNED OFF, BATTERY 3 VOLTAGE <= 1.75V");
 //    }
+
   }
 
-  battery_levels_in_time[batteryCounter] = batteryLevel;
+  batteryLevelsOverTimeSum += batteryLevel;
   batteryCounter++;
 
 
-  //  Serial.print("BATTERY 0 VOLTAGE = ");
-  //  Serial.println(battery0);
-  //  Serial.print("BATTERY 1 VOLTAGE = ");
-  //  Serial.println(battery1);
-  //  Serial.print("BATTERY 2 VOLTAGE = ");
-  //  Serial.println(battery2);
-  //  Serial.print("BATTERY 3 VOLTAGE = ");
-  //  Serial.println(battery3);
+//  Serial.print("BATTERY 0 VOLTAGE = ");
+//  Serial.println(battery0);
+//  Serial.print("BATTERY 1 VOLTAGE = ");
+//  Serial.println(battery1);
+//  Serial.print("BATTERY 2 VOLTAGE = ");
+//  Serial.println(battery2);
+//  Serial.print("BATTERY 3 VOLTAGE = ");
+//  Serial.println(battery3);
 
   // Если напряжение на какой-либо из батарей падает до 1.75V мы отключаем SHIELD
 
 
-  /* CHARGING */
-  charging = analogRead(A6);
+  //CHARGING 
+//  charging = analogRead(A4);
 
 //  Serial.print("CHARGING VOLTAGE = ");
 //  Serial.println(charging);
@@ -165,7 +168,7 @@ void loop() {
 
 
 
-  /* BLE */
+  // BLE 
   if(mySerial.available() > 0) {
 
     // int currentMessagePointer = 0;
