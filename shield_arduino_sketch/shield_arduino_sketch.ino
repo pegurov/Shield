@@ -28,9 +28,9 @@ const int CHANGING_HEAT_LEVEL = 101;
 int whatWereDoingByte = 255;
 int valueByte = 255;
 
-int logo = 12;
-int heat = 11;
-int charge = 13; // Индикатор зарядки SHIELD от внешней сети
+int logo = 9;
+int heat = 10;
+int charge = A2; // Индикатор зарядки SHIELD от внешней сети
 int incomingbyte = 0;
 
 float battery0 = 0;
@@ -59,14 +59,17 @@ int currentShieldHeatValue = 0;
 
 void setup() {
 
+//  pinMode(10, OUTPUT);
+//  digitalWrite(10, HIGH);
+    
   Serial.begin(115200);  
   mySerial.begin(115200);
 
   pinMode(logo, OUTPUT);
   pinMode(heat, OUTPUT);
   pinMode(charge, OUTPUT);
-  digitalWrite(logo, LOW);
-  digitalWrite(heat, LOW);
+  digitalWrite(logo, HIGH);
+  digitalWrite(heat, HIGH);
   digitalWrite(charge, LOW);
 
   delay(1000);
@@ -212,23 +215,30 @@ void loop() {
 
 void setHeatVelueToShield( int value ) {
 
-  if (currentShieldHeatValue == 0 && value!=0) {
+//  if (currentShieldHeatValue == 0 && value!=0) {
     // turning on
-    digitalWrite(logo, HIGH);
-    digitalWrite(heat, HIGH);
+//    digitalWrite(logo, HIGH);
+//    digitalWrite(heat, HIGH);
     //    Serial.println("SHIELD IS SWITCHING ON");
-  }
-  else if (currentShieldHeatValue != 0 && value == 0) {
-    digitalWrite(logo, LOW);
-    digitalWrite(heat, LOW);
+//  }
+//  else if (currentShieldHeatValue != 0 && value == 0) {
+//    digitalWrite(logo, LOW);
+//    digitalWrite(heat, LOW);
     //    Serial.println("SHIELD IS SWITCHING OFF");
-  }
+//  }
 
   currentShieldHeatValue = value;
+  analogWrite(heat, map(currentShieldHeatValue, 0, 100, 0, 255));
+//  analogWrite(heat, 100);
+  
+  
   //  Serial.print("SETTING VALUE TO SHIELD: ");
   //  Serial.println(currentShieldHeatValue);
 
   // here is the place to put the code that physically controls shield
+  
+  
+  
 }
 
 
