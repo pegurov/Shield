@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="9mu-gV-kb4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="9mu-gV-kb4">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -18,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="48" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="BSc-r6-Tll">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="518"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DeviceCell" rowHeight="48" id="sLw-kx-apU" customClass="DeviceCell">
@@ -56,13 +57,26 @@
                                     <outlet property="delegate" destination="PAg-tT-Jlc" id="CBG-sJ-c0Z"/>
                                 </connections>
                             </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fOO-Rt-69k">
+                                <rect key="frame" x="0.0" y="518" width="320" height="50"/>
+                                <state key="normal" title="Search">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="searchTap:" destination="PAg-tT-Jlc" eventType="touchUpInside" id="VeW-8d-Kw1"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="xrJ-TT-2tV" firstAttribute="top" secondItem="BSc-r6-Tll" secondAttribute="bottom" id="Dxf-4n-kzt"/>
+                            <constraint firstItem="fOO-Rt-69k" firstAttribute="leading" secondItem="Ub7-uP-nEe" secondAttribute="leading" id="4hA-jT-bWG"/>
+                            <constraint firstItem="fOO-Rt-69k" firstAttribute="top" secondItem="BSc-r6-Tll" secondAttribute="bottom" id="NeO-QZ-mby"/>
                             <constraint firstItem="BSc-r6-Tll" firstAttribute="leading" secondItem="Ub7-uP-nEe" secondAttribute="leading" id="Ubh-X0-gIu"/>
                             <constraint firstItem="BSc-r6-Tll" firstAttribute="top" secondItem="Ub7-uP-nEe" secondAttribute="top" id="XfQ-Ya-2On"/>
                             <constraint firstAttribute="trailing" secondItem="BSc-r6-Tll" secondAttribute="trailing" id="dc1-U2-bQN"/>
+                            <constraint firstItem="xrJ-TT-2tV" firstAttribute="top" secondItem="fOO-Rt-69k" secondAttribute="bottom" id="rwO-nx-otH"/>
+                            <constraint firstAttribute="trailing" secondItem="fOO-Rt-69k" secondAttribute="trailing" id="sky-N5-hdh"/>
+                            <constraint firstItem="xrJ-TT-2tV" firstAttribute="top" secondItem="BSc-r6-Tll" secondAttribute="bottom" constant="50" id="xdr-Zq-oLS"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="ggB-g9-4ak"/>

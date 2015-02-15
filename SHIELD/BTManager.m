@@ -145,10 +145,8 @@
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
 {
     NSLog(@"Disconnected from %@", peripheral.identifier.UUIDString);
-    if (error) {
-        if ([self.delegate respondsToSelector:@selector(btManager:errorOccured:)]) {
-            [self.delegate btManager:self errorOccured:error];
-        }
+    if ([self.delegate respondsToSelector:@selector(btManagerDidDisconnectFromShield:)]) {
+        [self.delegate btManagerDidDisconnectFromShield:self];
     }
 }
 
@@ -285,10 +283,17 @@
 
 - (void)writeToConecttedShield:(NSData *)data
 {
+// LOGGING
+    unsigned result = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:[NSString stringWithFormat:@"%@", data]];
+    [scanner setScanLocation:1]; // bypass '<' character
+    [scanner scanHexInt:&result];
+    NSLog(@"writing %u to shield", result);
+// /LOGGING
+    
+    
     CBUUID *mainServiceUUID = [CBUUID UUIDWithString:SHIELD_MAIN_SERVICE_UUID];
     CBUUID *rxCharUUID = [CBUUID UUIDWithString:SHIELD_CHAR_RX_UUID];
-    
-    NSLog(@"writing %@ to shield", data);
     
     [self writeValueToPeripheral:self.connectedShield.peripheral serviceUUID:mainServiceUUID characteristicUUID:rxCharUUID data:data];
 }

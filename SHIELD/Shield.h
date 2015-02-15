@@ -11,5 +11,6 @@
 @interface Shield : NSObject
 
 @property (strong, nonatomic) CBPeripheral *peripheral;
+- (BOOL)isEqualToShield:(Shield *)object;
 
 @end

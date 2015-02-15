@@ -259,6 +259,11 @@
 // ---------------------------------------------------------------------------
 #pragma mark - BTManagerDelegate
 
+- (void)btManagerDidDisconnectFromShield:(BTManager *)manager
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)btManager:(BTManager *)manager didReceiveData:(NSData *)data
 {
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];

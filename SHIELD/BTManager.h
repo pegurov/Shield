@@ -32,7 +32,7 @@
 
 @interface BTManager : NSObject
 
-@property (nonatomic, assign) id<BTManagerDelegate> delegate;
+@property (weak, nonatomic) id<BTManagerDelegate> delegate;
 @property (strong, nonatomic) NSMutableArray *discoveredShields;
 @property (strong, nonatomic) Shield *connectedShield;
 
@@ -54,6 +54,7 @@
 - (void)btManagerDidStartScanningForShields:(BTManager *)manager;
 - (void)btManagerDidEndScanningForShields:(BTManager *)manager;
 - (void)btManagerDidConnectToShield:(BTManager *)manager;
+- (void)btManagerDidDisconnectFromShield:(BTManager *)manager;
 - (void)btManager:(BTManager *)manager errorOccured:(NSError *)error;
 - (void)btManager:(BTManager *)manager didReceiveData:(NSData *)data;
 @end

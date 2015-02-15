@@ -15,6 +15,7 @@
 
 // IBOutlets
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+- (IBAction)searchTap:(id)sender;
 @end
 
 @implementation BTDevicesViewController
@@ -24,14 +25,14 @@
     [super viewDidLoad];
     self.title = @"Devices";
     [self addActivityIndicatorToNavigationBar];
-    
-    // BT manager
-    [[BTManager sharedInstance] setDelegate:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    [[BTManager sharedInstance] setDelegate:self];
+    [BTManager sharedInstance].discoveredShields = [NSMutableArray new];
+    [[BTManager sharedInstance] scanForShieldsForSeconds:3.];
     [super viewWillAppear:animated];
 }
 
@@ -111,6 +112,13 @@
         ShieldViewController *nextVC = segue.destinationViewController;
         nextVC.shield = sender;
     }
+}
+
+- (IBAction)searchTap:(id)sender
+{
+    [BTManager sharedInstance].discoveredShields = [NSMutableArray new];
+    [self.tableView reloadData];
+    [[BTManager sharedInstance] scanForShieldsForSeconds:3];
 }
 
 @end
