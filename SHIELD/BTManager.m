@@ -92,6 +92,29 @@
 }
 
 
+// setting and requesting values with conected shield
+- (void)setHeat:(NSInteger)heat
+{
+    
+}
+
+- (void)requestHeat
+{
+    
+}
+
+- (void)setMode:(ShieldMode)mode
+{
+    
+}
+
+- (void)requestMode
+{
+    
+}
+
+
+
 //----------------------------------------------------------------------------------------
 #pragma mark - CBCentralManagerDelegate
 
@@ -170,24 +193,24 @@
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
 {
-    // here we can consider the device connected, because we
-    // only need characteristics for SHIELD_MAIN_SERVICE_UUID
-    
     for (CBCharacteristic *ch in service.characteristics) {
         [peripheral setNotifyValue:YES forCharacteristic:ch];
     }
     
     // notify delegate about the new connection
-    Shield *connectedShield = nil;
+    Shield *shieldWeAreConnectingTo = nil;
     for (Shield *discoveredShield in self.discoveredShields) {
         if ([discoveredShield.peripheral isEqual:peripheral]) {
-            connectedShield = discoveredShield;
+            shieldWeAreConnectingTo = discoveredShield;
             break;
         }
     }
     
-    if (connectedShield) {
-        self.connectedShield = connectedShield;
+    if (shieldWeAreConnectingTo) {
+        
+        // now we need to get the mode and heat value of the shield
+        
+        self.connectedShield = shieldWeAreConnectingTo;
         if ([self.delegate respondsToSelector:@selector(btManagerDidConnectToShield:)]) {
             [self.delegate btManagerDidConnectToShield:self];
         }
@@ -201,80 +224,85 @@
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
 
-    [[self delegate] btManager:self didReceiveData:characteristic.value];
+//    [[self delegate] btManager:self didReceiveData:characteristic.value];
     
-    
-//    unsigned char data[20];
-//
-//    static unsigned char buf[512];
-//    static int len = 0;
-//    NSInteger data_len;
-//
-//    if (!error)
-//    {
-//        if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:SHIELD_CHAR_TX_UUID]])
-//        {
-//            data_len = characteristic.value.length;
-//            [characteristic.value getBytes:data length:data_len];
-//
-//            if (data_len == 20)
-//            {
-//                memcpy(&buf[len], data, 20);
-//                len += data_len;
-//
-//                if (len >= 64)
-//                {
-//                    if ([self.delegate respondsToSelector:@selector(btManager:didReceiveData:length:)]) {
-//                        [[self delegate] btManager:self didReceiveData:buf length:len];
-//                    }
-//                    len = 0;
-//                }
-//            }
-//            else if (data_len < 20)
-//            {
-//                memcpy(&buf[len], data, data_len);
-//                len += data_len;
-//
-//                if ([self.delegate respondsToSelector:@selector(btManager:didReceiveData:length:)]) {
-//                    
-//                }
-//                len = 0;
-//            }
+//        NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//        NSScanner *scanner = [NSScanner scannerWithString:dataString];
+//        
+//        NSCharacterSet *digitsSet = [NSCharacterSet decimalDigitCharacterSet];
+//        NSCharacterSet *scanUpToSet = [[NSCharacterSet decimalDigitCharacterSet] invertedSet];
+//        NSMutableArray *scannedStrings = [NSMutableArray array];
+//        
+//        while (!scanner.isAtEnd) {
+//            
+//            NSString *scannedString = @"";
+//            [scanner scanUpToCharactersFromSet:scanUpToSet intoString:&scannedString];
+//            [scannedStrings addObject:scannedString];
+//            [scanner scanUpToCharactersFromSet:digitsSet intoString:nil];
 //        }
-//    }
-//    else
-//    {
-//        NSLog(@"updateValueForCharacteristic failed!");
-//    }
+//        
+//        NSLog(@"%@", scannedStrings);
+//        
+//        if (scannedStrings.count == 2) {
+//            
+//            NSInteger commandByte = [scannedStrings[0] integerValue];
+//            NSInteger valueByte = [scannedStrings[1] integerValue];
+//            
+//            //        if (commandByte == COMMAND_BATTERY_UPDATED) {
+//            //            self.batteryLevel = valueByte;
+//            //        }
+//            //        else if (commandByte == COMMAND_IS_CHARGING_UPDATED) {
+//            //            self.isCharging = (valueByte == 1) ? YES : NO;
+//            //        }
+//        }
+//        
+//        [self updateLabels];
 }
 
 
 // ------------------------------------------------------------------------------
 #pragma mark - Reading
 
-- (void)readFromConnectedShield
-{
-    CBUUID *mainServiceUUID = [CBUUID UUIDWithString:SHIELD_MAIN_SERVICE_UUID];
-    CBUUID *txCharUUID = [CBUUID UUIDWithString:SHIELD_CHAR_TX_UUID];
-    
-    [self readValueFromPeripheral:self.connectedShield.peripheral serviceUUID:mainServiceUUID characteristicUUID:txCharUUID];
-}
-
-- (void)readValueFromPeripheral:(CBPeripheral *)peripheral
-                    serviceUUID:(CBUUID *)serviceUUID
-             characteristicUUID:(CBUUID *)characteristicUUID
-{
-    CBCharacteristic *foundCharcteristic = [peripheral findCharacteristicForServiceUUID:serviceUUID characteristicUUID:characteristicUUID];
-    if (foundCharcteristic) {
-        [peripheral readValueForCharacteristic:foundCharcteristic];
-    }
-    else {
-        NSLog(@"Could not read from characteristic with UUID %@ on peripheral %@", characteristicUUID, peripheral);
-    }
-}
+//- (void)readFromConnectedShield
+//{
+//    CBUUID *mainServiceUUID = [CBUUID UUIDWithString:SHIELD_MAIN_SERVICE_UUID];
+//    CBUUID *txCharUUID = [CBUUID UUIDWithString:SHIELD_CHAR_TX_UUID];
+//    
+//    [self readValueFromPeripheral:self.connectedShield.peripheral serviceUUID:mainServiceUUID characteristicUUID:txCharUUID];
+//}
+//
+//- (void)readValueFromPeripheral:(CBPeripheral *)peripheral
+//                    serviceUUID:(CBUUID *)serviceUUID
+//             characteristicUUID:(CBUUID *)characteristicUUID
+//{
+//    CBCharacteristic *foundCharcteristic = [peripheral findCharacteristicForServiceUUID:serviceUUID characteristicUUID:characteristicUUID];
+//    if (foundCharcteristic) {
+//        [peripheral readValueForCharacteristic:foundCharcteristic];
+//    }
+//    else {
+//        NSLog(@"Could not read from characteristic with UUID %@ on peripheral %@", characteristicUUID, peripheral);
+//    }
+//}
 
 // ------------------------------------------------------------------------------
 #pragma mark - Writing
+
+//- (void)writeToShield
+//{
+//    // we need to write 2 times
+//    // first is command, then value
+//
+//    unsigned char actionCommand = COMMAND_SET_HEAT_VALUE_HEX;
+//    unsigned char valueCommand = 0x64 * (1-self.sliderValue); // 0x64 is 100 in hex
+//
+//    [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&actionCommand length:sizeof(actionCommand)]];
+//
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&valueCommand length:sizeof(valueCommand)]];
+//    });
+//
+//}
+
 
 - (void)setHeatLevelToConnectedShield:(NSInteger)heatLevel
 {
@@ -284,13 +312,20 @@
 - (void)writeToConecttedShield:(NSData *)data
 {
 // LOGGING
-    unsigned result = 0;
-    NSScanner *scanner = [NSScanner scannerWithString:[NSString stringWithFormat:@"%@", data]];
-    [scanner setScanLocation:1]; // bypass '<' character
-    [scanner scanHexInt:&result];
-    NSLog(@"writing %u to shield", result);
-// /LOGGING
+//    unsigned result = 0;
+//    NSScanner *scanner = [NSScanner scannerWithString:[NSString stringWithFormat:@"%@", data]];
+//    [scanner setScanLocation:1]; // bypass '<' character
+//    [scanner scanHexInt:&result];
     
+    NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    unsigned short len = [string length];
+    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:len];
+    for (unsigned i = 0; i < len; ++i) {
+        [arr addObject:[NSNumber numberWithUnsignedShort:[string characterAtIndex:i]]];
+    }
+    
+    NSLog(@"writing to shield: %@", arr);
+// /LOGGING
     
     CBUUID *mainServiceUUID = [CBUUID UUIDWithString:SHIELD_MAIN_SERVICE_UUID];
     CBUUID *rxCharUUID = [CBUUID UUIDWithString:SHIELD_CHAR_RX_UUID];

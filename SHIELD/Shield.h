@@ -8,9 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSUInteger, ShieldMode) {
+    ShieldModeManual,
+    ShieldModeAuto
+};
+
 @interface Shield : NSObject
 
 @property (strong, nonatomic) CBPeripheral *peripheral;
 - (BOOL)isEqualToShield:(Shield *)object;
+
+@property (nonatomic) NSInteger heat;
+@property (nonatomic) ShieldMode mode;
 
 @end

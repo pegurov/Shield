@@ -33,28 +33,28 @@
         switch (type)
         {
             case 'V': // report protocol version
-                [[self delegate] protocolDidReceiveProtocolVersion:data[i++] Minor:data[i++] Bugfix:data[i++]];
+//                [[self delegate] protocolDidReceiveProtocolVersion:data[i++] Minor:data[i++] Bugfix:data[i++]];
                 break;
             
             case 'C': // report total pin count of the board
-                [[self delegate] protocolDidReceiveTotalPinCount:data[i++]];
+//                [[self delegate] protocolDidReceiveTotalPinCount:data[i++]];
                 break;
             
             case 'P': // report pin capability
-                [[self delegate] protocolDidReceivePinCapability:data[i++] Value:data[i++]];
+//                [[self delegate] protocolDidReceivePinCapability:data[i++] Value:data[i++]];
                 break;
             
             case 'Z': // custom data
-                [[self delegate] protocolDidReceiveCustomData:&data[i] length:length-i];
+//                [[self delegate] protocolDidReceiveCustomData:&data[i] length:length-i];
                 i=length;
                 break;
             
             case 'M': // report pin mode
-                [[self delegate] protocolDidReceivePinMode:data[i++] Mode:data[i++]];
+//                [[self delegate] protocolDidReceivePinMode:data[i++] Mode:data[i++]];
                 break;
         
             case 'G': // report pin data
-                [[self delegate] protocolDidReceivePinData:data[i++] Mode:data[i++] Value:data[i++]];
+//                [[self delegate] protocolDidReceivePinData:data[i++] Mode:data[i++] Value:data[i++]];
                 break;
         }
     }
@@ -70,7 +70,7 @@
     uint8_t len = 3;
     
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 -(void) digitalRead:(uint8_t)pin
@@ -83,7 +83,7 @@
     uint8_t len = 2;
     
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 -(void) digitalWrite:(uint8_t)pin Value:(uint8_t)value
@@ -96,7 +96,7 @@
     uint8_t len = 3;
     
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 -(void) queryPinAll
@@ -109,7 +109,7 @@
     uint8_t len = 1;
     
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 - (void) queryProtocolVersion
@@ -122,7 +122,7 @@
     uint8_t len = 1;
 
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 -(void) queryTotalPinCount
@@ -135,7 +135,7 @@
     uint8_t len = 1;
     
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 -(void) queryPinCapability:(uint8_t) pin
@@ -148,7 +148,7 @@
     uint8_t len = 2;
     
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 -(void) queryPinMode:(uint8_t) pin
@@ -161,7 +161,7 @@
     uint8_t len = 2;
     
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 -(void) analogWrite:(uint8_t) pin Value:(uint8_t) value
@@ -174,7 +174,7 @@
     uint8_t len = 3;
     
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 -(void) servoWrite:(uint8_t) pin Value:(uint8_t) value
@@ -187,7 +187,7 @@
     uint8_t len = 3;
     
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 -(void) sendCustomData: (uint8_t *) data Length:(uint8_t) length
@@ -199,7 +199,7 @@
     uint8_t len = 1+1+length;
 
     NSData *nsData = [[NSData alloc] initWithBytes:buf length:len];
-    [[BTManager sharedInstance] writeToConecttedShield:nsData];
+//    [[BTManager sharedInstance] writeToConecttedShield:nsData];
 }
 
 @end

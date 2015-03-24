@@ -205,6 +205,27 @@
                                 <color key="textColor" red="1" green="0.53725492949999998" blue="0.0" alpha="1" colorSpace="deviceRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="XQ5-VZ-rT3">
+                                <rect key="frame" x="187" y="220" width="117" height="29"/>
+                                <segments>
+                                    <segment title="Manual"/>
+                                    <segment title="Auto"/>
+                                </segments>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </segmentedControl>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tdS-Jt-pcc">
+                                <rect key="frame" x="218" y="261" width="86" height="30"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <state key="normal" title="Disconnnect">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="disconnectTap:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="zgQ-5c-PRF"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="pbd-B6-6bz">
+                                <rect key="frame" x="284" y="28" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
@@ -216,11 +237,17 @@
                             <constraint firstItem="hGU-B9-Y2p" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="topMargin" constant="254" id="9gB-2U-laC"/>
                             <constraint firstItem="Srh-6I-DyY" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="289" id="ACL-wk-hHZ"/>
                             <constraint firstItem="VcH-i2-hei" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="AQa-5D-vOm"/>
+                            <constraint firstItem="tdS-Jt-pcc" firstAttribute="top" secondItem="XQ5-VZ-rT3" secondAttribute="bottom" constant="13" id="CPP-wl-mPi"/>
+                            <constraint firstItem="XQ5-VZ-rT3" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="200" id="DDG-Qf-ytw"/>
                             <constraint firstAttribute="trailing" secondItem="Hrp-iL-zLv" secondAttribute="trailing" id="FGv-Cf-h9a"/>
                             <constraint firstAttribute="trailing" secondItem="DOK-iX-jdf" secondAttribute="trailing" id="Mwd-rM-2di"/>
                             <constraint firstItem="Hrp-iL-zLv" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Pax-IB-oYc"/>
+                            <constraint firstItem="pbd-B6-6bz" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="8" id="Rsn-pJ-WEr"/>
                             <constraint firstItem="hGU-B9-Y2p" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="16" id="SD6-Dc-L9o"/>
+                            <constraint firstAttribute="trailing" secondItem="pbd-B6-6bz" secondAttribute="trailing" constant="16" id="Sfx-c8-Oae"/>
+                            <constraint firstAttribute="trailing" secondItem="tdS-Jt-pcc" secondAttribute="trailing" constant="16" id="Xbt-5A-bcD"/>
                             <constraint firstItem="VcH-i2-hei" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="d7P-MR-Ddc"/>
+                            <constraint firstAttribute="trailing" secondItem="XQ5-VZ-rT3" secondAttribute="trailing" constant="16" id="dfW-oH-rrB"/>
                             <constraint firstItem="Srh-6I-DyY" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="16" id="dtC-fJ-WXQ"/>
                             <constraint firstItem="OVs-zy-fqh" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="g6k-oS-ZJ7"/>
                             <constraint firstItem="QGR-Hg-lbX" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="obL-Yn-TBG"/>
@@ -236,6 +263,7 @@
                         </connections>
                     </view>
                     <navigationItem key="navigationItem" id="IoE-iL-1lw"/>
+                    <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="constraintEllipseOriginX" destination="g6k-oS-ZJ7" id="Azl-R8-CDc"/>
                         <outlet property="constraintEllipseOriginY" destination="pt7-WR-pKU" id="dcv-UF-pE4"/>

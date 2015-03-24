@@ -62,6 +62,7 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageViewEllipse;
 - (IBAction)viewPanned:(UIPanGestureRecognizer *)sender;
+- (IBAction)disconnectTap:(id)sender;
 @end
 
 @implementation ShieldViewController
@@ -177,8 +178,6 @@
         self.currentPanCenter = [someTouch locationInView:self.view];
         [self showEllipse:YES animated:YES];
     }
-
-//    [self writeToShield];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -218,20 +217,21 @@
     self.currentPanCenter = currentPanCenter;
 }
 
+- (IBAction)disconnectTap:(id)sender
+{
+    [[BTManager sharedInstance] disconnectFromConnectedShield];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)writeToShield
 {
-    // we need to write 2 times
-    // first is command, then value
+    unsigned char actionCommand = COMMAND_SET_HEAT_VALUE_HEX;
+    unsigned char valueCommand = 0x64 * (1-self.sliderValue); // 0x64 is 100 in hex
+    unsigned char bytes[2];
+    bytes[0] = actionCommand;
+    bytes[1] = valueCommand;
     
-    unsigned char setHeatCommand = 0x65;
-    unsigned char valueCommand = 0x64 * (1-self.sliderValue);
-    
-    [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&setHeatCommand length:sizeof(setHeatCommand)]];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&valueCommand length:sizeof(valueCommand)]];
-    });
-    
+    [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&bytes length:sizeof(bytes)]];
 }
 
 //---------------------------------------------------------------------------
@@ -264,111 +264,5 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)btManager:(BTManager *)manager didReceiveData:(NSData *)data
-{
-    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    NSScanner *scanner = [NSScanner scannerWithString:dataString];
-
-    NSCharacterSet *digitsSet = [NSCharacterSet decimalDigitCharacterSet];
-    NSCharacterSet *scanUpToSet = [[NSCharacterSet decimalDigitCharacterSet] invertedSet];
-    NSMutableArray *scannedStrings = [NSMutableArray array];
-    
-    while (!scanner.isAtEnd) {
-        
-        NSString *scannedString = @"";
-        [scanner scanUpToCharactersFromSet:scanUpToSet intoString:&scannedString];
-        [scannedStrings addObject:scannedString];
-        [scanner scanUpToCharactersFromSet:digitsSet intoString:nil];
-    }
-    
-    NSLog(@"%@", scannedStrings);
-    
-    if (scannedStrings.count == 2) {
-        
-        NSInteger commandByte = [scannedStrings[0] integerValue];
-        NSInteger valueByte = [scannedStrings[1] integerValue];
-        
-        if (commandByte == COMMAND_BATTERY_UPDATED) {
-            self.batteryLevel = valueByte;
-        }
-        else if (commandByte == COMMAND_IS_CHARGING_UPDATED) {
-            self.isCharging = (valueByte == 1) ? YES : NO;
-        }
-    }
-    
-    [self updateLabels];
-}
-
-
-//// ---------------------------------------------------------------------------
-//#pragma mark - RBLProtocolDelegate
-//
-//- (void)protocolDidReceiveProtocolVersion:(uint8_t)major Minor:(uint8_t)minor Bugfix:(uint8_t)bugfix
-//{
-//    uint8_t buf[] = {'B', 'L', 'E'};
-//    [self.protocol sendCustomData:buf Length:3];
-//    [self.protocol queryTotalPinCount];
-//}
-//
-//- (void)protocolDidReceiveTotalPinCount:(UInt8) count
-//{
-//    total_pin_count = count;
-//    [self.protocol queryPinAll];
-//}
-//
-//- (void)protocolDidReceivePinCapability:(uint8_t)pin Value:(uint8_t)value
-//{
-//    if (value == 0)
-//        NSLog(@" - Nothing");
-//    else
-//    {
-//        if (value & PIN_CAPABILITY_DIGITAL)
-//            NSLog(@" - DIGITAL (I/O)");
-//        if (value & PIN_CAPABILITY_ANALOG)
-//            NSLog(@" - ANALOG");
-//        if (value & PIN_CAPABILITY_PWM)
-//            NSLog(@" - PWM");
-//        if (value & PIN_CAPABILITY_SERVO)
-//            NSLog(@" - SERVO");
-//    }
-//    
-//    pin_cap[pin] = value;
-//}
-//
-//- (void)protocolDidReceivePinData:(uint8_t)pin Mode:(uint8_t)mode Value:(uint8_t)value
-//{
-//    uint8_t _mode = mode & 0x0F;
-//    
-//    pin_mode[pin] = _mode;
-//    if ((_mode == INPUT) || (_mode == OUTPUT))
-//        pin_digital[pin] = value;
-//    else if (_mode == ANALOG)
-//        pin_analog[pin] = ((mode >> 4) << 8) + value;
-//    else if (_mode == PWM)
-//        pin_pwm[pin] = value;
-//    else if (_mode == SERVO)
-//        pin_servo[pin] = value;
-//}
-//
-//- (void)protocolDidReceivePinMode:(uint8_t)pin Mode:(uint8_t)mode
-//{
-//    if (mode == INPUT)
-//        NSLog(@" Pin %d Mode: INPUT", pin);
-//    else if (mode == OUTPUT)
-//        NSLog(@" Pin %d Mode: OUTPUT", pin);
-//    else if (mode == PWM)
-//        NSLog(@" Pin %d Mode: PWM", pin);
-//    else if (mode == SERVO)
-//        NSLog(@" Pin %d Mode: SERVO", pin);
-//    
-//    pin_mode[pin] = mode;
-//}
-//
-//- (void)protocolDidReceiveCustomData:(UInt8 *)data length:(UInt8)length
-//{
-//    for (int i = 0; i< length; i++)
-//        printf("0x%2X ", data[i]);
-//    printf("\n");
-//}
 
 @end

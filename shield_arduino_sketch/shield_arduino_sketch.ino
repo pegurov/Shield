@@ -21,6 +21,17 @@
  */
 
 #include <SoftwareSerial.h>
+#include <DallasTemperature.h>
+#include <OneWire.h>
+
+// Data wire is plugged into port 2 on the Arduino
+#define ONE_WIRE_BUS 12
+
+// Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
+OneWire oneWire(ONE_WIRE_BUS);
+
+// Pass our oneWire reference to Dallas Temperature. 
+DallasTemperature sensors(&oneWire);
 
 SoftwareSerial mySerial(0, 1);
 
@@ -68,20 +79,37 @@ void setup() {
   pinMode(logo, OUTPUT);
   pinMode(heat, OUTPUT);
   pinMode(charge, OUTPUT);
-  digitalWrite(logo, HIGH);
-  digitalWrite(heat, HIGH);
+  digitalWrite(logo, LOW);
+  digitalWrite(heat, LOW);
   digitalWrite(charge, LOW);
 
-  delay(1000);
-  Serial.println("SHEILD IS HERE"); 
+//  Serial.println("SHEILD IS HERE"); 
+
+
+  Serial.println("Dallas Temperature IC Control Library Demo");
+  // Start up the library
+  sensors.begin();
 }
 
 void loop() {
-
+  
+  
+  
   //  Serial.print("battery counter = "); 
   //  Serial.println(batteryCounter); 
 
-  delay(50);
+//  delay(100);
+
+
+  // call sensors.requestTemperatures() to issue a global temperature 
+  // request to all devices on the bus
+//  Serial.print("Requesting temperatures...");
+//  sensors.requestTemperatures(); // Send the command to get temperatures
+//  Serial.println("DONE");
+//  
+//  Serial.print("Temperature for the device 1 (index 0) is: ");
+//  Serial.println(sensors.getTempCByIndex(0));  
+
 
   /* BATTERIES 
    
@@ -99,27 +127,26 @@ void loop() {
    
    */
 
-  battery0 = analogRead(A0) * battery0coeff;
-  battery1 = analogRead(A1) * battery1coeff;
-  battery2 = analogRead(A2) * battery2coeff;
-  battery3 = analogRead(A3) * battery3coeff;
+//  battery0 = analogRead(A0) * battery0coeff;
+//  battery1 = analogRead(A1) * battery1coeff;
+//  battery2 = analogRead(A2) * battery2coeff;
+//  battery3 = analogRead(A3) * battery3coeff;
+//
+//  batteryAverage = (battery0 + battery1 + battery2 + battery3) / 4;
+//  batteryLevel = (batteryAverage - BATTERY_MINIMUM_V) * 2 * 100;
 
-  batteryAverage = (battery0 + battery1 + battery2 + battery3) / 4;
-  batteryLevel = (batteryAverage - BATTERY_MINIMUM_V) * 2 * 100;
-
-  if (batteryCounter >= writeChargeValueOnceInLoops) {
-
+//  if (batteryCounter >= writeChargeValueOnceInLoops) {
     //    Serial.print("BATTERIES CHARGE PERCENT = ");
     //    Serial.println(batteryLevelsOverTimeSum/writeChargeValueOnceInLoops);
 
-    byte batteryCommandByte = 102;
-    byte valueByte = batteryLevelsOverTimeSum/writeChargeValueOnceInLoops;
-    valueByte = (valueByte>100) ? 100 : valueByte;
-    Serial.println(batteryCommandByte);
-    Serial.println(valueByte);    
-
-    batteryLevelsOverTimeSum = 0; 
-    batteryCounter = 0; 
+//    byte batteryCommandByte = 102;
+//    byte valueByte = batteryLevelsOverTimeSum/writeChargeValueOnceInLoops;
+//    valueByte = (valueByte>100) ? 100 : valueByte;
+//    Serial.println(batteryCommandByte);
+//    Serial.println(valueByte);    
+//
+//    batteryLevelsOverTimeSum = 0; 
+//    batteryCounter = 0; 
 
 
     //    if (battery0 <= 3.5)  {
@@ -143,28 +170,28 @@ void loop() {
     //      Serial.println("SHIELD IS TURNED OFF, BATTERY 3 VOLTAGE <= 1.75V");
     //    }
 
-  }
-  else if (batteryCounter == 50) {
+//  }
+//  else if (batteryCounter == 50) {
+//
+//    batteriesAreCharging = analogRead(A6);
+//    
+//
+//      byte batteryCommandByte = 103;
+//      byte valueByte;
+//
+//      if (batteriesAreCharging > 0) {
+//        valueByte = 1;
+//      }
+//      else {
+//        valueByte = 0;
+//      }
+//      
+//      Serial.println(batteryCommandByte);
+//      Serial.println(valueByte);    
+//  }
 
-    batteriesAreCharging = analogRead(A6);
-    
-
-      byte batteryCommandByte = 103;
-      byte valueByte;
-
-      if (batteriesAreCharging > 0) {
-        valueByte = 1;
-      }
-      else {
-        valueByte = 0;
-      }
-      
-      Serial.println(batteryCommandByte);
-      Serial.println(valueByte);    
-  }
-
-  batteryLevelsOverTimeSum += batteryLevel;
-  batteryCounter++;
+//  batteryLevelsOverTimeSum += batteryLevel;
+//  batteryCounter++;
 
 
   //  Serial.print("BATTERY 0 VOLTAGE = ");
@@ -180,65 +207,83 @@ void loop() {
 
 
   // BLE 
-  if(mySerial.available() > 0) {
+  if(mySerial.available() == 2) {
 
     // int currentMessagePointer = 0;
     // int whatWereDoingByte = 0;
     // int valueByte = 0;
+    int availableCount = mySerial.available();
+//    for (int i=0; i<availableCount; i++) {
+//      incomingbyte = mySerial.read();
+//      Serial.println(incomingbyte);
+//    }
 
-    incomingbyte = mySerial.read();
-    Serial.println(incomingbyte);
-
-    if (incomingbyte == CHANGING_HEAT_LEVEL) { // what were doing byte
-      whatWereDoingByte = incomingbyte;
+    char incomingBytes[availableCount];
+    mySerial.readBytes(incomingBytes, availableCount);
+    
+    for (int i=0; i<availableCount; i++) {
+      Serial.println((int)incomingBytes[i]);
     }
-    else if (incomingbyte >= 0 && incomingbyte <= 100) { // value byte
-      valueByte = incomingbyte;
-    }
-    else {
-      valueByte = 255;        
-      whatWereDoingByte = 255;
-    }
+    
 
-    if (whatWereDoingByte != 255 && valueByte !=255) {
-
-      // decide on what to do with the incoming data
-      if (whatWereDoingByte == CHANGING_HEAT_LEVEL) {
-        setHeatVelueToShield(valueByte);
-      }
-
-      valueByte = 255;        
-      whatWereDoingByte = 255;
-    }
+//    if (incomingbyte == CHANGING_HEAT_LEVEL) { // what were doing byte
+//      whatWereDoingByte = incomingbyte;
+//      valueByte = 255; // drop value
+//    }
+//    else if (incomingbyte >= 0 && incomingbyte <= 100 && whatWereDoingByte!=255) { // value byte, making sure that action byte is present
+//      valueByte = incomingbyte;
+//    }
+//    else {
+//      valueByte = 255;        
+//      whatWereDoingByte = 255;
+//    }
+//
+//    if (whatWereDoingByte != 255 && valueByte !=255) {
+//
+//      // decide on what to do with the incoming data
+//      if (whatWereDoingByte == CHANGING_HEAT_LEVEL) {
+//        setHeatVelueToShield(valueByte);
+//      }
+//
+//      valueByte = 255;        
+//      whatWereDoingByte = 255;
+//    }
   } 
 }
 
 void setHeatVelueToShield( int value ) {
 
+  if (value == 0) { // гасим все
+    digitalWrite(logo, LOW);
+    digitalWrite(heat, LOW);
+    //    Serial.println("SHIELD IS SWITCHING OFF");
+  }
+  else {
+  
+    int finalValue = map(value, 0, 100, 40, 255);
+    analogWrite(heat, finalValue);
+    analogWrite(logo, finalValue);
+  }
+  
 //  if (currentShieldHeatValue == 0 && value!=0) {
     // turning on
 //    digitalWrite(logo, HIGH);
 //    digitalWrite(heat, HIGH);
+    
     //    Serial.println("SHIELD IS SWITCHING ON");
 //  }
-//  else if (currentShieldHeatValue != 0 && value == 0) {
-//    digitalWrite(logo, LOW);
-//    digitalWrite(heat, LOW);
-    //    Serial.println("SHIELD IS SWITCHING OFF");
-//  }
 
-  currentShieldHeatValue = value;
-  analogWrite(heat, map(currentShieldHeatValue, 0, 100, 0, 255));
-//  analogWrite(heat, 100);
+
+
+    currentShieldHeatValue = value;
   
+  
+//  analogWrite(heat, 100);
   
   //  Serial.print("SETTING VALUE TO SHIELD: ");
   //  Serial.println(currentShieldHeatValue);
 
   // here is the place to put the code that physically controls shield
-  
-  
-  
 }
 
 
