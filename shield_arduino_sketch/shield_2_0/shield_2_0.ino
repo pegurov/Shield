@@ -54,5 +54,3 @@ void setHeatVelueToShield( int value ) {
   analogWrite(heat, map(value, 0, 100, 0, 255));
   analogWrite(logo, map(value, 0, 100, 0, 255));
 }
-
-
