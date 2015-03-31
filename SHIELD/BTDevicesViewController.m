@@ -62,7 +62,7 @@
 
 - (void)btManager:(BTManager *)manager errorOccured:(NSError *)error
 {
-    NSLog(@"WARNING: btManager:errorOccured:")
+    NSLog(@"WARNING: btManager:errorOccured:");
 }
 
 - (void)errorOccured:(NSError *)error
