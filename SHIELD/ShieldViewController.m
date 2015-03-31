@@ -14,8 +14,11 @@
 #define ELLIPSE_RIGHT_OFFSET 170.
 #define MAXIMUM_OFFSET 30.
 
-
 @interface ShieldViewController () <BTManagerDelegate>
+
+@property (strong, nonatomic) Shield *shield;
+
+@property (strong, nonatomic) UISegmentedControl *segmentedControlMode;
 
 @property (nonatomic) CGPoint initialPanCenter;
 @property (nonatomic) CGPoint currentPanCenter;
@@ -28,7 +31,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *labelSetTime;
 @property (weak, nonatomic) IBOutlet UILabel *labelCurrentBatteryLevel;
 
-
 @property (weak, nonatomic) IBOutlet UILabel *labelHeatPercent;
 @property (weak, nonatomic) IBOutlet UILabel *labelTime;
 
@@ -37,9 +39,7 @@
 @property (weak, nonatomic) IBOutlet UIView *viewLine;
 @property (strong, nonatomic) IBOutlet UIPanGestureRecognizer *panGR;
 
-
 @property (strong, nonatomic) NSTimer *updateTimer;
-
 
 // constraints
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraintEllipseOriginX;
@@ -70,6 +70,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.shield = [BTManager sharedInstance].connectedShield;
+    [self.segmentedControlMode addTarget:self action:@selector(valueChanged:) forControlEvents: UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -77,8 +79,16 @@
     [super viewWillAppear:animated];
     [self updateBlurredImage];
 
+    // set default state
     [self showEllipse:NO animated:NO];
-    [self setCurrentPanCenter:CGPointMake(100, 100)];
+
+    // current heat level
+    NSInteger currentHeatLevel = self.shield.heat;
+    [self setCurrentPanCenter:CGPointMake((self.view.frame.size.height - MAXIMUM_OFFSET*2)*(currentHeatLevel/100) + MAXIMUM_OFFSET, self.view.frame.size.width/2.)];
+    
+    // current mode
+    NSInteger currentMode = self.shield.mode;
+    [self.segmentedControlMode setSelectedSegmentIndex:currentMode];
     
     [[BTManager sharedInstance] setDelegate:self];
 }
@@ -183,7 +193,7 @@
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [self showEllipse:NO animated:YES];
-    [self writeToShield];
+    [self writeCurrentHeatToShield];
 }
 
 - (IBAction)viewPanned:(UIPanGestureRecognizer *)sender
@@ -200,10 +210,9 @@
         
         [self showEllipse:NO animated:YES];
         
-        
         // WRITE TO SHIELD
         [self.updateTimer invalidate];
-        [self writeToShield];
+        [self writeCurrentHeatToShield];
     }
     
     CGFloat translationY = [sender translationInView:self.view].y;
@@ -219,19 +228,18 @@
 
 - (IBAction)disconnectTap:(id)sender
 {
+    [self.navigationController popToRootViewControllerAnimated:YES];
     [[BTManager sharedInstance] disconnectFromConnectedShield];
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)writeToShield
+- (void)valueChanged:(UISegmentedControl *)segment
 {
-    unsigned char actionCommand = COMMAND_SET_HEAT_VALUE_HEX;
-    unsigned char valueCommand = 0x64 * (1-self.sliderValue); // 0x64 is 100 in hex
-    unsigned char bytes[2];
-    bytes[0] = actionCommand;
-    bytes[1] = valueCommand;
-    
-    [[BTManager sharedInstance] writeToConecttedShield:[NSMutableData dataWithBytes:&bytes length:sizeof(bytes)]];
+    [[BTManager sharedInstance] setMode:segment.selectedSegmentIndex];
+}
+
+- (void)writeCurrentHeatToShield
+{
+    [[BTManager sharedInstance] setHeat:(int)(100*(1-self.sliderValue))];
 }
 
 //---------------------------------------------------------------------------
@@ -261,7 +269,7 @@
 
 - (void)btManagerDidDisconnectFromShield:(BTManager *)manager
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 

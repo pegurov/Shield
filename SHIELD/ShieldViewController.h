@@ -10,6 +10,4 @@
 
 @interface ShieldViewController : CommonViewController
 
-@property (strong, nonatomic) Shield *shield;
-
 @end

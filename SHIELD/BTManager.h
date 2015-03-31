@@ -11,34 +11,31 @@
 #define SHIELD_MAIN_SERVICE_UUID        @"FFE0"
 #define SHIELD_CHAR_RX_UUID             @"FFE1"
 
-#define SHIELD_NAME_REQUIRED_PREFIX     @"AnyFlite"
-
-
 #define BT_ERRORS_DOMAIN @"com.ogrenich.shield:BTERRORS"
 #define ERROR_CODE_BT_UNAVAILABLE 1
 #define ERROR_CODE_COULD_NOT_CONNECT_TO_DEVICE 2
 
 //---------------------------------------------------------------------------------------
-#pragma mark - PROTOCOL DEFINES
+#pragma mark - API DEFINES
 
-// SETTING SHIT TO SHIELD
-// heat
-#define COMMAND_GET_HEAT_VALUE 0x65             // 101
-#define COMMAND_SET_HEAT_VALUE_HEX 0x66         // 102
+// Commands that the phone sends to arduino are in range [101..109]
+#define COMMAND_SET_HEAT 0x65 // 101
+#define COMMAND_GET_HEAT 0x66 // 102
 // mode
-#define COMMAND_GET_MODE 0x67                   // 103
-#define COMMAND_SET_MODE 0x68                   // 104
+#define COMMAND_SET_MODE 0x67 // 103
+#define COMMAND_GET_MODE 0x68 // 104
+// battery level and chargin' indication
+#define COMMAND_GET_IS_CHARGING 0x69 // 105
+#define COMMAND_GET_BATTERY_LEVEL 0x6A // 106
 
-// NOTIFICATIONS FROM SHIELD
-// mode notifications
-#define NOTIFICATION_MODE_IS_MANUAL                  121
-#define NOTIFICATION_MODE_IS_AUTO                    122
-
-
-// battery/charging
-//#define NOTIFICATION_BATTERY_UPDATED                 123
-//#define NOTIFICATOON_IS_CHARGING_UPDATED             124
-
+// Commands that arduino sends to the phone are in range [111..120]
+// heat level
+#define COMMAND_HEAT_IS 111 // Sending back current heat level
+// mode
+#define COMMAND_MODE_IS 112 // Sending back current mode
+// battery level and chargin'
+#define COMMAND_IS_CHARGING 113 // Sending back charging status
+#define COMMAND_BATTERY_LEVEL_IS 114 // Sending back battery level
 
 @protocol BTManagerDelegate;
 
@@ -51,20 +48,15 @@
 + (BTManager *)sharedInstance;
 
 - (void)scanForShieldsForSeconds:(NSInteger)seconds;
-- (void)connectToShield:(Shield *)shield;
+- (void)connectToShield:(Shield *)shield completionBlock:(void (^)(Shield *connectedShield))completionBlock;
 - (void)disconnectFromConnectedShield;
 
 // setting and requesting values with conected shield
 - (void)setHeat:(NSInteger)heat;
-- (void)requestHeat;
+- (void)getHeatWithCompletionBlock:(void (^)(Shield *shield))completionBlock;
 
 - (void)setMode:(ShieldMode)mode;
-- (void)requestMode;
-
-
-// TESTING
-- (void)writeToConecttedShield:(NSData *)data;
-
+- (void)getModeWithCompletionBlock:(void (^)(Shield *shield))completionBlock;
 @end
 
 @protocol BTManagerDelegate <NSObject>
@@ -72,13 +64,8 @@
 - (void)btManagerUpdatedDiscoveredShields:(BTManager *)manager;
 - (void)btManagerDidStartScanningForShields:(BTManager *)manager;
 - (void)btManagerDidEndScanningForShields:(BTManager *)manager;
-- (void)btManagerDidConnectToShield:(BTManager *)manager;
 - (void)btManagerDidDisconnectFromShield:(BTManager *)manager;
 - (void)btManager:(BTManager *)manager errorOccured:(NSError *)error;
-
-// value request answers
-- (void)shieldHeatIs:(NSInteger)heat;
-- (void)shieldModeIs:(ShieldMode)mode;
 @end
 
 @interface CBPeripheral (Additions)

@@ -60,14 +60,9 @@
     [self.tableView reloadData];
 }
 
-- (void)btManagerDidConnectToShield:(BTManager *)manager
-{
-    [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:manager.connectedShield];
-}
-
 - (void)btManager:(BTManager *)manager errorOccured:(NSError *)error
 {
-    
+    NSLog(@"WARNING: btManager:errorOccured:")
 }
 
 - (void)errorOccured:(NSError *)error
@@ -101,17 +96,10 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     Shield *selectedShield = [[[BTManager sharedInstance] discoveredShields] objectAtIndex:indexPath.row];
-    [[BTManager sharedInstance] connectToShield:selectedShield];
-    
+    [[BTManager sharedInstance] connectToShield:selectedShield completionBlock:^(Shield *connectedShield) {
+        [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
+    }];
     [self.tableView reloadData];
-}
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:SEGUE_ID_DEVICE_DETAIL]) {
-        ShieldViewController *nextVC = segue.destinationViewController;
-        nextVC.shield = sender;
-    }
 }
 
 - (IBAction)searchTap:(id)sender
