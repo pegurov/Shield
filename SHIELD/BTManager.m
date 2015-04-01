@@ -233,12 +233,13 @@
         [scanner scanUpToCharactersFromSet:digitsSet intoString:nil];
     }
 
-    NSLog(@"got value from shield: %@", scannedStrings);
-
     NSInteger commandByte = [[scannedStrings firstObject] integerValue];
     NSInteger valueByte = [[scannedStrings lastObject] integerValue];
     
     if (commandByte == COMMAND_HEAT_IS) {
+        
+        NSLog(@"got HEAT from shield: %@", @(valueByte));
+        
         self.connectedShield.heat = valueByte;
         if (self.isWaitingForShieldResponse) {
             [self.timeoutTimer invalidate];
@@ -248,6 +249,9 @@
         }
     }
     else if (commandByte == COMMAND_MODE_IS) {
+        
+        NSLog(@"got MODE from shield: %@", @(valueByte));
+        
         self.connectedShield.mode = valueByte;
         if (self.isWaitingForShieldResponse) {
             [self.timeoutTimer invalidate];
@@ -257,7 +261,7 @@
         }
     }
     else {
-        NSLog(@"got an unknown kommand byte!");
+        NSLog(@"got some value from shield (possibly our command that just echoed back): %@", dataString);
     }
 }
 
