@@ -1,3 +1,5 @@
+// VERSION 0.0.1
+
 // INCLUDES
 #include <SoftwareSerial.h>
 
@@ -28,7 +30,6 @@ const int COMMAND_IS_CHARGING = 113; // Sending back charging status
 const int COMMAND_BATTERY_LEVEL_IS = 114; // Sending back battery level
 
 // ARDUINO PROPERTIES
-SoftwareSerial Shield(0, 1);         // Our Shield's UART, (Rx, Tx)
 int currentHeat, heatSetByUser = 0;  // Range is [0..100]
 int currentMode, modeSetByUser = 0;  // 0 - manual, 1 - auto
 int isCharging = 0;                  // 0 - not charging, 1 - charging
@@ -48,7 +49,7 @@ int loopCounter = 0;
 void setup() {
   // start serials
   Serial.begin(115200);  
-  Shield.begin(115200);
+//  iPhone.begin(115200);
   // setup pins
   pinMode(logoPin, OUTPUT);
   pinMode(heatPin, OUTPUT);
@@ -61,22 +62,21 @@ void setup() {
 // LOOP
 void loop() {  
   
-  delay(100); // make an intentional delay
+  delay(50); // make an intentional delay
   
   // Shield.availaShield() returns count of bytes availaShield through Shields UART
   // so we read all availaShield bytes, of which there should be 2 or 1
-  if (Shield.available()>0) { // if there are any bytes availaShield
+  if (Serial.available()>0) { // if there are any bytes availaShield
   
     byte receivedBytes[2] = {0, 0};
     int counter = 0;
-    while (Shield.available()>0 ) { // read all availaShield bytes, but no more than 2
+    while (Serial.available()>0 ) { // read all availaShield bytes, but no more than 2
       if (counter<2) {
-        receivedBytes[counter] = Shield.read();      
-        Serial.println((int)receivedBytes[counter]);
+        receivedBytes[counter] = Serial.read();      
       }
       else {
         // just flush the unneeded byte
-        byte unneededByte = Shield.read();
+        byte unneededByte = Serial.read();
       }
       counter = counter + 1; // increment counter
     }
@@ -116,6 +116,7 @@ void loop() {
     // TODO
     // check if Shield changed charging status
     // check if Shield changed battery level
+//    Serial.println(5);
   }
 
   loopCounter = loopCounter + 1;    
@@ -130,12 +131,13 @@ void setHeatValueToShield(int value) {
   // just write the appropriate value to heat and logo pins
   analogWrite(heatPin, map(value, 0, 100, 0, 255));
   analogWrite(logoPin, map(value, 0, 100, 0, 255));
+  sendCurrentHeatLevelToPhone();
 }
 
 void sendCurrentHeatLevelToPhone() {
   byte bytesToSend[2] = {(byte)COMMAND_HEAT_IS, (byte)currentHeat};
-  Serial.write(bytesToSend[0]);
-  Serial.write(bytesToSend[1]);
+  Serial.println(bytesToSend[0]);
+  Serial.println(bytesToSend[1]);
 }
 
 // MODE
@@ -147,22 +149,22 @@ void setModeToShield(int mode) {
   else if (mode == 1) { // auto
     setHeatValueToShield(AUTO_MODE_HEAT_LEVEL);
   }
+  sendCurrentModeToPhone();
 }
 
 void sendCurrentModeToPhone() {
   byte bytesToSend[2] = {(byte)COMMAND_MODE_IS, (byte)currentMode};
-//  Serial.write(bytesToSend, 2);
-  Shield.write(bytesToSend[0]);
-  Shield.write(bytesToSend[1]);
+  Serial.println(bytesToSend[0]);
+  Serial.println(bytesToSend[1]);
 }
 
 // BATTERY
 void sendIsChargingToPhone() {
-  byte bytesToSend[2] = {COMMAND_IS_CHARGING, isCharging};
-  Serial.write(bytesToSend, 2);
+//  byte bytesToSend[2] = {COMMAND_IS_CHARGING, isCharging};
+//  Serial.write(bytesToSend, 2);
 }
   
 void sendCurrentBatteryLevelToPhone() {
-  byte bytesToSend [2] = {COMMAND_BATTERY_LEVEL_IS, currentBatteryLevel};
-  Serial.write(bytesToSend, 2);
+//  byte bytesToSend [2] = {COMMAND_BATTERY_LEVEL_IS, currentBatteryLevel};
+//  Serial.write(bytesToSend, 2);
 }

@@ -77,10 +77,12 @@
     
     [[BTManager sharedInstance] setDelegate:self];
 
+    [self.segmentedControlMode.layer setAnchorPoint:CGPointMake(0.65, 0.5)];
+    [self.segmentedControlMode setTransform:CGAffineTransformMakeScale(1.5, 1.5)];
 
     // set default state
     [self updateBlurredImage];
-    [self showEllipse:NO animated:NO];
+    [self showEllipse:NO everythingElse:YES animated:YES];
     [self refreshViewOnShieldUpdated];
 }
 
@@ -95,6 +97,8 @@
     // current mode
     NSInteger currentMode = [BTManager sharedInstance].connectedShield.mode==ShieldModeManual? 0 : 1;
     [self.segmentedControlMode setSelectedSegmentIndex:currentMode];
+    [self showEllipse:NO everythingElse:(currentMode==1) animated:NO];
+    [self.panGR setEnabled:(currentMode==0)];
 }
 
 - (void)updateBlurredImage
@@ -176,7 +180,6 @@
     [self.labelHeatPercent setText:[NSString stringWithFormat:@"heat %d\%%",(int)heat]];
     [self.labelTime setText:[NSString stringWithFormat:@"use %d:%02d",(int)(floorf(time/60)), (int)(time%60)]];
     
-    
     NSString *isChargingString = self.isCharging? @", charging" : @"";
     [self.labelCurrentBatteryLevel setText:[NSString stringWithFormat:@"battery: %@%%%@", @(self.batteryLevel), isChargingString]];
 }
@@ -186,18 +189,26 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    UITouch *someTouch = [touches anyObject];
+    [super touchesBegan:touches withEvent:event];
     
-    if (someTouch) {
-        self.currentPanCenter = [someTouch locationInView:self.view];
-        [self showEllipse:YES animated:YES];
+    if (self.panGR.enabled) {
+        UITouch *someTouch = [touches anyObject];
+        
+        if (someTouch) {
+            self.currentPanCenter = [someTouch locationInView:self.view];
+            [self showEllipse:YES everythingElse:NO animated:YES];
+        }
     }
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [self showEllipse:NO animated:YES];
-    [self writeCurrentHeatToShield];
+    [super touchesEnded:touches withEvent:event];
+    
+    if (self.panGR.enabled) {
+        [self showEllipse:NO everythingElse:YES animated:YES];
+        [self writeCurrentHeatToShield];
+    }
 }
 
 - (IBAction)viewPanned:(UIPanGestureRecognizer *)sender
@@ -205,14 +216,14 @@
     if (sender.state == UIGestureRecognizerStateBegan) {
         
         self.initialPanCenter = [sender locationInView:self.view];
-        [self showEllipse:YES animated:YES];
+        [self showEllipse:YES everythingElse:NO animated:YES];
         
     }
     
     if (sender.state == UIGestureRecognizerStateEnded ||
         sender.state == UIGestureRecognizerStateCancelled) {
         
-        [self showEllipse:NO animated:YES];
+        [self showEllipse:NO everythingElse:YES animated:YES];
         
         // WRITE TO SHIELD
         [self.updateTimer invalidate];
@@ -250,21 +261,22 @@
 #pragma mark - Helpers
 
 // pass YES to show, NO to hide
-- (void)showEllipse:(BOOL)show animated:(BOOL)animated
+- (void)showEllipse:(BOOL)showEllipse everythingElse:(BOOL)showEverythingElse animated:(BOOL)animated
 {
     [self updateBlurredImage];
     
     CGFloat duration = animated ? 0.1 : 0;
-    CGFloat alpha = show? 1 : 0;
+    CGFloat ellipseAlpha = showEllipse? 1 : 0;
+    CGFloat everythingElseAlpha = showEverythingElse? 1 : 0;
     
     [UIView animateWithDuration:duration animations:^{
-        self.imageViewEllipse.alpha = alpha;
-        self.viewLine.alpha = alpha;
-        self.labelSetHeatPercent.alpha = alpha;
-        self.labelSetTime.alpha = alpha;
+        self.imageViewEllipse.alpha = ellipseAlpha;
+        self.viewLine.alpha = ellipseAlpha;
+        self.labelSetHeatPercent.alpha = ellipseAlpha;
+        self.labelSetTime.alpha = ellipseAlpha;
         
-        [self.imageViewBlurredLabels setAlpha:alpha/4.];
-        [self.viewBlack setAlpha:alpha];
+//        [self.imageViewBlurredLabels setAlpha:everythingElseAlpha/4.];
+//        [self.viewBlack setAlpha:everythingElseAlpha];
     }];
 }
 

@@ -253,42 +253,58 @@
         [scannedStrings addObject:scannedString];
         [scanner scanUpToCharactersFromSet:digitsSet intoString:nil];
     }
-
-    NSInteger commandByte = [[scannedStrings firstObject] integerValue];
-    NSInteger valueByte = [[scannedStrings lastObject] integerValue];
     
-    if (commandByte == COMMAND_HEAT_IS) {
+    NSMutableArray *commandPairs = [NSMutableArray array];
+    
+    // parse scanned strings into array of pairs
+    NSMutableArray *newPair = [NSMutableArray array];
+    for (int i = 0; i<scannedStrings.count; i++) {
+        [newPair addObject:scannedStrings[i]];
         
-        NSLog(@"RESPONSE <- current HEAT LEVEL is: %@", @(valueByte));
-        
-        self.connectedShield.heat = valueByte;
-        if (self.isWaitingForShieldResponse) {
-            [self.timeoutTimer invalidate];
-            self.isWaitingForShieldResponse = NO;
-            self.getHeatCompletionBlock(self.connectedShield);
-            self.getHeatCompletionBlock = nil;
-        }
-        if ([self.delegate respondsToSelector:@selector(btManagerConnectedShieldUpdated:)]) {
-            [self.delegate btManagerConnectedShieldUpdated:self];
+        if (newPair.count==2) {
+            [commandPairs addObject:[newPair copy]];
+            newPair = [NSMutableArray array];
         }
     }
-    else if (commandByte == COMMAND_MODE_IS) {
-        
-        NSLog(@"RESPONSE <- current MODE is: %@", valueByte==0? @"manual" : @"auto" );
-        
-        self.connectedShield.mode = valueByte;
-        if (self.isWaitingForShieldResponse) {
-            [self.timeoutTimer invalidate];
-            self.isWaitingForShieldResponse = NO;
-            self.getModeCompletionBlock(self.connectedShield);
-            self.getModeCompletionBlock = nil;
+    
+    for (NSMutableArray *commandValuePair in commandPairs) {
+    
+        NSInteger commandByte = [[commandValuePair firstObject] integerValue];
+        NSInteger valueByte = [[commandValuePair lastObject] integerValue];
+    
+        if (commandByte == COMMAND_HEAT_IS) {
+            
+            NSLog(@"RESPONSE <- current HEAT LEVEL is: %@", @(valueByte));
+            
+            self.connectedShield.heat = valueByte;
+            if (self.isWaitingForShieldResponse) {
+                [self.timeoutTimer invalidate];
+                self.isWaitingForShieldResponse = NO;
+                self.getHeatCompletionBlock(self.connectedShield);
+                self.getHeatCompletionBlock = nil;
+            }
+            if ([self.delegate respondsToSelector:@selector(btManagerConnectedShieldUpdated:)]) {
+                [self.delegate btManagerConnectedShieldUpdated:self];
+            }
         }
-        if ([self.delegate respondsToSelector:@selector(btManagerConnectedShieldUpdated:)]) {
-            [self.delegate btManagerConnectedShieldUpdated:self];
+        else if (commandByte == COMMAND_MODE_IS) {
+            
+            NSLog(@"RESPONSE <- current MODE is: %@", valueByte==0? @"manual" : @"auto" );
+            
+            self.connectedShield.mode = valueByte;
+            if (self.isWaitingForShieldResponse) {
+                [self.timeoutTimer invalidate];
+                self.isWaitingForShieldResponse = NO;
+                self.getModeCompletionBlock(self.connectedShield);
+                self.getModeCompletionBlock = nil;
+            }
+            if ([self.delegate respondsToSelector:@selector(btManagerConnectedShieldUpdated:)]) {
+                [self.delegate btManagerConnectedShieldUpdated:self];
+            }
         }
-    }
-    else {
-        NSLog(@"RESPONSE: got some value from shield : %@", dataString);
+        else {
+            NSLog(@"RESPONSE: got some value from shield : %@", dataString);
+        }
     }
 }
 
