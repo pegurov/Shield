@@ -61,6 +61,7 @@
 
 @protocol BTManagerDelegate <NSObject>
 @optional
+- (void)btManagerConnectedShieldUpdated:(BTManager *)manager;
 - (void)btManagerUpdatedDiscoveredShields:(BTManager *)manager;
 - (void)btManagerDidStartScanningForShields:(BTManager *)manager;
 - (void)btManagerDidEndScanningForShields:(BTManager *)manager;

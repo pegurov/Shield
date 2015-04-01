@@ -16,8 +16,6 @@
 
 @interface ShieldViewController () <BTManagerDelegate>
 
-@property (strong, nonatomic) Shield *shield;
-
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControlMode;
 
 @property (nonatomic) CGPoint initialPanCenter;
@@ -70,27 +68,33 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.shield = [BTManager sharedInstance].connectedShield;
     [self.segmentedControlMode addTarget:self action:@selector(valueChanged:) forControlEvents: UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self updateBlurredImage];
-
-    // set default state
-    [self showEllipse:NO animated:NO];
-
-    // current heat level
-    NSInteger currentHeatLevel = self.shield.heat;
-    [self setCurrentPanCenter:CGPointMake((self.view.frame.size.height - MAXIMUM_OFFSET*2)*(currentHeatLevel/100) + MAXIMUM_OFFSET, self.view.frame.size.width/2.)];
-    
-    // current mode
-    NSInteger currentMode = self.shield.mode;
-    [self.segmentedControlMode setSelectedSegmentIndex:currentMode];
     
     [[BTManager sharedInstance] setDelegate:self];
+
+
+    // set default state
+    [self updateBlurredImage];
+    [self showEllipse:NO animated:NO];
+    [self refreshViewOnShieldUpdated];
+}
+
+- (void)refreshViewOnShieldUpdated
+{
+    // current heat level
+    NSInteger currentHeatLevel = [BTManager sharedInstance].connectedShield.heat;
+    CGFloat x = self.view.frame.size.width/2.;
+    CGFloat y = self.view.frame.size.height - ((self.view.frame.size.height - MAXIMUM_OFFSET*2)*(currentHeatLevel/100.) + MAXIMUM_OFFSET);
+    [self setCurrentPanCenter:CGPointMake(x, y)];
+    
+    // current mode
+    NSInteger currentMode = [BTManager sharedInstance].connectedShield.mode==ShieldModeManual? 0 : 1;
+    [self.segmentedControlMode setSelectedSegmentIndex:currentMode];
 }
 
 - (void)updateBlurredImage
@@ -272,5 +276,9 @@
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
+- (void)btManagerConnectedShieldUpdated:(BTManager *)manager
+{
+    [self refreshViewOnShieldUpdated];
+}
 
 @end

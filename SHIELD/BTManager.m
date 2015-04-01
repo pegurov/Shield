@@ -193,8 +193,29 @@
     for (unsigned i = 0; i < len; ++i) {
         [arr addObject:[NSNumber numberWithUnsignedShort:[string characterAtIndex:i]]];
     }
-    NSLog(@"writing to shield: %@", arr);
 
+    if ([[arr firstObject] isEqual:@(101)]) {
+        NSLog(@"REQUEST -> setting HEAT LEVEL to: %@", [arr lastObject]);
+    }
+    else if ([[arr firstObject] isEqualToNumber:@(102)]) {
+        NSLog(@"REQUEST -> requesting HEAT LEVEL");
+    }
+    else if ([[arr firstObject] isEqual:@(103)]) {
+        NSLog(@"REQUEST -> setting MODE to: %@", [[arr lastObject] isEqual:@(0)] ? @"manual" : @"auto");
+    }
+    else if ([[arr firstObject ]isEqual:@(104)]) {
+        NSLog(@"REQUEST -> requesting MODE");
+    }
+    else if ([[arr firstObject ]isEqual:@(105)]) {
+        NSLog(@"REQUEST -> requesting IS CHARGING");
+    }
+    else if ([[arr firstObject ]isEqual:@(106)]) {
+        NSLog(@"REQUEST -> requesting BATTERY LEVEL");
+    }
+    else {
+        NSLog(@"WARNING: sending an unauthorised command to shield! :%@", arr);
+    }
+    
     // actual writing
     CBUUID *mainServiceUUID = [CBUUID UUIDWithString:SHIELD_MAIN_SERVICE_UUID];
     CBUUID *rxCharUUID = [CBUUID UUIDWithString:SHIELD_CHAR_RX_UUID];
@@ -238,30 +259,36 @@
     
     if (commandByte == COMMAND_HEAT_IS) {
         
-        NSLog(@"got HEAT from shield: %@", @(valueByte));
+        NSLog(@"RESPONSE <- current HEAT LEVEL is: %@", @(valueByte));
         
         self.connectedShield.heat = valueByte;
         if (self.isWaitingForShieldResponse) {
             [self.timeoutTimer invalidate];
+            self.isWaitingForShieldResponse = NO;
             self.getHeatCompletionBlock(self.connectedShield);
             self.getHeatCompletionBlock = nil;
-            self.isWaitingForShieldResponse = NO;
+        }
+        if ([self.delegate respondsToSelector:@selector(btManagerConnectedShieldUpdated:)]) {
+            [self.delegate btManagerConnectedShieldUpdated:self];
         }
     }
     else if (commandByte == COMMAND_MODE_IS) {
         
-        NSLog(@"got MODE from shield: %@", @(valueByte));
+        NSLog(@"RESPONSE <- current MODE is: %@", valueByte==0? @"manual" : @"auto" );
         
         self.connectedShield.mode = valueByte;
         if (self.isWaitingForShieldResponse) {
             [self.timeoutTimer invalidate];
-            self.getModeCompletionBlock(self.connectedShield);
-            self.getHeatCompletionBlock = nil;
             self.isWaitingForShieldResponse = NO;
+            self.getModeCompletionBlock(self.connectedShield);
+            self.getModeCompletionBlock = nil;
+        }
+        if ([self.delegate respondsToSelector:@selector(btManagerConnectedShieldUpdated:)]) {
+            [self.delegate btManagerConnectedShieldUpdated:self];
         }
     }
     else {
-        NSLog(@"got some value from shield (possibly our command that just echoed back): %@", dataString);
+        NSLog(@"RESPONSE: got some value from shield : %@", dataString);
     }
 }
 
@@ -361,10 +388,9 @@
         
         // now we need to get the mode and heat value of the shield
         self.connectedShield = shieldWeAreConnectingTo;
-        
-        [self getHeatWithCompletionBlock:^(Shield *shield) {
-           [self getModeWithCompletionBlock:^(Shield *shield) {
-        
+
+       [self getModeWithCompletionBlock:^(Shield *shield) {
+            [self getHeatWithCompletionBlock:^(Shield *shield) {
                if (self.connectToShieldCompletionBlock) {
                    self.connectToShieldCompletionBlock(self.connectedShield);
                }
