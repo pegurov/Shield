@@ -18,7 +18,7 @@
 
 @property (strong, nonatomic) Shield *shield;
 
-@property (strong, nonatomic) UISegmentedControl *segmentedControlMode;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControlMode;
 
 @property (nonatomic) CGPoint initialPanCenter;
 @property (nonatomic) CGPoint currentPanCenter;

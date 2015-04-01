@@ -72,6 +72,7 @@ void loop() {
     while (Shield.available()>0 ) { // read all availaShield bytes, but no more than 2
       if (counter<2) {
         receivedBytes[counter] = Shield.read();      
+        Serial.println((int)receivedBytes[counter]);
       }
       else {
         // just flush the unneeded byte
@@ -132,8 +133,9 @@ void setHeatValueToShield(int value) {
 }
 
 void sendCurrentHeatLevelToPhone() {
-  byte bytesToSend[2] = {COMMAND_HEAT_IS, currentHeat};
-  Shield.write(bytesToSend, 2);
+  byte bytesToSend[2] = {(byte)COMMAND_HEAT_IS, (byte)currentHeat};
+  Serial.write(bytesToSend[0]);
+  Serial.write(bytesToSend[1]);
 }
 
 // MODE
@@ -148,17 +150,19 @@ void setModeToShield(int mode) {
 }
 
 void sendCurrentModeToPhone() {
-  byte bytesToSend[2] = {COMMAND_MODE_IS, currentMode};
-  Shield.write(bytesToSend, 2);
+  byte bytesToSend[2] = {(byte)COMMAND_MODE_IS, (byte)currentMode};
+//  Serial.write(bytesToSend, 2);
+  Shield.write(bytesToSend[0]);
+  Shield.write(bytesToSend[1]);
 }
 
 // BATTERY
 void sendIsChargingToPhone() {
   byte bytesToSend[2] = {COMMAND_IS_CHARGING, isCharging};
-  Shield.write(bytesToSend, 2);
+  Serial.write(bytesToSend, 2);
 }
   
 void sendCurrentBatteryLevelToPhone() {
   byte bytesToSend [2] = {COMMAND_BATTERY_LEVEL_IS, currentBatteryLevel};
-  Shield.write(bytesToSend, 2);
+  Serial.write(bytesToSend, 2);
 }

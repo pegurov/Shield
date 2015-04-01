@@ -364,7 +364,7 @@
         
         [self getHeatWithCompletionBlock:^(Shield *shield) {
            [self getModeWithCompletionBlock:^(Shield *shield) {
-               
+        
                if (self.connectToShieldCompletionBlock) {
                    self.connectToShieldCompletionBlock(self.connectedShield);
                }
