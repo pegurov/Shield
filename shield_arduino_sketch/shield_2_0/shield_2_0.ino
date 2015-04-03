@@ -1,7 +1,8 @@
-// VERSION 0.0.1
+// VERSION 0.0.2
 
 // INCLUDES
-#include <SoftwareSerial.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 /* ------------------------------------ API DEFINES ------------------------------------
 The phone talks to arduino and arduino talks back to the phone by sending 1 or 2 byte long commands.
@@ -28,17 +29,25 @@ const int COMMAND_MODE_IS = 112; // Sending back current mode
 // battery level and chargin'
 const int COMMAND_IS_CHARGING = 113; // Sending back charging status
 const int COMMAND_BATTERY_LEVEL_IS = 114; // Sending back battery level
+// temperature
+const int COMMAND_TEMPERATURE_IS = 115; // Sending back battery level
 
 // ARDUINO PROPERTIES
 int currentHeat, heatSetByUser = 0;  // Range is [0..100]
 int currentMode, modeSetByUser = 0;  // 0 - manual, 1 - auto
 int isCharging = 0;                  // 0 - not charging, 1 - charging
 int currentBatteryLevel = 0;         // current battery level of Shield
+float currentTemperature = 0;        // last scanned temperature from sensor
 
 // PIN DEFINES
 int logoPin = 9;
 int heatPin = 10;
 int chargePin = 10;
+int temperaturePin = 2;
+
+// TEMP SENSOR SHIT
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensor(&oneWire);
 
 // OTHERS
 int AUTO_MODE_HEAT_LEVEL = 50;
@@ -47,9 +56,10 @@ int loopCounter = 0;
 /* ------------------------------------ CODE ------------------------------------ */
 // SETUP
 void setup() {
+  // start the temperature sensor
+  sensor.begin();
   // start serials
   Serial.begin(115200);  
-//  iPhone.begin(115200);
   // setup pins
   pinMode(logoPin, OUTPUT);
   pinMode(heatPin, OUTPUT);
@@ -106,21 +116,23 @@ void loop() {
     else if (commandByte == COMMAND_GET_BATTERY_LEVEL) {
       sendCurrentBatteryLevelToPhone();
     }
-    
   } // end of "is there any bytes availaShield" IF statement
   
-  // charging and battery level code should only run once a second, not every 100ms loop    
-  if (loopCounter == 10) {
+  // charging and battery level code should only run once a second
+  if (loopCounter == 20) {
     loopCounter = 0; 
+    
+    sensor.requestTemperatures();
+    float scannedTemperature = sensors.getTempCByIndex(0);
+    if (scannedTemperature != currentTemperature) {
+      currentTemperature = scannedTemperature;
+    }
     
     // TODO
     // check if Shield changed charging status
     // check if Shield changed battery level
-//    Serial.println(5);
   }
-
   loopCounter = loopCounter + 1;    
-      
 } // end of loop
 
 
@@ -167,4 +179,16 @@ void sendIsChargingToPhone() {
 void sendCurrentBatteryLevelToPhone() {
 //  byte bytesToSend [2] = {COMMAND_BATTERY_LEVEL_IS, currentBatteryLevel};
 //  Serial.write(bytesToSend, 2);
+}
+
+// TEMPERATURE
+void sendCurrentTemperatureToPhone() {
+  // from -40 to +60 (0-100)
+  int currentIntTemperature = (int)currentTemperature + 40;
+  if (currentIntTemperature<0) { currentIntTemperature = 0;}
+  if (currentIntTemperature>100) { currentIntTemperature = 100;}  
+  
+  byte bytesToSend[2] = {(byte)COMMAND_TEMPERATURE_IS, (byte)currentMode};
+  Serial.println(bytesToSend[0]);
+  Serial.println(bytesToSend[1]);
 }
