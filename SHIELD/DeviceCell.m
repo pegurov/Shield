@@ -10,7 +10,7 @@
 
 @interface DeviceCell()
 @property (weak, nonatomic) IBOutlet UILabel *labelName;
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (weak, nonatomic) IBOutlet UILabel *labelStatus;
 
 @property (strong, nonatomic) Shield *device;
 @end
@@ -21,27 +21,25 @@
 {
     _device = device;
 
-    [self.activityIndicator stopAnimating];
     [self.labelName setTextColor:[UIColor blackColor]];
+    [self.labelName setText:device.peripheral.name];
     
     if (device.peripheral.state == CBPeripheralStateConnected) {
-
-        self.selectionStyle = UITableViewCellSelectionStyleNone;
-        [self.labelName setTextColor:[UIColor lightGrayColor]];
-        [self.activityIndicator stopAnimating];
-    }
-    if (device.peripheral.state == CBPeripheralStateConnecting) {
-        
-        self.selectionStyle = UITableViewCellSelectionStyleNone;
-        [self.labelName setTextColor:[UIColor lightGrayColor]];
-        [self.activityIndicator startAnimating];
-    }
-    else { // DISCONNECTED
-        
+        // CONNECTED
         self.selectionStyle = UITableViewCellSelectionStyleDefault;
+        [self.labelStatus setText:@"connected"];
+        
     }
-
-    [self.labelName setText:device.peripheral.name];
+    else if (device.peripheral.state == CBPeripheralStateConnecting) {
+        // CONNECTING
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        [self.labelStatus setText:@"connecting"];
+    }
+    else {
+        // CONNECTABLE
+        self.selectionStyle = UITableViewCellSelectionStyleDefault;
+        [self.labelStatus setText:@"connectable"];
+    }
 }
 
 @end

@@ -18,8 +18,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [UIApplication sharedApplication].statusBarHidden = YES;
-
+//    [UIApplication sharedApplication].statusBarHidden = YES;
     return YES;
 }
 

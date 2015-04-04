@@ -9,12 +9,13 @@
 /* Begin PBXBuildFile section */
 		03739D1D87104B65AAE71C36 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DDDF33E91F43DE951701B4 /* libPods.a */; };
 		C41EB76019A246FF00641436 /* CommonViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB75F19A246FF00641436 /* CommonViewController.m */; };
-		C41EB76319A2475000641436 /* ShieldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76219A2475000641436 /* ShieldViewController.m */; };
+		C41EB76319A2475000641436 /* OldShieldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76219A2475000641436 /* OldShieldViewController.m */; };
 		C41EB76619A392D000641436 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76519A392D000641436 /* UIImage+ImageEffects.m */; };
 		C41EB76919A3ABCC00641436 /* GeneralHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76819A3ABCC00641436 /* GeneralHelper.m */; };
 		C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9A919C62E5000126086 /* CommonTableViewCell.m */; };
 		C46CE9AD19C62E6100126086 /* DeviceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9AC19C62E6100126086 /* DeviceCell.m */; };
 		C47BC79419CC4C4B00C19E62 /* RBLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = C47BC79319CC4C4B00C19E62 /* RBLProtocol.m */; };
+		C4C616071ACFFDC000F45A11 /* ShieldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C616061ACFFDC000F45A11 /* ShieldViewController.m */; };
 		C4EA89E619CA343900E90942 /* Shield.m in Sources */ = {isa = PBXBuildFile; fileRef = C4EA89E519CA343900E90942 /* Shield.m */; };
 		F0A6F10019A2356D00D976BA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */; };
 		F0A6F10719A2384D00D976BA /* BTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10219A2384D00D976BA /* BTManager.m */; };
@@ -42,8 +43,8 @@
 		83DDDF33E91F43DE951701B4 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C41EB75E19A246FF00641436 /* CommonViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonViewController.h; sourceTree = "<group>"; };
 		C41EB75F19A246FF00641436 /* CommonViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonViewController.m; sourceTree = "<group>"; };
-		C41EB76119A2475000641436 /* ShieldViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShieldViewController.h; sourceTree = "<group>"; };
-		C41EB76219A2475000641436 /* ShieldViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShieldViewController.m; sourceTree = "<group>"; };
+		C41EB76119A2475000641436 /* OldShieldViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OldShieldViewController.h; sourceTree = "<group>"; };
+		C41EB76219A2475000641436 /* OldShieldViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OldShieldViewController.m; sourceTree = "<group>"; };
 		C41EB76419A392D000641436 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		C41EB76519A392D000641436 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		C41EB76719A3ABCC00641436 /* GeneralHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralHelper.h; sourceTree = "<group>"; };
@@ -55,6 +56,8 @@
 		C46CE9AE19C62F2600126086 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		C47BC79219CC4C4B00C19E62 /* RBLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBLProtocol.h; sourceTree = "<group>"; };
 		C47BC79319CC4C4B00C19E62 /* RBLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBLProtocol.m; sourceTree = "<group>"; };
+		C4C616051ACFFDC000F45A11 /* ShieldViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShieldViewController.h; sourceTree = "<group>"; };
+		C4C616061ACFFDC000F45A11 /* ShieldViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShieldViewController.m; sourceTree = "<group>"; };
 		C4EA89E419CA343900E90942 /* Shield.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shield.h; sourceTree = "<group>"; };
 		C4EA89E519CA343900E90942 /* Shield.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shield.m; sourceTree = "<group>"; };
 		F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
@@ -126,6 +129,7 @@
 				C41EB75D19A246E000641436 /* Common */,
 				C41EB75C19A246B600641436 /* Shield */,
 				C41EB75B19A246AA00641436 /* BT Devices */,
+				C4C616041ACFFD8F00F45A11 /* Old */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -162,8 +166,8 @@
 		C41EB75C19A246B600641436 /* Shield */ = {
 			isa = PBXGroup;
 			children = (
-				C41EB76119A2475000641436 /* ShieldViewController.h */,
-				C41EB76219A2475000641436 /* ShieldViewController.m */,
+				C4C616051ACFFDC000F45A11 /* ShieldViewController.h */,
+				C4C616061ACFFDC000F45A11 /* ShieldViewController.m */,
 			);
 			name = Shield;
 			sourceTree = "<group>";
@@ -254,6 +258,15 @@
 				C47BC79319CC4C4B00C19E62 /* RBLProtocol.m */,
 			);
 			name = RBL;
+			sourceTree = "<group>";
+		};
+		C4C616041ACFFD8F00F45A11 /* Old */ = {
+			isa = PBXGroup;
+			children = (
+				C41EB76119A2475000641436 /* OldShieldViewController.h */,
+				C41EB76219A2475000641436 /* OldShieldViewController.m */,
+			);
+			name = Old;
 			sourceTree = "<group>";
 		};
 		C4EA89E219CA341700E90942 /* Managed */ = {
@@ -477,9 +490,10 @@
 				C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */,
 				C4EA89E619CA343900E90942 /* Shield.m in Sources */,
 				F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */,
-				C41EB76319A2475000641436 /* ShieldViewController.m in Sources */,
+				C41EB76319A2475000641436 /* OldShieldViewController.m in Sources */,
 				F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */,
 				C41EB76919A3ABCC00641436 /* GeneralHelper.m in Sources */,
+				C4C616071ACFFDC000F45A11 /* ShieldViewController.m in Sources */,
 				C47BC79419CC4C4B00C19E62 /* RBLProtocol.m in Sources */,
 				F0D7E2E619A1F99200F78ED1 /* main.m in Sources */,
 				F0A6F10719A2384D00D976BA /* BTManager.m in Sources */,

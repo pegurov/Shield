@@ -15,12 +15,15 @@
 
 @property (nonatomic, copy) void (^getHeatCompletionBlock)(Shield *shield);
 @property (nonatomic, copy) void (^getModeCompletionBlock)(Shield *shield);
+@property (nonatomic, copy) void (^getTemperatureCmpletionBlock)(Shield *shield);
+
 @property (nonatomic, copy) void (^connectToShieldCompletionBlock)(Shield *shield);
 
 // flags
 @property (nonatomic) BOOL isScanning;
-@property (nonatomic) BOOL isWaitingForShieldResponse;
-@property (strong, nonatomic) NSTimer *timeoutTimer;
+@property (strong, nonatomic) NSTimer *heatTimeoutTimer;
+@property (strong, nonatomic) NSTimer *modeTimeoutTimer;
+@property (strong, nonatomic) NSTimer *temperatureTimeoutTimer;
 @end
 
 @implementation BTManager
@@ -35,7 +38,6 @@
         self.centralBTManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
         self.discoveredShields = [NSMutableArray array];
         self.isScanning = NO;
-        self.isWaitingForShieldResponse = NO;
     }
     return self;
 }
@@ -109,6 +111,7 @@
 {
     if (self.connectedShield) {
         [self.centralBTManager cancelPeripheralConnection:self.connectedShield.peripheral];
+        self.connectedShield = nil;
     }
 }
 
@@ -123,18 +126,17 @@
 }
 
 - (void)getHeatWithCompletionBlock:(void (^)(Shield *shield))completionBlock {
-    if (!self.isWaitingForShieldResponse) {
-        self.isWaitingForShieldResponse = YES;
+    if (!self.getHeatCompletionBlock) {
+        self.getHeatCompletionBlock = completionBlock;
         unsigned char commandByte = COMMAND_GET_HEAT;
         unsigned char bytesToSend[1] = {commandByte};
-        self.getHeatCompletionBlock = completionBlock;
+
         [self writeToConecttedShield:[NSMutableData dataWithBytes:&bytesToSend length:sizeof(bytesToSend)]];
-        
-        self.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:3 // 3 secs timeout
-                                                             target:self
-                                                           selector:@selector(timeoutHandler)
-                                                           userInfo:nil
-                                                            repeats:NO];
+        self.heatTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:5 // 5 secs timeout
+                                                                 target:self
+                                                               selector:@selector(heatTimeoutHandler)
+                                                               userInfo:nil
+                                                                repeats:NO];
     }
     else {
 #warning TODO - make this possible
@@ -150,18 +152,17 @@
 }
 
 - (void)getModeWithCompletionBlock:(void (^)(Shield *shield))completionBlock {
-    if (!self.isWaitingForShieldResponse) {
-        self.isWaitingForShieldResponse = YES;
+    if (!self.getModeCompletionBlock) {
+        self.getModeCompletionBlock = completionBlock;
         unsigned char commandByte = COMMAND_GET_MODE;
         unsigned char bytesToSend[1] = {commandByte};
-        self.getModeCompletionBlock = completionBlock;
+
         [self writeToConecttedShield:[NSMutableData dataWithBytes:&bytesToSend length:sizeof(bytesToSend)]];
-        
-        self.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:3 // 3 secs timeout
-                                                             target:self
-                                                           selector:@selector(timeoutHandler)
-                                                           userInfo:nil
-                                                            repeats:NO];
+        self.modeTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:5 // 5 secs timeout
+                                                                 target:self
+                                                               selector:@selector(modeTimeoutHandler)
+                                                               userInfo:nil
+                                                                repeats:NO];
     }
     else {
 #warning TODO - make this possible
@@ -169,16 +170,50 @@
     }
 }
 
-- (void)timeoutHandler
+- (void)getTemperatureWithCompletionBlock:(void (^)(Shield *shield))completionBlock
 {
-    if (self.isWaitingForShieldResponse) {
-        
-        NSLog(@"WARNING: No response from shield, stopping wait on timeout");
-        self.getHeatCompletionBlock = nil;
-        self.getModeCompletionBlock = nil;
-        self.isWaitingForShieldResponse = NO;
+    if (!self.getTemperatureCmpletionBlock) {
+        self.getTemperatureCmpletionBlock = completionBlock;
+        unsigned char commandByte = COMMAND_GET_TEMPERATURE;
+        unsigned char bytesToSend[1] = {commandByte};
+
+        [self writeToConecttedShield:[NSMutableData dataWithBytes:&bytesToSend length:sizeof(bytesToSend)]];
+        self.temperatureTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:5 // 5 secs timeout
+                                                                        target:self
+                                                                      selector:@selector(temperatureTimeoutHandler)
+                                                                      userInfo:nil
+                                                                       repeats:NO];
+    }
+    else {
+#warning TODO - make this possible
+        NSLog(@"WARNING: cannot get mode from shield, waiting for a response!");
     }
 }
+
+- (void)heatTimeoutHandler
+{
+    if (self.getHeatCompletionBlock) {
+       self.getHeatCompletionBlock = nil;
+        NSLog(@"WARNING: Could not get heat, stopping wait on timeout");
+    }
+}
+
+- (void)modeTimeoutHandler
+{
+    if (self.getModeCompletionBlock) {
+        self.getModeCompletionBlock = nil;
+        NSLog(@"WARNING: Could not get mode, stopping wait on timeout");
+    }
+}
+
+- (void)temperatureTimeoutHandler
+{
+    if (self.getTemperatureCmpletionBlock) {
+        self.getTemperatureCmpletionBlock = nil;
+        NSLog(@"WARNING: Could not get temperature, stopping wait on timeout");
+    }
+}
+
 
 //----------------------------------------------------------------------------------------
 #pragma mark - Shield writing and updating values
@@ -194,23 +229,26 @@
         [arr addObject:[NSNumber numberWithUnsignedShort:[string characterAtIndex:i]]];
     }
 
-    if ([[arr firstObject] isEqual:@(101)]) {
+    if ([[arr firstObject] isEqual:@(COMMAND_SET_HEAT)]) {
         NSLog(@"REQUEST -> setting HEAT LEVEL to: %@", [arr lastObject]);
     }
-    else if ([[arr firstObject] isEqualToNumber:@(102)]) {
+    else if ([[arr firstObject] isEqualToNumber:@(COMMAND_GET_HEAT)]) {
         NSLog(@"REQUEST -> requesting HEAT LEVEL");
     }
-    else if ([[arr firstObject] isEqual:@(103)]) {
+    else if ([[arr firstObject] isEqual:@(COMMAND_SET_MODE)]) {
         NSLog(@"REQUEST -> setting MODE to: %@", [[arr lastObject] isEqual:@(0)] ? @"manual" : @"auto");
     }
-    else if ([[arr firstObject ]isEqual:@(104)]) {
+    else if ([[arr firstObject ]isEqual:@(COMMAND_GET_MODE)]) {
         NSLog(@"REQUEST -> requesting MODE");
     }
-    else if ([[arr firstObject ]isEqual:@(105)]) {
+    else if ([[arr firstObject ]isEqual:@(COMMAND_GET_IS_CHARGING)]) {
         NSLog(@"REQUEST -> requesting IS CHARGING");
     }
-    else if ([[arr firstObject ]isEqual:@(106)]) {
+    else if ([[arr firstObject ]isEqual:@(COMMAND_GET_BATTERY_LEVEL)]) {
         NSLog(@"REQUEST -> requesting BATTERY LEVEL");
+    }
+    else if ([[arr firstObject ]isEqual:@(COMMAND_GET_TEMPERATURE)]) {
+        NSLog(@"REQUEST -> requesting TEMPERATURE");
     }
     else {
         NSLog(@"WARNING: sending an unauthorised command to shield! :%@", arr);
@@ -277,14 +315,10 @@
             NSLog(@"RESPONSE <- current HEAT LEVEL is: %@", @(valueByte));
             
             self.connectedShield.heat = valueByte;
-            if (self.isWaitingForShieldResponse) {
-                [self.timeoutTimer invalidate];
-                self.isWaitingForShieldResponse = NO;
+            if (self.getHeatCompletionBlock) {
+                [self.heatTimeoutTimer invalidate];
                 self.getHeatCompletionBlock(self.connectedShield);
                 self.getHeatCompletionBlock = nil;
-            }
-            if ([self.delegate respondsToSelector:@selector(btManagerConnectedShieldUpdated:)]) {
-                [self.delegate btManagerConnectedShieldUpdated:self];
             }
         }
         else if (commandByte == COMMAND_MODE_IS) {
@@ -292,15 +326,28 @@
             NSLog(@"RESPONSE <- current MODE is: %@", valueByte==0? @"manual" : @"auto" );
             
             self.connectedShield.mode = valueByte;
-            if (self.isWaitingForShieldResponse) {
-                [self.timeoutTimer invalidate];
-                self.isWaitingForShieldResponse = NO;
+            if (self.getModeCompletionBlock) {
+                [self.modeTimeoutTimer invalidate];
                 self.getModeCompletionBlock(self.connectedShield);
                 self.getModeCompletionBlock = nil;
             }
-            if ([self.delegate respondsToSelector:@selector(btManagerConnectedShieldUpdated:)]) {
-                [self.delegate btManagerConnectedShieldUpdated:self];
+        }
+        else if (commandByte == COMMAND_TEMPERATURE_IS) {
+            
+            NSLog(@"RESPONSE <- current TEMPERATURE is: %@", @(valueByte));
+            
+            self.connectedShield.temperature = @(valueByte-40);
+            if (self.getTemperatureCmpletionBlock) {
+                [self.temperatureTimeoutTimer invalidate];
+                self.getTemperatureCmpletionBlock(self.connectedShield);
+                self.getTemperatureCmpletionBlock = nil;
             }
+        }
+        else if (commandByte == COMMAND_IS_CHARGING) {
+            
+            NSLog(@"RESPONSE <- is CHARGING: %@", valueByte==0? @"NO" : @"YES");
+            
+            self.connectedShield.isCharging = valueByte==0? NO : YES;
         }
         else {
             NSLog(@"RESPONSE: got some value from shield : %@", dataString);
@@ -362,11 +409,11 @@
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
 {
     NSLog(@"Disconnected from %@", peripheral.identifier.UUIDString);
+    self.connectedShield = nil;
     if ([self.delegate respondsToSelector:@selector(btManagerDidDisconnectFromShield:)]) {
         [self.delegate btManagerDidDisconnectFromShield:self];
     }
 }
-
 
 #pragma mark - CBPeripheralDelegate
 
@@ -407,9 +454,11 @@
 
        [self getModeWithCompletionBlock:^(Shield *shield) {
             [self getHeatWithCompletionBlock:^(Shield *shield) {
-               if (self.connectToShieldCompletionBlock) {
-                   self.connectToShieldCompletionBlock(self.connectedShield);
-               }
+                [self getTemperatureWithCompletionBlock:^(Shield *shield) {
+                    if (self.connectToShieldCompletionBlock) {
+                        self.connectToShieldCompletionBlock(self.connectedShield);
+                    }
+                }];
            }];
         }];
     }

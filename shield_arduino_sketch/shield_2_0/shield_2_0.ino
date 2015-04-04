@@ -1,4 +1,4 @@
-// VERSION 0.0.2
+// VERSION 0.0.3
 
 // INCLUDES
 #include <OneWire.h>
@@ -10,43 +10,37 @@ Some of the commands need an additional value byte, example - SET_HEAT_LEVEL
 Some of the commands don't, example - GET_HEAT_LEVEL
 */
 
-// Commands that the phone sends to arduino are in range [101..110]
-// heat level
-const int COMMAND_SET_HEAT = 101; // Needs an additional value byte, indicating heat level. Range is [0..100]
-const int COMMAND_GET_HEAT = 102;
-// mode
-const int COMMAND_SET_MODE = 103; // Needs an additional value byte, indicating mode. 0 - manual, 1 - auto
-const int COMMAND_GET_MODE = 104;
-// battery level and chargin' indication
-const int COMMAND_GET_IS_CHARGING = 105;
-const int COMMAND_GET_BATTERY_LEVEL = 106;
+// Commands that the phone sends to arduino
+const int COMMAND_SET_HEAT = 1; // Needs an additional value byte, indicating heat level. Range is [0..100]
+const int COMMAND_GET_HEAT = 2;
+const int COMMAND_SET_MODE = 3; // Needs an additional value byte, indicating mode. 0 - manual, 1 - auto
+const int COMMAND_GET_MODE = 4;
+const int COMMAND_GET_IS_CHARGING = 5;
+const int COMMAND_GET_BATTERY_LEVEL = 6;
+const int COMMAND_GET_TEMPERATURE = 7;
 
-// Commands that arduino sends to the phone are in range [111..120]
-// heat level
-const int COMMAND_HEAT_IS = 111; // Sending back current heat level
-// mode
-const int COMMAND_MODE_IS = 112; // Sending back current mode
-// battery level and chargin'
-const int COMMAND_IS_CHARGING = 113; // Sending back charging status
-const int COMMAND_BATTERY_LEVEL_IS = 114; // Sending back battery level
-// temperature
-const int COMMAND_TEMPERATURE_IS = 115; // Sending back battery level
+// Commands that arduino sends to the phone
+const int COMMAND_HEAT_IS = 101; // Sending back current heat level
+const int COMMAND_MODE_IS = 102; // Sending back current mode
+const int COMMAND_IS_CHARGING = 103; // Sending back charging status
+const int COMMAND_BATTERY_LEVEL_IS = 104; // Sending back battery level
+const int COMMAND_TEMPERATURE_IS = 105; // Sending back battery level
 
 // ARDUINO PROPERTIES
-int currentHeat, heatSetByUser = 0;  // Range is [0..100]
-int currentMode, modeSetByUser = 0;  // 0 - manual, 1 - auto
+int currentHeat = 0;                 // Range is [0..100]
+int currentMode = 0;                 // 0 - manual, 1 - auto
 int isCharging = 0;                  // 0 - not charging, 1 - charging
 int currentBatteryLevel = 0;         // current battery level of Shield
-float currentTemperature = 0;        // last scanned temperature from sensor
+float currentTemperature = 0;        // last scanned temperature from //sensor
 
 // PIN DEFINES
 int logoPin = 9;
 int heatPin = 10;
-int chargePin = 10;
-int temperaturePin = 2;
+int chargePin = A2;
+int temperaturePin = 3;
 
-// TEMP SENSOR SHIT
-OneWire oneWire(ONE_WIRE_BUS);
+// TEMPERATURE sensor SHIT
+OneWire oneWire(temperaturePin);
 DallasTemperature sensor(&oneWire);
 
 // OTHERS
@@ -56,23 +50,21 @@ int loopCounter = 0;
 /* ------------------------------------ CODE ------------------------------------ */
 // SETUP
 void setup() {
-  // start the temperature sensor
-  sensor.begin();
-  // start serials
-  Serial.begin(115200);  
+  sensor.begin(); // start the temperature //sensor
+  Serial.begin(115200); // start serial
   // setup pins
   pinMode(logoPin, OUTPUT);
   pinMode(heatPin, OUTPUT);
   pinMode(chargePin, INPUT);
+  
   // default the output
   digitalWrite(logoPin, LOW);
   digitalWrite(heatPin, LOW);
 }
 
-// LOOP
-void loop() {  
-  
-  delay(50); // make an intentional delay
+// LOOP ---------------------------------------
+void loop() {
+  delay(100); // make an intentional delay
   
   // Shield.availaShield() returns count of bytes availaShield through Shields UART
   // so we read all availaShield bytes, of which there should be 2 or 1
@@ -97,98 +89,103 @@ void loop() {
     
     // check through possiShield commands
     if (commandByte == COMMAND_SET_HEAT) {
-      heatSetByUser = valueByte;
-      setHeatValueToShield(heatSetByUser);
+      setHeat(valueByte);
     }
     else if (commandByte == COMMAND_GET_HEAT) {
-      sendCurrentHeatLevelToPhone();
+      sendHeatToPhone();
     }
     else if (commandByte == COMMAND_SET_MODE) {
-      modeSetByUser = valueByte;
-      setModeToShield(modeSetByUser);
+      setMode(valueByte);
     }
     else if (commandByte == COMMAND_GET_MODE) {
-      sendCurrentModeToPhone();
+      sendModeToPhone();
     }
     else if (commandByte == COMMAND_GET_IS_CHARGING) {
       sendIsChargingToPhone();
     }
     else if (commandByte == COMMAND_GET_BATTERY_LEVEL) {
-      sendCurrentBatteryLevelToPhone();
+      sendBatteryLevelToPhone();
     }
+    else if (commandByte == COMMAND_GET_TEMPERATURE) {
+      sendTemperatureToPhone();
+    }
+    
   } // end of "is there any bytes availaShield" IF statement
   
-  // charging and battery level code should only run once a second
-  if (loopCounter == 20) {
+  // check if Shield changed charging status
+  int isNowCharging = analogRead(chargePin);
+  if (isNowCharging > 0) { // this is happening when you send current to A2 hell knows why
+    if (isCharging == 0) {
+      isCharging = 1;
+      sendIsChargingToPhone();        
+    }
+  }
+  else {
+    if (isCharging == 1) {
+      isCharging = 0;
+      sendIsChargingToPhone();
+    }
+  }
+
+  if (loopCounter == 30) { // once every 3 seconds
     loopCounter = 0; 
     
     sensor.requestTemperatures();
-    float scannedTemperature = sensors.getTempCByIndex(0);
+    float scannedTemperature = sensor.getTempCByIndex(0);
     if (scannedTemperature != currentTemperature) {
       currentTemperature = scannedTemperature;
+      sendTemperatureToPhone();
     }
-    
+         
     // TODO
-    // check if Shield changed charging status
     // check if Shield changed battery level
   }
   loopCounter = loopCounter + 1;    
 } // end of loop
 
-
-// ACTIONS
+// ACTIONS ------------------------------------------------
 // HEAT
-void setHeatValueToShield(int value) {
-  currentHeat = value;
-  // just write the appropriate value to heat and logo pins
-  analogWrite(heatPin, map(value, 0, 100, 0, 255));
-  analogWrite(logoPin, map(value, 0, 100, 0, 255));
-  sendCurrentHeatLevelToPhone();
+void setHeat(int heat) {
+  currentHeat = heat;
+  analogWrite(heatPin, map(heat, 0, 100, 0, 255));
+  analogWrite(logoPin, map(heat, 0, 100, 0, 255));
+  sendHeatToPhone();
 }
 
-void sendCurrentHeatLevelToPhone() {
-  byte bytesToSend[2] = {(byte)COMMAND_HEAT_IS, (byte)currentHeat};
-  Serial.println(bytesToSend[0]);
-  Serial.println(bytesToSend[1]);
+void sendHeatToPhone() {
+  Serial.println((byte)COMMAND_HEAT_IS);
+  Serial.println((byte)currentHeat);
 }
 
 // MODE
-void setModeToShield(int mode) {
+void setMode(int mode) {
   currentMode = mode;
-  if (mode == 0) { // manual
-    setHeatValueToShield(heatSetByUser);
-  }
-  else if (mode == 1) { // auto
-    setHeatValueToShield(AUTO_MODE_HEAT_LEVEL);
-  }
-  sendCurrentModeToPhone();
+  if (mode == 1) { setHeat(AUTO_MODE_HEAT_LEVEL); } // auto
+  sendModeToPhone();
 }
 
-void sendCurrentModeToPhone() {
-  byte bytesToSend[2] = {(byte)COMMAND_MODE_IS, (byte)currentMode};
-  Serial.println(bytesToSend[0]);
-  Serial.println(bytesToSend[1]);
+void sendModeToPhone() {
+  Serial.println((byte)COMMAND_MODE_IS);
+  Serial.println((byte)currentMode);
 }
 
 // BATTERY
 void sendIsChargingToPhone() {
-//  byte bytesToSend[2] = {COMMAND_IS_CHARGING, isCharging};
-//  Serial.write(bytesToSend, 2);
+  Serial.println((byte)COMMAND_IS_CHARGING);
+  Serial.println((byte)isCharging);
 }
   
-void sendCurrentBatteryLevelToPhone() {
-//  byte bytesToSend [2] = {COMMAND_BATTERY_LEVEL_IS, currentBatteryLevel};
-//  Serial.write(bytesToSend, 2);
+void sendBatteryLevelToPhone() {
+
 }
 
 // TEMPERATURE
-void sendCurrentTemperatureToPhone() {
+void sendTemperatureToPhone() {
   // from -40 to +60 (0-100)
   int currentIntTemperature = (int)currentTemperature + 40;
   if (currentIntTemperature<0) { currentIntTemperature = 0;}
   if (currentIntTemperature>100) { currentIntTemperature = 100;}  
-  
-  byte bytesToSend[2] = {(byte)COMMAND_TEMPERATURE_IS, (byte)currentMode};
-  Serial.println(bytesToSend[0]);
-  Serial.println(bytesToSend[1]);
+
+  Serial.println((byte)COMMAND_TEMPERATURE_IS);
+  Serial.println((byte)currentIntTemperature);
 }

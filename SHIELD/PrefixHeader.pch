@@ -10,8 +10,10 @@
 #define SHIELD_PrefixHeader_pch
 
 #import <CoreBluetooth/CoreBluetooth.h>
+#import "Shield.h"
+#import "BTManager.h"
 #import "GeneralHelper.h"
 #import "CommonViewController.h"
-#import "Shield.h"
+
 
 #endif

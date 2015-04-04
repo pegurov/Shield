@@ -2,8 +2,8 @@
 //  ShieldViewController.h
 //  SHIELD
 //
-//  Created by Pavel Gurov on 18/08/14.
-//  Copyright (c) 2014 Andrey Ogrenich. All rights reserved.
+//  Created by Pavel Gurov on 04/04/15.
+//  Copyright (c) 2015 Andrey Ogrenich. All rights reserved.
 //
 
 #import "CommonViewController.h"

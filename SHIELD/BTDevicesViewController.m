@@ -14,32 +14,32 @@
 @interface BTDevicesViewController () <UITableViewDataSource, UITableViewDelegate, BTManagerDelegate>
 
 // IBOutlets
+@property (weak, nonatomic) IBOutlet UIView *viewSearch;
+@property (weak, nonatomic) IBOutlet UIButton *buttonSearch;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 - (IBAction)searchTap:(id)sender;
 @end
 
 @implementation BTDevicesViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Devices";
-    [self addActivityIndicatorToNavigationBar];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [self.navigationController setNavigationBarHidden:NO animated:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
     [[BTManager sharedInstance] setDelegate:self];
     [BTManager sharedInstance].discoveredShields = [NSMutableArray new];
-    [[BTManager sharedInstance] scanForShieldsForSeconds:3.];
-    [super viewWillAppear:animated];
+    [[BTManager sharedInstance] scanForShieldsForSeconds:10.];
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [self.navigationController setNavigationBarHidden:YES animated:animated];
-    [super viewWillDisappear:animated];
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [BTManager sharedInstance].delegate = self;
 }
 
 //------------------------------------------------------------------------------------
@@ -47,12 +47,18 @@
 
 - (void)btManagerDidStartScanningForShields:(BTManager *)manager
 {
-    [self.activityIndicatorNavigation startAnimating];
+    [self.activityIndicator startAnimating];
+    [self.viewSearch setUserInteractionEnabled:NO];
+    [self.viewSearch setAlpha:0.75];
+    [self.buttonSearch setTitle:@"Searching" forState:UIControlStateNormal];
 }
 
 - (void)btManagerDidEndScanningForShields:(BTManager *)manager
 {
-    [self.activityIndicatorNavigation stopAnimating];
+    [self.activityIndicator stopAnimating];
+    [self.viewSearch setUserInteractionEnabled:YES];
+    [self.viewSearch setAlpha:1];
+    [self.buttonSearch setTitle:@"Search" forState:UIControlStateNormal];
 }
 
 - (void)btManagerUpdatedDiscoveredShields:(BTManager *)manager
@@ -62,30 +68,46 @@
 
 - (void)btManager:(BTManager *)manager errorOccured:(NSError *)error
 {
+    [self.activityIndicator stopAnimating];
+    [self.viewSearch setUserInteractionEnabled:YES];
+    [self.buttonSearch setTitle:@"Search" forState:UIControlStateNormal];
     NSLog(@"WARNING: btManager:errorOccured:");
 }
 
-- (void)errorOccured:(NSError *)error
+- (void)btManagerDidDisconnectFromShield:(BTManager *)manager
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"BTLE"
-                                                    message:[NSString stringWithFormat:@"Error %@ occured", @(error.code)]
-                                                   delegate:nil
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
+    [self.tableView reloadData];
 }
 
 //------------------------------------------------------------------------------------
 #pragma mark - UITableView methods
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 2;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[BTManager sharedInstance] discoveredShields].count;
+    if (section == 0) {
+        return [BTManager sharedInstance].connectedShield? 1 : 0;
+    }
+    else if (section == 1) {
+        return [[BTManager sharedInstance] discoveredShields].count;
+    }
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    Shield *device = [[[BTManager sharedInstance] discoveredShields] objectAtIndex:indexPath.row];
+    Shield *device;
+    if (indexPath.section == 0) {
+        device = [BTManager sharedInstance].connectedShield;
+    }
+    else {
+        device = [[[BTManager sharedInstance] discoveredShields] objectAtIndex:indexPath.row];
+    }
+    
     DeviceCell *cell = [tableView dequeueReusableCellWithIdentifier:[DeviceCell cellIdentifier] forIndexPath:indexPath];
     [cell setDevice:device];
         
@@ -94,11 +116,17 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    Shield *selectedShield = [[[BTManager sharedInstance] discoveredShields] objectAtIndex:indexPath.row];
-    [[BTManager sharedInstance] connectToShield:selectedShield completionBlock:^(Shield *connectedShield) {
+    if (indexPath.section == 0) {
         [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
-    }];
+    }
+    else if (indexPath.section == 1) {
+        Shield *selectedShield = [[[BTManager sharedInstance] discoveredShields] objectAtIndex:indexPath.row];
+        [[BTManager sharedInstance] disconnectFromConnectedShield];
+        [[BTManager sharedInstance] connectToShield:selectedShield completionBlock:^(Shield *connectedShield) {
+            [self.tableView reloadData];
+            [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
+        }];
+    }
     [self.tableView reloadData];
 }
 
@@ -106,7 +134,7 @@
 {
     [BTManager sharedInstance].discoveredShields = [NSMutableArray new];
     [self.tableView reloadData];
-    [[BTManager sharedInstance] scanForShieldsForSeconds:3];
+    [[BTManager sharedInstance] scanForShieldsForSeconds:10];
 }
 
 @end
