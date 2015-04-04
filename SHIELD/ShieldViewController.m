@@ -83,6 +83,11 @@
     [self refreshValuesView];
 }
 
+- (void)shieldDidUpdateBatteryLevel:(Shield *)shield {
+    [self refreshValuesView];
+}
+
+
 // -----------------------------------------------------------------
 #pragma mark - View refreshing
 
@@ -92,6 +97,7 @@
     [self.labelHeat setText:[NSString stringWithFormat:@"%@", @(connectedShield.heat)]];
     [self.labelTemperature setText:[NSString stringWithFormat:@"%.01f", [connectedShield.temperature floatValue]]];
     [self.labelIsCharging setText:[NSString stringWithFormat:@"%@", connectedShield.isCharging? @"YES" : @"NO"]];
+    [self.labelBatteryLevel setText:[NSString stringWithFormat:@"%@", @(connectedShield.batteryLevel)]];
 }
 
 - (void)refreshControlsViewAfterModeChange:(ShieldMode)mode {

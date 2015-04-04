@@ -346,8 +346,12 @@
         else if (commandByte == COMMAND_IS_CHARGING) {
             
             NSLog(@"RESPONSE <- is CHARGING: %@", valueByte==0? @"NO" : @"YES");
-            
             self.connectedShield.isCharging = valueByte==0? NO : YES;
+        }
+        else if (commandByte == COMMAND_BATTERY_LEVEL_IS) {
+            
+            NSLog(@"RESPONSE <- current BATTERY LEVEL is: %@", @(valueByte));
+            self.connectedShield.batteryLevel = valueByte;
         }
         else {
             NSLog(@"RESPONSE: got some value from shield : %@", dataString);

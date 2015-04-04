@@ -23,6 +23,7 @@ typedef NS_ENUM(NSUInteger, ShieldMode) {
 @property (nonatomic) ShieldMode mode;
 @property (strong, nonatomic) NSNumber *temperature;
 @property (nonatomic) BOOL isCharging;
+@property (nonatomic) NSInteger batteryLevel;
 
 - (BOOL)isEqualToShield:(Shield *)object;
 
@@ -34,5 +35,6 @@ typedef NS_ENUM(NSUInteger, ShieldMode) {
 - (void)shieldDidUpdateMode:(Shield *)shield;
 - (void)shieldDidUpdateTemperature:(Shield *)shield;
 - (void)shieldDidUpdateIsCharging:(Shield *)shield;
+- (void)shieldDidUpdateBatteryLevel:(Shield *)shield;
 @end
 

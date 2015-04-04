@@ -48,6 +48,15 @@
     }
 }
 
+- (void)setBatteryLevel:(NSInteger)batteryLevel
+{
+    _batteryLevel = batteryLevel;
+    if ([self.delegate respondsToSelector:@selector(shieldDidUpdateBatteryLevel:)]) {
+        [self.delegate shieldDidUpdateBatteryLevel:self];
+    }
+}
+
+
 - (BOOL)isEqual:(id)object
 {
     if ([object isKindOfClass:[Shield class]]) {

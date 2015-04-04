@@ -30,13 +30,15 @@ const int COMMAND_TEMPERATURE_IS = 105; // Sending back battery level
 int currentHeat = 0;                 // Range is [0..100]
 int currentMode = 0;                 // 0 - manual, 1 - auto
 int isCharging = 0;                  // 0 - not charging, 1 - charging
-int currentBatteryLevel = 0;         // current battery level of Shield
 float currentTemperature = 0;        // last scanned temperature from //sensor
+int currentBatteryLevel = 0;        // среднее арифметическое от 10 значений в секунду
+int battteryLevels[30] = {0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0};
 
 // PIN DEFINES
 int logoPin = 9;
 int heatPin = 10;
 int chargePin = A2;
+int batteryPin = A1;
 int temperaturePin = 3;
 
 // TEMPERATURE sensor SHIT
@@ -66,6 +68,21 @@ void setup() {
 void loop() {
   delay(100); // make an intentional delay
   
+  // check if Shield changed charging status
+  int isNowCharging = analogRead(chargePin);
+  if (isNowCharging > 100) {
+    if (isCharging == 0) {
+      isCharging = 1;
+      sendIsChargingToPhone();        
+    }
+  }
+  else {
+    if (isCharging == 1) {
+      isCharging = 0;
+      sendIsChargingToPhone();
+    }
+  }
+   
   // Shield.availaShield() returns count of bytes availaShield through Shields UART
   // so we read all availaShield bytes, of which there should be 2 or 1
   if (Serial.available()>0) { // if there are any bytes availaShield
@@ -110,25 +127,27 @@ void loop() {
       sendTemperatureToPhone();
     }
     
-  } // end of "is there any bytes availaShield" IF statement
+  } // end of "is there any bytes availaShield" IF statement  
   
-  // check if Shield changed charging status
-  int isNowCharging = analogRead(chargePin);
-  if (isNowCharging > 0) { // this is happening when you send current to A2 hell knows why
-    if (isCharging == 0) {
-      isCharging = 1;
-      sendIsChargingToPhone();        
+   
+  if (loopCounter == 30) { // once in 3 seconds
+    loopCounter = 0; // LOOP COUNTER IS ZEROED HERE
+    
+    // calculate now battery level
+    int nowBatteryLevel = 0;
+    for (int i=0; i<30; i++) {
+      nowBatteryLevel += battteryLevels[i];
     }
-  }
-  else {
-    if (isCharging == 1) {
-      isCharging = 0;
-      sendIsChargingToPhone();
+    nowBatteryLevel = (int)((float)nowBatteryLevel/30.);
+    
+    // see if we need to send it to the phone
+    if (currentBatteryLevel != nowBatteryLevel) {
+      currentBatteryLevel = nowBatteryLevel;
+      sendBatteryLevelToPhone();
     }
+    
   }
-
-  if (loopCounter == 30) { // once every 3 seconds
-    loopCounter = 0; 
+  else if (loopCounter == 15) {
     
     sensor.requestTemperatures();
     float scannedTemperature = sensor.getTempCByIndex(0);
@@ -136,11 +155,15 @@ void loop() {
       currentTemperature = scannedTemperature;
       sendTemperatureToPhone();
     }
-         
-    // TODO
-    // check if Shield changed battery level
+    
   }
-  loopCounter = loopCounter + 1;    
+  
+  int n = analogRead(batteryPin);
+//  Serial.println(n);
+  battteryLevels[loopCounter] = n;
+  loopCounter = loopCounter + 1;  
+
+  
 } // end of loop
 
 // ACTIONS ------------------------------------------------
@@ -176,7 +199,8 @@ void sendIsChargingToPhone() {
 }
   
 void sendBatteryLevelToPhone() {
-
+  Serial.println((byte)COMMAND_BATTERY_LEVEL_IS);
+  Serial.println((byte) map(currentBatteryLevel, 0, 1023, 0, 255));
 }
 
 // TEMPERATURE
