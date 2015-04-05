@@ -3,6 +3,7 @@
 // INCLUDES
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <SoftwareSerial.h>
 
 /* ------------------------------------ API DEFINES ------------------------------------
 The phone talks to arduino and arduino talks back to the phone by sending 1 or 2 byte long commands.
@@ -35,15 +36,22 @@ int currentBatteryLevel = 0;        // среднее арифметическо
 int battteryLevels[30] = {0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0};
 
 // PIN DEFINES
-int logoPin = 9;
-int heatPin = 10;
-int chargePin = A2;
-int batteryPin = A1;
-int temperaturePin = 3;
+#define logoPin 9
+#define heatPin 10
+#define chargePin A2
+#define batteryPin A1
+#define temperaturePin 4
+#define ARDUINO_SOFT_Rx 11
+#define ARDUINO_SOFT_Tx 12
 
-// TEMPERATURE sensor SHIT
+#define BAUD_RATE 115200
+
+// temperature sensor
 OneWire oneWire(temperaturePin);
 DallasTemperature sensor(&oneWire);
+
+// Shields UART is connected through SoftwareSerial
+SoftwareSerial HM11(ARDUINO_SOFT_Rx,ARDUINO_SOFT_Tx);
 
 // OTHERS
 int AUTO_MODE_HEAT_LEVEL = 50;
@@ -52,50 +60,37 @@ int loopCounter = 0;
 /* ------------------------------------ CODE ------------------------------------ */
 // SETUP
 void setup() {
-  sensor.begin(); // start the temperature //sensor
-  Serial.begin(115200); // start serial
+ 
   // setup pins
   pinMode(logoPin, OUTPUT);
   pinMode(heatPin, OUTPUT);
   pinMode(chargePin, INPUT);
+  pinMode(ARDUINO_SOFT_Rx, INPUT);
+  pinMode(ARDUINO_SOFT_Tx, OUTPUT);
   
-  // default the output
-  digitalWrite(logoPin, LOW);
-  digitalWrite(heatPin, LOW);
+  // setup sensors and UARTs
+  sensor.begin(); // start the temperature //sensor
+  Serial.begin(BAUD_RATE);
+  HM11.begin(BAUD_RATE);
 }
+
 
 // LOOP ---------------------------------------
 void loop() {
-  delay(100); // make an intentional delay
-  
-  // check if Shield changed charging status
-  int isNowCharging = analogRead(chargePin);
-  if (isNowCharging > 100) {
-    if (isCharging == 0) {
-      isCharging = 1;
-      sendIsChargingToPhone();        
-    }
-  }
-  else {
-    if (isCharging == 1) {
-      isCharging = 0;
-      sendIsChargingToPhone();
-    }
-  }
+  delay(50); // make an intentional delay
    
-  // Shield.availaShield() returns count of bytes availaShield through Shields UART
-  // so we read all availaShield bytes, of which there should be 2 or 1
-  if (Serial.available()>0) { // if there are any bytes availaShield
+// READING FROM PHONE
+  if (HM11.available()>0) { // if there are any bytes
   
     byte receivedBytes[2] = {0, 0};
     int counter = 0;
-    while (Serial.available()>0 ) { // read all availaShield bytes, but no more than 2
+    while (HM11.available()>0 ) { // read all bytes from HM11, but no more than 2
+    
+      byte nextByte = HM11.read();
+      Serial.print((char)nextByte);
+      
       if (counter<2) {
-        receivedBytes[counter] = Serial.read();      
-      }
-      else {
-        // just flush the unneeded byte
-        byte unneededByte = Serial.read();
+        receivedBytes[counter] = nextByte;      
       }
       counter = counter + 1; // increment counter
     }
@@ -129,7 +124,32 @@ void loop() {
     
   } // end of "is there any bytes availaShield" IF statement  
   
-   
+  
+// READ FROM SERIAL AND TRANSMIT COMMAND TO HM11
+// THIS IS FOR DEBUG THROUGH SERIAL MONITIR
+// this is for writing AT commands to the serial monitor
+  if (Serial.available()) {//check if there's any data sent from the local serial terminal, you can add the other applications here
+    while (Serial.available() > 0) {
+      char recvChar  = Serial.read();
+      HM11.print(recvChar);
+    }
+  }
+  
+  // check if Shield changed charging status
+  int isNowCharging = analogRead(chargePin);
+  if (isNowCharging > 100) {
+    if (isCharging == 0) {
+      isCharging = 1;
+      sendIsChargingToPhone();        
+    }
+  }
+  else {
+    if (isCharging == 1) {
+      isCharging = 0;
+      sendIsChargingToPhone();
+    }
+  }
+  
   if (loopCounter == 30) { // once in 3 seconds
     loopCounter = 0; // LOOP COUNTER IS ZEROED HERE
     
@@ -155,16 +175,12 @@ void loop() {
       currentTemperature = scannedTemperature;
       sendTemperatureToPhone();
     }
-    
   }
   
-  int n = analogRead(batteryPin);
-//  Serial.println(n);
-  battteryLevels[loopCounter] = n;
+  battteryLevels[loopCounter] = analogRead(batteryPin);
   loopCounter = loopCounter + 1;  
-
-  
 } // end of loop
+
 
 // ACTIONS ------------------------------------------------
 // HEAT
@@ -176,8 +192,8 @@ void setHeat(int heat) {
 }
 
 void sendHeatToPhone() {
-  Serial.println((byte)COMMAND_HEAT_IS);
-  Serial.println((byte)currentHeat);
+  HM11.write((byte)COMMAND_HEAT_IS);
+  HM11.write((byte)currentHeat);
 }
 
 // MODE
@@ -188,28 +204,31 @@ void setMode(int mode) {
 }
 
 void sendModeToPhone() {
-  Serial.println((byte)COMMAND_MODE_IS);
-  Serial.println((byte)currentMode);
+  HM11.write((byte)COMMAND_MODE_IS);
+  HM11.write((byte)currentMode);
 }
 
 // BATTERY
 void sendIsChargingToPhone() {
-  Serial.println((byte)COMMAND_IS_CHARGING);
-  Serial.println((byte)isCharging);
+  HM11.write((byte)COMMAND_IS_CHARGING);
+  HM11.write((byte)isCharging);
 }
   
 void sendBatteryLevelToPhone() {
-  Serial.println((byte)COMMAND_BATTERY_LEVEL_IS);
-  Serial.println((byte) map(currentBatteryLevel, 0, 1023, 0, 255));
+  HM11.write((byte)COMMAND_BATTERY_LEVEL_IS);
+  int batteryLevelToSend = currentBatteryLevel;
+  if (currentBatteryLevel < 800) { batteryLevelToSend = 800; }
+  if (currentBatteryLevel > 900) { batteryLevelToSend = 900; }
+  HM11.write((byte) map(batteryLevelToSend, 800, 900, 0, 100));
 }
 
 // TEMPERATURE
 void sendTemperatureToPhone() {
-  // from -40 to +60 (0-100)
-  int currentIntTemperature = (int)currentTemperature + 40;
+  // from -50 to +200 (0-255)
+  int currentIntTemperature = (int)currentTemperature + 50;
   if (currentIntTemperature<0) { currentIntTemperature = 0;}
-  if (currentIntTemperature>100) { currentIntTemperature = 100;}  
+  if (currentIntTemperature>250) { currentIntTemperature = 250;}  
 
-  Serial.println((byte)COMMAND_TEMPERATURE_IS);
-  Serial.println((byte)currentIntTemperature);
+  HM11.write((byte)COMMAND_TEMPERATURE_IS);
+  HM11.write((byte)currentIntTemperature);
 }

@@ -277,27 +277,16 @@
 // getting notifications
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
-    NSString *dataString = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
-    NSScanner *scanner = [NSScanner scannerWithString:dataString];
-
-    NSCharacterSet *digitsSet = [NSCharacterSet decimalDigitCharacterSet];
-    NSCharacterSet *scanUpToSet = [[NSCharacterSet decimalDigitCharacterSet] invertedSet];
-    NSMutableArray *scannedStrings = [NSMutableArray array];
-
-    while (!scanner.isAtEnd) {
-
-        NSString *scannedString = @"";
-        [scanner scanUpToCharactersFromSet:scanUpToSet intoString:&scannedString];
-        [scannedStrings addObject:scannedString];
-        [scanner scanUpToCharactersFromSet:digitsSet intoString:nil];
-    }
+    NSData *rawData = characteristic.value;
+    unsigned char incomingBytes[rawData.length];
+    [rawData getBytes:incomingBytes length:rawData.length];
     
     NSMutableArray *commandPairs = [NSMutableArray array];
     
     // parse scanned strings into array of pairs
     NSMutableArray *newPair = [NSMutableArray array];
-    for (int i = 0; i<scannedStrings.count; i++) {
-        [newPair addObject:scannedStrings[i]];
+    for (int i = 0; i<rawData.length; i++) {
+        [newPair addObject:@(incomingBytes[i])];
         
         if (newPair.count==2) {
             [commandPairs addObject:[newPair copy]];
@@ -336,7 +325,7 @@
             
             NSLog(@"RESPONSE <- current TEMPERATURE is: %@", @(valueByte));
             
-            self.connectedShield.temperature = @(valueByte-40);
+            self.connectedShield.temperature = @(valueByte-50);
             if (self.getTemperatureCmpletionBlock) {
                 [self.temperatureTimeoutTimer invalidate];
                 self.getTemperatureCmpletionBlock(self.connectedShield);
@@ -354,7 +343,7 @@
             self.connectedShield.batteryLevel = valueByte;
         }
         else {
-            NSLog(@"RESPONSE: got some value from shield : %@", dataString);
+            NSLog(@"RESPONSE: got some value from shield : %@", rawData);
         }
     }
 }
@@ -456,15 +445,15 @@
         // now we need to get the mode and heat value of the shield
         self.connectedShield = shieldWeAreConnectingTo;
 
-       [self getModeWithCompletionBlock:^(Shield *shield) {
-            [self getHeatWithCompletionBlock:^(Shield *shield) {
-                [self getTemperatureWithCompletionBlock:^(Shield *shield) {
+//       [self getModeWithCompletionBlock:^(Shield *shield) {
+//            [self getHeatWithCompletionBlock:^(Shield *shield) {
+//                [self getTemperatureWithCompletionBlock:^(Shield *shield) {
                     if (self.connectToShieldCompletionBlock) {
                         self.connectToShieldCompletionBlock(self.connectedShield);
                     }
-                }];
-           }];
-        }];
+//                }];
+//           }];
+//        }];
     }
 }
 
