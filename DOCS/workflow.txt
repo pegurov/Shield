@@ -6,12 +6,12 @@ AT+MODE2  Remote control + transmit
 AT+NOTI1  Notify arduino on connect/disconnect
 AT+NAMESheild set correct name
 AT+PIO11  Set LED mode to not blink when not connected
-AT+PWRM0  Set auto sleep mode
+AT+PWRM0  Set auto sleep mode. Auto sleep means it will be in sleep mode before phone is connected. After phone is connected, automatically out of sleep mode and can receive AT commands. When you are sending commands through serial monitor, you need to manually wake it up first by sending a long string, length>80. It will respond with AT+WAKE
 
 ————————————————————————————————————————————————
-Commands that are sent from the phone after establishing a conection
+Commands that are sent from the phone after establishing a connection
 
-AT smoke test. returns either OK or OK+WAKE
+AT smoke test. returns OK
 AT+PIO2[par] Command to remote control PIO2 (turn arduino on or off)
 
 
