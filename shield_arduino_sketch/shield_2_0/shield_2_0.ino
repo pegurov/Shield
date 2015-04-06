@@ -44,7 +44,7 @@ int battteryLevels[30] = {0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,
 #define ARDUINO_SOFT_Rx 11
 #define ARDUINO_SOFT_Tx 12
 
-#define BAUD_RATE 115200
+#define BAUD_RATE 57600
 
 // temperature sensor
 OneWire oneWire(temperaturePin);

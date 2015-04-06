@@ -1,0 +1,53 @@
+————————————————————————————————————————————————
+Correct settings of the HM11 module
+They should be configured through serial monitor before deployment
+AT+BAUD3  57600
+AT+MODE2  Remote control + transmit
+AT+NOTI1  Notify arduino on connect/disconnect
+AT+NAMESheild set correct name
+AT+PIO11  Set LED mode to not blink when not connected
+AT+PWRM0  Set auto sleep mode
+
+————————————————————————————————————————————————
+Commands that are sent from the phone after establishing a conection
+
+AT smoke test. returns either OK or OK+WAKE
+AT+PIO2[par] Command to remote control PIO2 (turn arduino on or off)
+
+
+
+————————————————————————————————————————————————
+Workflow comments
+
+When our HM11 is in mode 2 (remote control + transmit) it can always receive AT commands. In disconnected state from Arduino, in connected state from the phone. If an AT command is sent, arduino will respond back to the sender with result, if something else is sent, it will transmit.
+
+
+
+
+
+
+————————————————————————————————————————————————
+// Pasha is testing commands
+1. Smoke test: AT
+in disconnected state:  -> OK
+in connected state: disconnects
+
+2.Connection notification status: AT+NOTI
+If this value is set to 1, when link ESTABLISHED or LOSTED module will send OK+CONN or OK+LOST string through UART.
+
+3. 
+
+
+
+2. Firmware version
+AT+VERR? -> AnyFlite V528
+
+3. module address
+AT+ADDR? -> OK+ADDR:B4994C572F6C
+
+4.Query/Set PIO1 output status (System LED)
+AT+PIO1? -> OK+Get:1 (1 is Unconnected outputLow, Connected outputHigh, 0 is Unconnected Output500ms High 500ms Low,Connected output High)
+
+5. Query/Set Module Work Mode
+we need 1
+AT+MODE? -> OK+Get:1
