@@ -53,6 +53,8 @@
 #pragma mark - Searching / connecting to shield
 
 - (void)scanForShieldsForSeconds:(NSInteger)seconds {
+    [self stopScanningForShields];
+    
     if (self.centralBTManager.state == CBCentralManagerStatePoweredOn) {
         if (!self.isScanning) {
             if ([self.delegate respondsToSelector:@selector(btManagerDidStartScanningForShields:)]) {
@@ -103,6 +105,7 @@
     if (self.connectToShieldCompletionBlock) {
         self.connectToShieldCompletionBlock(NO);
         self.connectToShieldCompletionBlock = nil;
+        [self.connectTimeoutTimer invalidate];
         NSLog(@"WARNING: Could not connect to shield, stopping wait on timeout");
     }
 }
@@ -157,6 +160,7 @@
     if (self.connectToShieldCompletionBlock) {
         self.connectToShieldCompletionBlock(NO);
         self.connectToShieldCompletionBlock = nil;
+        [self.connectTimeoutTimer invalidate];
         NSLog(@"WARNING: Could not connect to shield, BT manager error: %@", error);
     }
 }
@@ -204,11 +208,13 @@
     if (shieldWeAreConnectingTo) {
         
         self.connectedShield = shieldWeAreConnectingTo;
+        [self.discoveredShields removeObject:self.connectedShield];
         
         if (self.connectToShieldCompletionBlock) {
             self.connectToShieldCompletionBlock(self.connectedShield);
         }
         self.connectToShieldCompletionBlock = nil;
+        [self.connectTimeoutTimer invalidate];
     }
 }
 
@@ -292,7 +298,7 @@
     else if (data.length>=2 && outgoingBytes[0] == COMMAND_SET_MODE) {
         NSLog(@"REQUEST -> setting MODE to: %@", @((int)outgoingBytes[1]));
     }
-    else if (data.length>=2 && outgoingBytes[0] == COMMAND_GET_STATE) {
+    else if (data.length>=1 && outgoingBytes[0] == COMMAND_GET_STATE) {
         NSLog(@"REQUEST -> requesting STATE");
     }
     else if (data.length>=3 && outgoingBytes[0] == 'A' && outgoingBytes[1] == 'T' && outgoingBytes[2] == '+') {
@@ -330,7 +336,7 @@
         [rawData getBytes:incomingBytes length:rawData.length];
 
         char firstByte = incomingBytes[0];
-        if (firstByte == COMMAND_STATE_IS && rawData.length == 6) {
+        if (firstByte == COMMAND_STATE_IS && rawData.length >= 6) {
 
             // we have 5 more bytes in the message
             // mode, batteryLevel, heat, isCharging, temperature
@@ -340,13 +346,14 @@
             self.connectedShield.batteryLevel = (int)incomingBytes[2];
             self.connectedShield.heat = (int)incomingBytes[3];
             self.connectedShield.isCharging = (int)incomingBytes[4] == 0? NO : YES;
-            self.connectedShield.temperature = (CGFloat)incomingBytes[5];
+            self.connectedShield.temperature = (CGFloat)incomingBytes[5] - 50.;
             
             if ([self.connectedShield.delegate respondsToSelector:@selector(shieldDidUpdate:)]) {
                 [self.connectedShield.delegate shieldDidUpdate:self.connectedShield];
             }
             
             if (self.getStateCompletionBlock) {
+                [self.stateTimeoutTimer invalidate];
                 self.getStateCompletionBlock(YES);
                 self.getStateCompletionBlock = nil;
             }
@@ -354,9 +361,13 @@
         else if (firstByte == AT_RESPONSE_START) {
             // we have an AT command response
             NSString *ATCommandResponse = [[NSString alloc] initWithData:rawData encoding:NSASCIIStringEncoding];
+            NSLog(@"RESPONSE <- AT response %@", ATCommandResponse);
+            
             if (self.ATCommandCompletionBlock) {
-                self.ATCommandCompletionBlock(YES, ATCommandResponse);
+                [self.ATCommandTimeoutTimer invalidate];
+                void (^localBlock)(BOOL successful, NSString *response) = self.ATCommandCompletionBlock;
                 self.ATCommandCompletionBlock = nil;
+                localBlock(YES, ATCommandResponse);
             }
         }
     }

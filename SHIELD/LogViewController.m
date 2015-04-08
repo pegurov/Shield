@@ -91,8 +91,7 @@
 // ----------------------------------------------------------------------
 #pragma mark - BT Manager delegete
 
-- (void)btManagerDidDisconnectFromShield:(BTManager *)manager
-{
+- (void)btManagerDidDisconnectFromShield:(BTManager *)manager {
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 

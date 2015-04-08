@@ -71,3 +71,11 @@ AT+PIO1? -> OK+Get:1 (1 is Unconnected outputLow, Connected outputHigh, 0 is U
 5. Query/Set Module Work Mode
 we need 1
 AT+MODE? -> OK+Get:1
+
+470 - 552
+
+0 1023
+0 5
+
+2,3 - 2,7
+

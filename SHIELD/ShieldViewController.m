@@ -40,10 +40,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self refreshValuesView];
     Shield *connectedShield = [BTManager sharedInstance].connectedShield;
-    [self refreshControlsViewAfterModeChange:connectedShield.mode];
-    
     UIBarButtonItem *disconnectButton = [[UIBarButtonItem alloc] initWithTitle:@"Disconnect" style:UIBarButtonItemStylePlain target:self action:@selector(disconnectTap)];
     [self.navigationItem setRightBarButtonItem:disconnectButton];
 }
@@ -54,6 +51,8 @@
     Shield *connectedShield = [BTManager sharedInstance].connectedShield;
     self.title = connectedShield.peripheral.name;
     [connectedShield setDelegate:self];
+    
+    [self refreshViewSettingShieldValuesToControls:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -66,8 +65,7 @@
 // -----------------------------------------------------------------
 #pragma mark - BTManagerDelegate
 
-- (void)btManagerDidDisconnectFromShield:(BTManager *)manager
-{
+- (void)btManagerDidDisconnectFromShield:(BTManager *)manager {
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
@@ -75,34 +73,43 @@
 #pragma mark - ShieldDelegate
 
 - (void)shieldDidUpdate:(Shield *)shield {
-    [self refreshValuesView];
+    [self refreshViewSettingShieldValuesToControls:NO];
 }
 
 // -----------------------------------------------------------------
 #pragma mark - View refreshing
 
-- (void)refreshValuesView {
+- (void)refreshViewSettingShieldValuesToControls:(BOOL)setting {
+    
     Shield *connectedShield = [BTManager sharedInstance].connectedShield;
-    [self.labelMode setText:(connectedShield.mode == ShieldModeManual)? @"Manual" : @"Auto"];
-    [self.labelHeat setText:[NSString stringWithFormat:@"%@", @(connectedShield.heat)]];
-    [self.labelTemperature setText:[NSString stringWithFormat:@"%.01f", connectedShield.temperature]];
-    [self.labelIsCharging setText:[NSString stringWithFormat:@"%@", connectedShield.isCharging? @"YES" : @"NO"]];
-    [self.labelBatteryLevel setText:[NSString stringWithFormat:@"%@", @(connectedShield.batteryLevel)]];
-}
-
-- (void)refreshControlsViewAfterModeChange:(ShieldMode)mode {
-    Shield *connectedShield = [BTManager sharedInstance].connectedShield;
-    if (mode == ShieldModeManual) { // manual
-        [self.segmentedControlMode setSelectedSegmentIndex:0];
-        [self.viewManual setHidden:NO];
-        [self.viewAuto setHidden:YES];
+    
+    if (connectedShield.isOn) {
+        [self.viewContainer setHidden:NO];
+        
+        [self.labelMode setText:(connectedShield.mode == ShieldModeManual)? @"Manual" : @"Auto"];
+        [self.labelHeat setText:[NSString stringWithFormat:@"%@", @(connectedShield.heat)]];
+        [self.labelTemperature setText:[NSString stringWithFormat:@"%.01f", connectedShield.temperature]];
+        [self.labelIsCharging setText:[NSString stringWithFormat:@"%@", connectedShield.isCharging? @"YES" : @"NO"]];
+        [self.labelBatteryLevel setText:[NSString stringWithFormat:@"%@", @(connectedShield.batteryLevel)]];
+        
+        if (connectedShield.mode == ShieldModeManual) { // manual
+            [self.viewManual setHidden:NO];
+            [self.viewAuto setHidden:YES];
+        }
+        else { // auto
+            [self.viewManual setHidden:YES];
+            [self.viewAuto setHidden:NO];
+        }
+    }
+    else {
+        [self.viewContainer setHidden:YES];
+    }
+    
+    if (setting) {
+        self.switchIsWorking.on = connectedShield.isOn;
+        [self.segmentedControlMode setSelectedSegmentIndex:(connectedShield.mode == ShieldModeManual)? 0 : 1];
         [self.labelManualHeat setText:[NSString stringWithFormat:@"%@", @(connectedShield.heat)]];
         [self.sliderManualHeat setValue:((float)connectedShield.heat/100.) animated:YES];
-    }
-    else { // auto
-        [self.segmentedControlMode setSelectedSegmentIndex:1];
-        [self.viewManual setHidden:YES];
-        [self.viewAuto setHidden:NO];
     }
 }
 
@@ -112,11 +119,62 @@
 - (IBAction)segmentedControlValueChanged:(UISegmentedControl *)sender {
     ShieldMode selectedMode = sender.selectedSegmentIndex == 0 ? ShieldModeManual : ShieldModeAuto;
     [[BTManager sharedInstance] setMode:selectedMode];
-    [self refreshControlsViewAfterModeChange:selectedMode];
 }
 
 - (IBAction)switchValueChanged:(UISwitch *)sender {
+    self.switchIsWorking.enabled = NO;
+    self.viewContainer.userInteractionEnabled = NO;
     
+    NSString *setPIOCommand = sender.isOn? @"AT+PIO21" : @"AT+PIO20";
+    NSString *setPIOResponse = sender.isOn? @"OK+PIO2:1" : @"OK+PIO2:0";
+    NSString *setAFTC = sender.isOn? @"AT+AFTC3FF" : @"AT+AFTC000";
+    NSString *setAFTCresponse = sender.isOn? @"OK+Set:3FF" : @"OK+Set:000";
+    
+    [[BTManager sharedInstance] sendATCommandToHM11:setPIOCommand timeout:2 completionBlock:^(BOOL successful, NSString *response) {
+        if (successful) {
+            if ([response isEqualToString:setPIOResponse]) {
+                [[BTManager sharedInstance] sendATCommandToHM11:setAFTC timeout:2 completionBlock:^(BOOL successful, NSString *response) {
+                    if (successful) {
+                        if ([response isEqualToString:setAFTCresponse]) {
+                            // success
+                            [BTManager sharedInstance].connectedShield.isOn = self.switchIsWorking.on;
+                            if ([BTManager sharedInstance].connectedShield.isOn) {
+                                [[BTManager sharedInstance] getStateWithCompletionBlock:^(BOOL successful) {
+                                    self.switchIsWorking.enabled = YES;
+                                    self.viewContainer.userInteractionEnabled = YES;
+                                    [self refreshViewSettingShieldValuesToControls:YES];
+                                }];
+                            }
+                            else {
+                                self.switchIsWorking.enabled = YES;
+                                self.viewContainer.userInteractionEnabled = YES;
+                                [self refreshViewSettingShieldValuesToControls:YES];
+                            }
+                        }
+                        else {
+                            [self unsuccessfulModeChangeHandler];
+                        }
+                    }
+                    else {
+                        [self unsuccessfulModeChangeHandler];
+                    }
+                }];
+            }
+            else {
+                [self unsuccessfulModeChangeHandler];
+            }
+        }
+        else {
+            [self unsuccessfulModeChangeHandler];
+        }
+    }];
+}
+
+- (void)unsuccessfulModeChangeHandler {
+    self.switchIsWorking.enabled = YES;
+    self.viewContainer.userInteractionEnabled = YES;
+    [self refreshViewSettingShieldValuesToControls:NO];
+    self.switchIsWorking.on = !self.switchIsWorking.on;
 }
 
 - (IBAction)sliderManualHeatValueChanged:(UISlider *)sender {
@@ -128,8 +186,9 @@
 }
 
 - (void)disconnectTap {
+    self.viewContainer.alpha = 0.5;
+    [self.view setUserInteractionEnabled:NO];
     [[BTManager sharedInstance] disconnectFromConnectedShield];
-    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end
