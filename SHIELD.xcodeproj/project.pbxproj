@@ -14,10 +14,9 @@
 		C41EB76919A3ABCC00641436 /* GeneralHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76819A3ABCC00641436 /* GeneralHelper.m */; };
 		C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9A919C62E5000126086 /* CommonTableViewCell.m */; };
 		C46CE9AD19C62E6100126086 /* DeviceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9AC19C62E6100126086 /* DeviceCell.m */; };
-		C47BC79419CC4C4B00C19E62 /* RBLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = C47BC79319CC4C4B00C19E62 /* RBLProtocol.m */; };
 		C4C616071ACFFDC000F45A11 /* ShieldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C616061ACFFDC000F45A11 /* ShieldViewController.m */; };
 		C4C7060F1AD3016D008BD0C1 /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C7060E1AD3016D008BD0C1 /* LogViewController.m */; };
-		C4EA89E619CA343900E90942 /* Shield.m in Sources */ = {isa = PBXBuildFile; fileRef = C4EA89E519CA343900E90942 /* Shield.m */; };
+		C4C706161AD5BB6A008BD0C1 /* Shield.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C706151AD5BB6A008BD0C1 /* Shield.m */; };
 		F0A6F10019A2356D00D976BA /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */; };
 		F0A6F10719A2384D00D976BA /* BTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10219A2384D00D976BA /* BTManager.m */; };
 		F0A6F10919A2384D00D976BA /* BTDevicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6F10619A2384D00D976BA /* BTDevicesViewController.m */; };
@@ -40,8 +39,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		689715B4D84A415BBD265053 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		83DDDF33E91F43DE951701B4 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B531D0A1DD6C65DC1BD33E70 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		BB96DE66E9B673C626F0A477 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		C41EB75E19A246FF00641436 /* CommonViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonViewController.h; sourceTree = "<group>"; };
 		C41EB75F19A246FF00641436 /* CommonViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonViewController.m; sourceTree = "<group>"; };
 		C41EB76119A2475000641436 /* OldShieldViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OldShieldViewController.h; sourceTree = "<group>"; };
@@ -55,14 +55,12 @@
 		C46CE9AB19C62E6100126086 /* DeviceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceCell.h; sourceTree = "<group>"; };
 		C46CE9AC19C62E6100126086 /* DeviceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceCell.m; sourceTree = "<group>"; };
 		C46CE9AE19C62F2600126086 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
-		C47BC79219CC4C4B00C19E62 /* RBLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBLProtocol.h; sourceTree = "<group>"; };
-		C47BC79319CC4C4B00C19E62 /* RBLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBLProtocol.m; sourceTree = "<group>"; };
 		C4C616051ACFFDC000F45A11 /* ShieldViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShieldViewController.h; sourceTree = "<group>"; };
 		C4C616061ACFFDC000F45A11 /* ShieldViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShieldViewController.m; sourceTree = "<group>"; };
 		C4C7060D1AD3016D008BD0C1 /* LogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogViewController.h; sourceTree = "<group>"; };
 		C4C7060E1AD3016D008BD0C1 /* LogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogViewController.m; sourceTree = "<group>"; };
-		C4EA89E419CA343900E90942 /* Shield.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shield.h; sourceTree = "<group>"; };
-		C4EA89E519CA343900E90942 /* Shield.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shield.m; sourceTree = "<group>"; };
+		C4C706141AD5BB6A008BD0C1 /* Shield.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shield.h; path = ../../../Shield.h; sourceTree = "<group>"; };
+		C4C706151AD5BB6A008BD0C1 /* Shield.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Shield.m; path = ../../../Shield.m; sourceTree = "<group>"; };
 		F0A6F0FF19A2356D00D976BA /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		F0A6F10119A2384D00D976BA /* BTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTManager.h; sourceTree = "<group>"; };
 		F0A6F10219A2384D00D976BA /* BTManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTManager.m; sourceTree = "<group>"; };
@@ -110,6 +108,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		8CF0BF986E24F125180E6B6F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BB96DE66E9B673C626F0A477 /* Pods.debug.xcconfig */,
+				B531D0A1DD6C65DC1BD33E70 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		C41EB75619A2462A00641436 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -150,7 +157,6 @@
 		C41EB75A19A2464600641436 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				C47BC79119CC4C3000C19E62 /* Protocol */,
 				C46CE9A219C6256E00126086 /* BTManager */,
 				C46CE9A319C6258300126086 /* UIImage+ImageEffects */,
 				C46CE9A419C6258A00126086 /* GeneralHelper */,
@@ -239,31 +245,6 @@
 			name = Device;
 			sourceTree = "<group>";
 		};
-		C47BC79119CC4C3000C19E62 /* Protocol */ = {
-			isa = PBXGroup;
-			children = (
-				C4AD526919E2B5CE00DA12CB /* HM */,
-				C4AD526A19E2B5D400DA12CB /* RBL */,
-			);
-			name = Protocol;
-			sourceTree = "<group>";
-		};
-		C4AD526919E2B5CE00DA12CB /* HM */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = HM;
-			sourceTree = "<group>";
-		};
-		C4AD526A19E2B5D400DA12CB /* RBL */ = {
-			isa = PBXGroup;
-			children = (
-				C47BC79219CC4C4B00C19E62 /* RBLProtocol.h */,
-				C47BC79319CC4C4B00C19E62 /* RBLProtocol.m */,
-			);
-			name = RBL;
-			sourceTree = "<group>";
-		};
 		C4C616041ACFFD8F00F45A11 /* Old */ = {
 			isa = PBXGroup;
 			children = (
@@ -293,8 +274,8 @@
 		C4EA89E319CA341D00E90942 /* Non-managed */ = {
 			isa = PBXGroup;
 			children = (
-				C4EA89E419CA343900E90942 /* Shield.h */,
-				C4EA89E519CA343900E90942 /* Shield.m */,
+				C4C706141AD5BB6A008BD0C1 /* Shield.h */,
+				C4C706151AD5BB6A008BD0C1 /* Shield.m */,
 			);
 			name = "Non-managed";
 			sourceTree = "<group>";
@@ -305,8 +286,8 @@
 				F0D7E2E219A1F99200F78ED1 /* SHIELD */,
 				F0D7E2FC19A1F99200F78ED1 /* SHIELDTests */,
 				F0D7E2E119A1F99200F78ED1 /* Products */,
-				689715B4D84A415BBD265053 /* Pods.xcconfig */,
 				3244B573A243441FB2386EAB /* Frameworks */,
+				8CF0BF986E24F125180E6B6F /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -487,7 +468,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -499,15 +480,14 @@
 			files = (
 				C46CE9AD19C62E6100126086 /* DeviceCell.m in Sources */,
 				C41EB76619A392D000641436 /* UIImage+ImageEffects.m in Sources */,
+				C4C706161AD5BB6A008BD0C1 /* Shield.m in Sources */,
 				F0A6F10919A2384D00D976BA /* BTDevicesViewController.m in Sources */,
 				C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */,
-				C4EA89E619CA343900E90942 /* Shield.m in Sources */,
 				F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */,
 				C41EB76319A2475000641436 /* OldShieldViewController.m in Sources */,
 				F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */,
 				C41EB76919A3ABCC00641436 /* GeneralHelper.m in Sources */,
 				C4C616071ACFFDC000F45A11 /* ShieldViewController.m in Sources */,
-				C47BC79419CC4C4B00C19E62 /* RBLProtocol.m in Sources */,
 				C4C7060F1AD3016D008BD0C1 /* LogViewController.m in Sources */,
 				F0D7E2E619A1F99200F78ED1 /* main.m in Sources */,
 				F0A6F10719A2384D00D976BA /* BTManager.m in Sources */,
@@ -627,7 +607,7 @@
 		};
 		F0D7E30419A1F99200F78ED1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 689715B4D84A415BBD265053 /* Pods.xcconfig */;
+			baseConfigurationReference = BB96DE66E9B673C626F0A477 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -645,7 +625,7 @@
 		};
 		F0D7E30519A1F99200F78ED1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 689715B4D84A415BBD265053 /* Pods.xcconfig */;
+			baseConfigurationReference = B531D0A1DD6C65DC1BD33E70 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

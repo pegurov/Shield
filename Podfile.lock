@@ -1,13 +1,10 @@
 PODS:
   - GoogleAnalytics-iOS-SDK (3.0.9)
-  - GPUImage (0.1.5)
 
 DEPENDENCIES:
   - GoogleAnalytics-iOS-SDK
-  - GPUImage
 
 SPEC CHECKSUMS:
-  GoogleAnalytics-iOS-SDK: d9e198b1f955259a72886769be7377cdfcdb2250
-  GPUImage: 5114a47f5fc33eb312f3731550a3cea379416d04
+  GoogleAnalytics-iOS-SDK: 3b0994bef22ed2e176a9e2a4d1660c7c2542eb47
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.35.0

@@ -45,50 +45,42 @@
 //------------------------------------------------------------------------------------
 #pragma mark - BTManagerDelegate
 
-- (void)btManagerDidStartScanningForShields:(BTManager *)manager
-{
+- (void)btManagerDidStartScanningForShields:(BTManager *)manager {
     [self.activityIndicator startAnimating];
     [self.viewSearch setUserInteractionEnabled:NO];
     [self.viewSearch setAlpha:0.75];
     [self.buttonSearch setTitle:@"Searching" forState:UIControlStateNormal];
 }
 
-- (void)btManagerDidEndScanningForShields:(BTManager *)manager
-{
+- (void)btManagerDidEndScanningForShields:(BTManager *)manager {
     [self.activityIndicator stopAnimating];
     [self.viewSearch setUserInteractionEnabled:YES];
     [self.viewSearch setAlpha:1];
     [self.buttonSearch setTitle:@"Search" forState:UIControlStateNormal];
 }
 
-- (void)btManagerUpdatedDiscoveredShields:(BTManager *)manager
-{
+- (void)btManagerUpdatedDiscoveredShields:(BTManager *)manager {
     [self.tableView reloadData];
 }
 
-- (void)btManager:(BTManager *)manager errorOccured:(NSError *)error
-{
+- (void)btManager:(BTManager *)manager errorOccured:(NSError *)error {
     [self.activityIndicator stopAnimating];
     [self.viewSearch setUserInteractionEnabled:YES];
     [self.buttonSearch setTitle:@"Search" forState:UIControlStateNormal];
-    NSLog(@"WARNING: btManager:errorOccured:");
 }
 
-- (void)btManagerDidDisconnectFromShield:(BTManager *)manager
-{
+- (void)btManagerDidDisconnectFromShield:(BTManager *)manager {
     [self.tableView reloadData];
 }
 
 //------------------------------------------------------------------------------------
 #pragma mark - UITableView methods
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
         return [BTManager sharedInstance].connectedShield? 1 : 0;
     }
@@ -98,8 +90,7 @@
     return 0;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     Shield *device;
     if (indexPath.section == 0) {
         device = [BTManager sharedInstance].connectedShield;
@@ -114,24 +105,49 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
         [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
     }
     else if (indexPath.section == 1) {
         Shield *selectedShield = [[[BTManager sharedInstance] discoveredShields] objectAtIndex:indexPath.row];
         [[BTManager sharedInstance] disconnectFromConnectedShield];
-        [[BTManager sharedInstance] connectToShield:selectedShield completionBlock:^(Shield *connectedShield) {
+        [[BTManager sharedInstance] connectToShield:selectedShield completionBlock:^(BOOL successful) {
+            
             [self.tableView reloadData];
-            [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
+            if (successful) {
+                
+                [[BTManager sharedInstance] sendATCommandToHM11:@"AT+PIO2?" timeout:2 completionBlock:^(BOOL successful, NSString *response) {
+                   
+                    if (successful) {
+                        if ([response isEqualToString:@"OK+PIO2:0"]) {
+                            [BTManager sharedInstance].connectedShield.isOn = NO;
+                            [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
+                        }
+                        else if ([response isEqualToString:@"OK+PIO2:1"]) {
+                            [BTManager sharedInstance].connectedShield.isOn = YES;
+                            [[BTManager sharedInstance] getStateWithCompletionBlock:^(BOOL successful) {
+                                [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
+                            }];
+                        }
+                        else {
+#warning TODO - show alert
+                        }
+                    }
+                    else {
+#warning TODO - show alert
+                    }
+                }];
+            }
+            else {
+#warning TODO - show alert
+            }
         }];
     }
     [self.tableView reloadData];
 }
 
-- (IBAction)searchTap:(id)sender
-{
+- (IBAction)searchTap:(id)sender {
     [BTManager sharedInstance].discoveredShields = [NSMutableArray new];
     [self.tableView reloadData];
     [[BTManager sharedInstance] scanForShieldsForSeconds:10];

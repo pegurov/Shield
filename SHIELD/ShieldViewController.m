@@ -10,6 +10,9 @@
 
 @interface ShieldViewController () <BTManagerDelegate, ShieldDelegate>
 
+@property (weak, nonatomic) IBOutlet UISwitch *switchIsWorking;
+@property (weak, nonatomic) IBOutlet UIView *viewContainer;
+
 @property (weak, nonatomic) IBOutlet UILabel *labelMode;
 @property (weak, nonatomic) IBOutlet UILabel *labelHeat;
 @property (weak, nonatomic) IBOutlet UILabel *labelTemperature;
@@ -28,6 +31,7 @@
 
 // user actions
 - (IBAction)segmentedControlValueChanged:(UISegmentedControl *)sender;
+- (IBAction)switchValueChanged:(UISwitch *)sender;
 - (IBAction)sliderManualHeatValueChanged:(UISlider *)sender;
 - (IBAction)sliderManualEndedTouch:(UISlider *)sender;
 @end
@@ -70,26 +74,9 @@
 // -----------------------------------------------------------------
 #pragma mark - ShieldDelegate
 
-- (void)shieldDidUpdateMode:(Shield *)shield {
+- (void)shieldDidUpdate:(Shield *)shield {
     [self refreshValuesView];
 }
-
-- (void)shieldDidUpdateHeat:(Shield *)shield {
-    [self refreshValuesView];
-}
-
-- (void)shieldDidUpdateTemperature:(Shield *)shield {
-    [self refreshValuesView];
-}
-
-- (void)shieldDidUpdateIsCharging:(Shield *)shield {
-    [self refreshValuesView];
-}
-
-- (void)shieldDidUpdateBatteryLevel:(Shield *)shield {
-    [self refreshValuesView];
-}
-
 
 // -----------------------------------------------------------------
 #pragma mark - View refreshing
@@ -98,7 +85,7 @@
     Shield *connectedShield = [BTManager sharedInstance].connectedShield;
     [self.labelMode setText:(connectedShield.mode == ShieldModeManual)? @"Manual" : @"Auto"];
     [self.labelHeat setText:[NSString stringWithFormat:@"%@", @(connectedShield.heat)]];
-    [self.labelTemperature setText:[NSString stringWithFormat:@"%.01f", [connectedShield.temperature floatValue]]];
+    [self.labelTemperature setText:[NSString stringWithFormat:@"%.01f", connectedShield.temperature]];
     [self.labelIsCharging setText:[NSString stringWithFormat:@"%@", connectedShield.isCharging? @"YES" : @"NO"]];
     [self.labelBatteryLevel setText:[NSString stringWithFormat:@"%@", @(connectedShield.batteryLevel)]];
 }
@@ -126,6 +113,10 @@
     ShieldMode selectedMode = sender.selectedSegmentIndex == 0 ? ShieldModeManual : ShieldModeAuto;
     [[BTManager sharedInstance] setMode:selectedMode];
     [self refreshControlsViewAfterModeChange:selectedMode];
+}
+
+- (IBAction)switchValueChanged:(UISwitch *)sender {
+    
 }
 
 - (IBAction)sliderManualHeatValueChanged:(UISlider *)sender {

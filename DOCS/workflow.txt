@@ -10,6 +10,7 @@ AT+PIO11  Set LED mode to not blink when not connected
 AT+PWRM0  Set auto sleep mode. Auto sleep means it will be in sleep mode before phone is connected. After phone is connected, automatically out of sleep mode and can receive AT commands. When you are sending commands through serial monitor, you need to manually wake it up first by sending a long string, length>80. It will respond with AT+WAKE
 AT+PASS001234 Setting PIN code
 
+
 ————————————————————————————————————————————————
 AT commands
 
@@ -33,6 +34,7 @@ PIN code should be printed under the QR code, and should be a set of 4 digits.  
 
 Turning arduino on and off.
 In initial state, PIO2 is turned off, and Arduino is not working. After we proceed to control screen, we show a switch that turns Arduino (and everything else too) on and off. The initial state of the switch is determined by querying HM11 for PIO2 state (AT+PIO2?). When arduino is off, the app shows no controls, but the ON button. When it is on, we can control everything else. After we turn on arduino, we query it for the battery level. If it is too low, we turn arduino off, and show BATTERY LOW message. If battery is ok, we allow user to control Shield.
+AT+AFTC? Module pin output state, after connection is established 0~3FF
 
 
 Controlling Arduino through HM11.
@@ -43,11 +45,11 @@ LOW BATTERY situation. self righteous suicide
 When arduino sees that the battery level is low enough, it needs a way to turn itself off. It happens in the following way:
 1. It sends “AT” to HM11 through UART, this causes disconnection from the phone. 
 2. Module goes into sleep mode automatically. Then it needs to wake up the module by sending it a long string > 80chars
-2. Then it sends “AT+PIO20”, which causes HM-11 to kill arduino.
+2. Then it sends “AT+PIO20”, which causes HM-11 to kill Arduino.
 
 
 ————————————————————————————————————————————————
-// esting commands …
+// Testing commands …
 1. Smoke test: AT
 in disconnected state:  -> OK
 in connected state: disconnects

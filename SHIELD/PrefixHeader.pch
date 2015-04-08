@@ -9,6 +9,7 @@
 #ifndef SHIELD_PrefixHeader_pch
 #define SHIELD_PrefixHeader_pch
 
+#import <UIKit/UIKit.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "Shield.h"
 #import "BTManager.h"
