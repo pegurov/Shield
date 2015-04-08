@@ -1,5 +1,6 @@
 ————————————————————————————————————————————————
 Correct settings of the HM11 module
+
 They should be configured through serial monitor before deployment
 AT+BAUD3  57600
 AT+MODE2  Remote control + transmit
@@ -7,27 +8,46 @@ AT+NOTI1  Notify arduino on connect/disconnect
 AT+NAMESheild set correct name
 AT+PIO11  Set LED mode to not blink when not connected
 AT+PWRM0  Set auto sleep mode. Auto sleep means it will be in sleep mode before phone is connected. After phone is connected, automatically out of sleep mode and can receive AT commands. When you are sending commands through serial monitor, you need to manually wake it up first by sending a long string, length>80. It will respond with AT+WAKE
+AT+PASS001234 Setting PIN code
 
 ————————————————————————————————————————————————
-Commands that are sent from the phone after establishing a connection
+AT commands
 
-AT smoke test. returns OK
-AT+PIO2[par] Command to remote control PIO2 (turn arduino on or off)
-
-
+When our HM11 is in mode 2 (remote control + transmit) it can always receive AT commands. In disconnected state from Arduino, in connected state from the phone. If an AT command is sent, arduino will respond back to the sender with result, if something else is sent, it will transmit bytes to the other side. We are using AT commands from the phone to conrol PIO2 state (turn arduino on and off), and to query PIN code. We are using AT commands from Arduino side just for debugging and setting HM11 correct settings, before shipping.
 
 ————————————————————————————————————————————————
 Workflow comments
 
-When our HM11 is in mode 2 (remote control + transmit) it can always receive AT commands. In disconnected state from Arduino, in connected state from the phone. If an AT command is sent, arduino will respond back to the sender with result, if something else is sent, it will transmit.
+Initially our HM11 is in sleep state, its PIO2 is off, arduino is off.
+We have QR code with HM11 UUID printed on the inside of Shield. Then pairing happens. 
+NOTE: After you connect to HM11 from the phone, it automatically turns out of the sleep mode. Same thing happens when you disconnect, it automatically goes into sleep mode.
+
+Auto pairing through QR code scanning. http://goqr.me
+While we are scanning QR code, phone is scanning for devices, and almost instantly finds our Shield. When QR code is scanned and we know UUID, we go through all of the found devices, looking for the one with the specified UUID. If it is found, we connect to it straight away.
+
+Manual pairing.
+If there were any problems in auto pairing mode, then we offer manual pairing mode. Instead of QR code scanning, we just show all available devices as a list, allowing to connect to any of them. After user selects device, we connect to it.
+
+PIN code entering.
+PIN code should be printed under the QR code, and should be a set of 4 digits.  After we have connected to HM11 we first query it for the pin code with AT+PASS? command. When it returns the PIN, we ask the user to enter that specified PIN. Then if the PIN is correct, we consider pairing completed, proceed to control screen. We store HM11 UUID in device, and next time the app opens, we look to connect to the device with the specified UUID, without pairing and PIN entering.
+
+Turning arduino on and off.
+In initial state, PIO2 is turned off, and Arduino is not working. After we proceed to control screen, we show a switch that turns Arduino (and everything else too) on and off. The initial state of the switch is determined by querying HM11 for PIO2 state (AT+PIO2?). When arduino is off, the app shows no controls, but the ON button. When it is on, we can control everything else. After we turn on arduino, we query it for the battery level. If it is too low, we turn arduino off, and show BATTERY LOW message. If battery is ok, we allow user to control Shield.
 
 
+Controlling Arduino through HM11.
+We can control Heat, Mode, and receive temperature, current mode, battery level and current heat. This happens by transmitting byte values there and back. Protocol is defined in arduino sketch, and iphone app. It is still in development, and is subject to change.
 
 
+LOW BATTERY situation. self righteous suicide
+When arduino sees that the battery level is low enough, it needs a way to turn itself off. It happens in the following way:
+1. It sends “AT” to HM11 through UART, this causes disconnection from the phone. 
+2. Module goes into sleep mode automatically. Then it needs to wake up the module by sending it a long string > 80chars
+2. Then it sends “AT+PIO20”, which causes HM-11 to kill arduino.
 
 
 ————————————————————————————————————————————————
-// Pasha is testing commands
+// esting commands …
 1. Smoke test: AT
 in disconnected state:  -> OK
 in connected state: disconnects
@@ -36,8 +56,6 @@ in connected state: disconnects
 If this value is set to 1, when link ESTABLISHED or LOSTED module will send OK+CONN or OK+LOST string through UART.
 
 3. 
-
-
 
 2. Firmware version
 AT+VERR? -> AnyFlite V528

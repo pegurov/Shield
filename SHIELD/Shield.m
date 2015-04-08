@@ -56,6 +56,21 @@
     }
 }
 
+- (void)setASCIIlog:(NSString *)ASCIIlog
+{
+    _ASCIIlog = ASCIIlog;
+    if ([self.delegate respondsToSelector:@selector(shieldDidUpdateASCIILog:)]) {
+        [self.delegate shieldDidUpdateASCIILog:self];
+    }
+}
+
+- (void)setHEXlog:(NSString *)HEXlog
+{
+    _HEXlog = HEXlog;
+    if ([self.delegate respondsToSelector:@selector(shieldDidUpdateASCIILog:)]) {
+        [self.delegate shieldDidUpdateHEXLog:self];
+    }
+}
 
 - (BOOL)isEqual:(id)object
 {

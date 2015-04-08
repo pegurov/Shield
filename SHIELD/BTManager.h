@@ -66,6 +66,7 @@
 @property (strong, nonatomic) NSMutableArray *discoveredShields;
 @property (strong, nonatomic) Shield *connectedShield;
 
+
 + (BTManager *)sharedInstance;
 
 - (void)scanForShieldsForSeconds:(NSInteger)seconds;
@@ -80,6 +81,11 @@
 - (void)getModeWithCompletionBlock:(void (^)(Shield *shield))completionBlock;
 
 - (void)getTemperatureWithCompletionBlock:(void (^)(Shield *shield))completionBlock;
+
+// command must be shorter than 20 bytes
+- (void)sendATCommandToHM11:(NSString *)command
+                    timeout:(NSInteger)timeout
+            completionBlock:(void (^)(BOOL successful, NSString *response))completionBlock;
 @end
 
 @protocol BTManagerDelegate <NSObject>

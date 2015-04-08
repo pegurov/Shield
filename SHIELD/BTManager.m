@@ -190,6 +190,13 @@
     }
 }
 
+- (void)sendATCommandToHM11:(NSString *)command
+                    timeout:(NSInteger)timeout
+            completionBlock:(void (^)(BOOL successful, NSString *response))completionBlock
+{
+    [self writeToConecttedShield:[command dataUsingEncoding:NSASCIIStringEncoding]];
+}
+
 - (void)heatTimeoutHandler
 {
     if (self.getHeatCompletionBlock) {
@@ -255,22 +262,23 @@
     }
     
     // actual writing
-    CBUUID *mainServiceUUID = [CBUUID UUIDWithString:SHIELD_MAIN_SERVICE_UUID];
-    CBUUID *rxCharUUID = [CBUUID UUIDWithString:SHIELD_CHAR_RX_UUID];
-    [self writeValueToPeripheral:self.connectedShield.peripheral serviceUUID:mainServiceUUID characteristicUUID:rxCharUUID data:data];
+    [self writeValueToPeripheral:self.connectedShield.peripheral data:data];
 }
 
 - (void)writeValueToPeripheral:(CBPeripheral *)peripheral
-                   serviceUUID:(CBUUID *)serviceUUID
-            characteristicUUID:(CBUUID *)characteristicUUID
                           data:(NSData *)data
 {
-    CBCharacteristic *foundCharcteristic = [peripheral findCharacteristicForServiceUUID:serviceUUID characteristicUUID:characteristicUUID];
+    CBUUID *mainServiceUUID = [CBUUID UUIDWithString:SHIELD_MAIN_SERVICE_UUID];
+    CBUUID *rxCharUUID = [CBUUID UUIDWithString:SHIELD_CHAR_RX_UUID];
+    
+    CBCharacteristic *foundCharcteristic = [peripheral findCharacteristicForServiceUUID:mainServiceUUID characteristicUUID:rxCharUUID];
+    
     if (foundCharcteristic) {
+        [self addDataToLog:data isOutgoing:YES];
         [peripheral writeValue:data forCharacteristic:foundCharcteristic type:CBCharacteristicWriteWithoutResponse];
     }
     else {
-        NSLog(@"Could not read from characteristic with UUID %@ on peripheral %@", characteristicUUID, peripheral);
+        NSLog(@"Could not write to  characteristic with UUID %@ on peripheral %@", rxCharUUID, peripheral);
     }
 }
 
@@ -278,6 +286,8 @@
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
     NSData *rawData = characteristic.value;
+    [self addDataToLog:rawData isOutgoing:NO];
+    
     unsigned char incomingBytes[rawData.length];
     [rawData getBytes:incomingBytes length:rawData.length];
     
@@ -346,6 +356,31 @@
             NSLog(@"RESPONSE: got some value from shield : %@", rawData);
         }
     }
+}
+
+- (void)addDataToLog:(NSData *)data isOutgoing:(BOOL)outgoing
+{
+    if (!self.connectedShield.ASCIIlog) self.connectedShield.ASCIIlog = @"";
+    if (!self.connectedShield.HEXlog) self.connectedShield.HEXlog = @"";
+    
+    NSString *ASCIIstringMessage = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+    NSString *ASCIImessageToAdd = [NSString stringWithFormat:@"%@:%@\n",outgoing?@"WR" : @"RE", ASCIIstringMessage];
+    self.connectedShield.ASCIIlog = [ASCIImessageToAdd stringByAppendingString:self.connectedShield.ASCIIlog];
+
+    
+    NSString *HEXCharsString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    unsigned short len = [HEXCharsString length];
+    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:len];
+    for (unsigned i = 0; i < len; ++i) {
+        [arr addObject:[NSNumber numberWithUnsignedShort:[HEXCharsString characterAtIndex:i]]];
+    }
+    
+    NSString *intByteValuesString = outgoing? @"WR:" : @"RE:";
+    for (NSNumber *someByte in arr) {
+        intByteValuesString = [intByteValuesString stringByAppendingFormat:@"%03ld ", (long)someByte.integerValue];
+    }
+    intByteValuesString = [intByteValuesString stringByAppendingString:@"\n"];
+    self.connectedShield.HEXlog = [intByteValuesString stringByAppendingString:self.connectedShield.HEXlog];
 }
 
 

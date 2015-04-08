@@ -36,10 +36,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    Shield *connectedShield = [BTManager sharedInstance].connectedShield;
-    self.title = connectedShield.peripheral.name;
-    [connectedShield setDelegate:self];
     [self refreshValuesView];
+    Shield *connectedShield = [BTManager sharedInstance].connectedShield;
     [self refreshControlsViewAfterModeChange:connectedShield.mode];
     
     UIBarButtonItem *disconnectButton = [[UIBarButtonItem alloc] initWithTitle:@"Disconnect" style:UIBarButtonItemStylePlain target:self action:@selector(disconnectTap)];
@@ -49,11 +47,16 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [BTManager sharedInstance].delegate = self;
+    Shield *connectedShield = [BTManager sharedInstance].connectedShield;
+    self.title = connectedShield.peripheral.name;
+    [connectedShield setDelegate:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [BTManager sharedInstance].delegate = self;
+    Shield *connectedShield = [BTManager sharedInstance].connectedShield;
+    [connectedShield setDelegate:self];
 }
 
 // -----------------------------------------------------------------

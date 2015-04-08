@@ -17,6 +17,9 @@ typedef NS_ENUM(NSUInteger, ShieldMode) {
 
 @interface Shield : NSObject
 
+@property (strong, nonatomic) NSString *ASCIIlog;
+@property (strong, nonatomic) NSString *HEXlog;
+
 @property (weak, nonatomic) id<ShieldDelegate> delegate;
 @property (strong, nonatomic) CBPeripheral *peripheral;
 @property (nonatomic) NSInteger heat;
@@ -36,5 +39,7 @@ typedef NS_ENUM(NSUInteger, ShieldMode) {
 - (void)shieldDidUpdateTemperature:(Shield *)shield;
 - (void)shieldDidUpdateIsCharging:(Shield *)shield;
 - (void)shieldDidUpdateBatteryLevel:(Shield *)shield;
+- (void)shieldDidUpdateASCIILog:(Shield *)shield;
+- (void)shieldDidUpdateHEXLog:(Shield *)shield;
 @end
 
