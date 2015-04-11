@@ -29,6 +29,9 @@
 // auto view
 @property (weak, nonatomic) IBOutlet UIView *viewAuto;
 
+//
+@property (strong, nonatomic) NSTimer *timer;
+
 // user actions
 - (IBAction)segmentedControlValueChanged:(UISegmentedControl *)sender;
 - (IBAction)switchValueChanged:(UISwitch *)sender;
@@ -40,7 +43,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    Shield *connectedShield = [BTManager sharedInstance].connectedShield;
     UIBarButtonItem *disconnectButton = [[UIBarButtonItem alloc] initWithTitle:@"Disconnect" style:UIBarButtonItemStylePlain target:self action:@selector(disconnectTap)];
     [self.navigationItem setRightBarButtonItem:disconnectButton];
 }
@@ -60,6 +62,33 @@
     [BTManager sharedInstance].delegate = self;
     Shield *connectedShield = [BTManager sharedInstance].connectedShield;
     [connectedShield setDelegate:self];
+    
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:2.
+                                                  target:self
+                                                selector:@selector(timerHandler)
+                                                userInfo:nil
+                                                 repeats:YES];
+}
+
+- (void)timerHandler {
+    Shield *connectedShield = [BTManager sharedInstance].connectedShield;
+    if (connectedShield.isOn) {
+        if (connectedShield.mode != self.segmentedControlMode.selectedSegmentIndex) {
+            // wrong mode
+            ShieldMode selectedMode = self.segmentedControlMode.selectedSegmentIndex == 0 ? ShieldModeManual : ShieldModeAuto;
+            [[BTManager sharedInstance] setMode:selectedMode сompletionBlock:^(BOOL successful) {
+                [self refreshViewSettingShieldValuesToControls:YES];
+            }];
+        }
+        if (connectedShield.heat != (int)(self.sliderManualHeat.value*100)) {
+            [[BTManager sharedInstance] setHeat:(int)(100*self.sliderManualHeat.value) сompletionBlock:^(BOOL successful) { }];
+        }
+    }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [self.timer invalidate];
 }
 
 // -----------------------------------------------------------------
@@ -117,32 +146,44 @@
 #pragma mark - User actions
 
 - (IBAction)segmentedControlValueChanged:(UISegmentedControl *)sender {
+    [self.viewAuto setHidden:YES];
+    [self.viewManual setHidden:YES];
+    
     ShieldMode selectedMode = sender.selectedSegmentIndex == 0 ? ShieldModeManual : ShieldModeAuto;
-    [[BTManager sharedInstance] setMode:selectedMode];
+    [[BTManager sharedInstance] setMode:selectedMode сompletionBlock:^(BOOL successful) {
+        [self refreshViewSettingShieldValuesToControls:YES];
+    }];
 }
 
 - (IBAction)switchValueChanged:(UISwitch *)sender {
     self.switchIsWorking.enabled = NO;
     self.viewContainer.userInteractionEnabled = NO;
-    
-    NSString *setPIOCommand = sender.isOn? @"AT+PIO21" : @"AT+PIO20";
-    NSString *setPIOResponse = sender.isOn? @"OK+PIO2:1" : @"OK+PIO2:0";
+
     NSString *setAFTC = sender.isOn? @"AT+AFTC3FF" : @"AT+AFTC000";
     NSString *setAFTCresponse = sender.isOn? @"OK+Set:3FF" : @"OK+Set:000";
     
-    [[BTManager sharedInstance] sendATCommandToHM11:setPIOCommand timeout:2 completionBlock:^(BOOL successful, NSString *response) {
+    NSString *setPIOCommand = sender.isOn? @"AT+PIO21" : @"AT+PIO20";
+    NSString *setPIOResponse = sender.isOn? @"OK+PIO2:1" : @"OK+PIO2:0";
+
+    [[BTManager sharedInstance] sendATCommandToHM11:setAFTC timeout:2 completionBlock:^(BOOL successful, NSString *response) {
         if (successful) {
-            if ([response isEqualToString:setPIOResponse]) {
-                [[BTManager sharedInstance] sendATCommandToHM11:setAFTC timeout:2 completionBlock:^(BOOL successful, NSString *response) {
+            if ([response isEqualToString:setAFTCresponse]) {
+                
+                [[BTManager sharedInstance] sendATCommandToHM11:setPIOCommand timeout:2 completionBlock:^(BOOL successful, NSString *response) {
                     if (successful) {
-                        if ([response isEqualToString:setAFTCresponse]) {
+                        if ([response isEqualToString:setPIOResponse]) {
                             // success
                             [BTManager sharedInstance].connectedShield.isOn = self.switchIsWorking.on;
                             if ([BTManager sharedInstance].connectedShield.isOn) {
                                 [[BTManager sharedInstance] getStateWithCompletionBlock:^(BOOL successful) {
-                                    self.switchIsWorking.enabled = YES;
-                                    self.viewContainer.userInteractionEnabled = YES;
-                                    [self refreshViewSettingShieldValuesToControls:YES];
+                                    if (successful) {
+                                        self.switchIsWorking.enabled = YES;
+                                        self.viewContainer.userInteractionEnabled = YES;
+                                        [self refreshViewSettingShieldValuesToControls:YES];
+                                    }
+                                    else {
+                                        [self unsuccessfulModeChangeHandler];
+                                    }
                                 }];
                             }
                             else {
@@ -182,7 +223,7 @@
 }
 
 - (IBAction)sliderManualEndedTouch:(UISlider *)sender {
-    [[BTManager sharedInstance] setHeat:(int)(100*sender.value)];
+    [[BTManager sharedInstance] setHeat:(int)(100*sender.value) сompletionBlock:^(BOOL successful) { }];
 }
 
 - (void)disconnectTap {

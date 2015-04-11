@@ -35,6 +35,8 @@
     [[BTManager sharedInstance] setDelegate:self];
     [BTManager sharedInstance].discoveredShields = [NSMutableArray new];
     [[BTManager sharedInstance] scanForShieldsForSeconds:10.];
+    
+    [self.tableView reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

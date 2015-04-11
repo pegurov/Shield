@@ -256,12 +256,12 @@
 
 - (void)valueChanged:(UISegmentedControl *)segment
 {
-    [[BTManager sharedInstance] setMode:segment.selectedSegmentIndex];
+//    [[BTManager sharedInstance] setMode:segment.selectedSegmentIndex];
 }
 
 - (void)writeCurrentHeatToShield
 {
-    [[BTManager sharedInstance] setHeat:(int)(100*(1-self.sliderValue))];
+//    [[BTManager sharedInstance] setHeat:(int)(100*(1-self.sliderValue))];
 }
 
 //---------------------------------------------------------------------------

@@ -12,14 +12,20 @@
 @property (nonatomic, strong) CBCentralManager *centralBTManager;
 
 @property (nonatomic, copy) void (^connectToShieldCompletionBlock)(BOOL successful);
-@property (nonatomic, copy) void (^getStateCompletionBlock)(BOOL successful);
 @property (nonatomic, copy) void (^ATCommandCompletionBlock)(BOOL successful, NSString *response);
+
+@property (nonatomic, copy) void (^getStateCompletionBlock)(BOOL successful);
+@property (nonatomic, copy) void (^setModeCompletionBlock)(BOOL successful);
+@property (nonatomic, copy) void (^setHeatCompletionBlock)(BOOL successful);
 
 // flags
 @property (nonatomic) BOOL isScanning;
 @property (strong, nonatomic) NSTimer *connectTimeoutTimer;
-@property (strong, nonatomic) NSTimer *stateTimeoutTimer;
 @property (strong, nonatomic) NSTimer *ATCommandTimeoutTimer;
+
+@property (strong, nonatomic) NSTimer *stateTimeoutTimer;
+@property (strong, nonatomic) NSTimer *modeTimeoutTimer;
+@property (strong, nonatomic) NSTimer *heatTimeoutTimer;
 @end
 
 @implementation BTManager
@@ -114,6 +120,9 @@
     if (self.connectedShield) {
         [self.centralBTManager cancelPeripheralConnection:self.connectedShield.peripheral];
         self.connectedShield = nil;
+        if ([self.delegate respondsToSelector:@selector(btManagerUpdatedDiscoveredShields:)]) {
+            [self.delegate btManagerUpdatedDiscoveredShields:self];
+        }
     }
 }
 
@@ -138,7 +147,21 @@
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral
      advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
-    if (![self.discoveredShields containsObject:peripheral]) {
+
+    BOOL discoveredPeripheralIsConnectedOrIsAlreadyInDiscoveredList = NO;
+    
+    
+    for (Shield *someShield in self.discoveredShields) {
+        if ([someShield.peripheral isEqual:peripheral]) {
+            discoveredPeripheralIsConnectedOrIsAlreadyInDiscoveredList = YES;
+        }
+    }
+    if ([self.connectedShield.peripheral isEqual:peripheral]) {
+        discoveredPeripheralIsConnectedOrIsAlreadyInDiscoveredList = YES;
+    }
+    
+    
+    if (!discoveredPeripheralIsConnectedOrIsAlreadyInDiscoveredList) {
         
         Shield *newDevice = [[Shield alloc] init];
         newDevice.peripheral = peripheral;
@@ -221,32 +244,67 @@
 //----------------------------------------------------------------------------------------
 #pragma mark - Setting / Requesting values from connected shield
 
-- (void)setHeat:(NSInteger)heat {
+// set heat
+- (void)setHeat:(NSInteger)heat сompletionBlock:(void (^)(BOOL successful))completionBlock {
+    self.setHeatCompletionBlock = completionBlock;
+    [self.heatTimeoutTimer invalidate];
+    self.heatTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:4
+                                                              target:self
+                                                            selector:@selector(heatTimeoutHandler)
+                                                            userInfo:nil
+                                                             repeats:NO];
+    
     unsigned char commandByte = COMMAND_SET_HEAT;
     unsigned char valueByte = 0x64 * (heat/100.); // 0x64 is 100 in hex
     unsigned char bytesToSend[2] = {commandByte, valueByte};
     [self writeToConecttedShield:[NSMutableData dataWithBytes:&bytesToSend length:sizeof(bytesToSend)]];
 }
 
-- (void)setMode:(ShieldMode)mode {
+- (void)heatTimeoutHandler {
+    if (self.setHeatCompletionBlock) {
+        self.setHeatCompletionBlock(NO);
+        self.setHeatCompletionBlock = nil;
+        NSLog(@"WARNING: Could not set heat, stopping wait on timeout");
+    }
+}
+
+// set mode
+- (void)setMode:(ShieldMode)mode сompletionBlock:(void (^)(BOOL successful))completionBlock {
+    self.setModeCompletionBlock = completionBlock;
+    [self.modeTimeoutTimer invalidate];
+    self.modeTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:4
+                                                              target:self
+                                                            selector:@selector(modeTimeoutHandler)
+                                                            userInfo:nil
+                                                             repeats:NO];
+    
     unsigned char commandByte = COMMAND_SET_MODE;
     unsigned char valueByte = (mode==ShieldModeManual)? 0x00 : 0x01; // 0x00 - manual, 0x01 - auto
     unsigned char bytesToSend[2] = {commandByte, valueByte};
     [self writeToConecttedShield:[NSMutableData dataWithBytes:&bytesToSend length:sizeof(bytesToSend)]];
 }
 
+- (void)modeTimeoutHandler {
+    if (self.setModeCompletionBlock) {
+        self.setModeCompletionBlock(NO);
+        self.setModeCompletionBlock = nil;
+        NSLog(@"WARNING: Could not set mode, stopping wait on timeout");
+    }
+}
+
+// get state
 - (void)getStateWithCompletionBlock:(void (^)(BOOL successful))completionBlock {
     if (!self.getStateCompletionBlock) {
         self.getStateCompletionBlock = completionBlock;
-        unsigned char commandByte = COMMAND_GET_STATE;
-        unsigned char bytesToSend[1] = {commandByte};
-
-        [self writeToConecttedShield:[NSMutableData dataWithBytes:&bytesToSend length:sizeof(bytesToSend)]];
-        self.stateTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:2 // 2 secs timeout
+        self.stateTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:4
                                                                   target:self
                                                                 selector:@selector(stateTimeoutHandler)
                                                                 userInfo:nil
                                                                  repeats:NO];
+        
+        unsigned char commandByte = COMMAND_GET_STATE;
+        unsigned char bytesToSend[1] = {commandByte};
+        [self writeToConecttedShield:[NSMutableData dataWithBytes:&bytesToSend length:sizeof(bytesToSend)]];
     }
     else {
 #warning TODO - make this possible
@@ -301,7 +359,7 @@
     else if (data.length>=1 && outgoingBytes[0] == COMMAND_GET_STATE) {
         NSLog(@"REQUEST -> requesting STATE");
     }
-    else if (data.length>=3 && outgoingBytes[0] == 'A' && outgoingBytes[1] == 'T' && outgoingBytes[2] == '+') {
+    else if (data.length>=2 && outgoingBytes[0] == 'A' && outgoingBytes[1] == 'T') {
         NSLog(@"REQUEST -> sending AT command: %@", [[NSString alloc] initWithBytes:outgoingBytes length:data.length encoding:NSASCIIStringEncoding]);
     }
     else {
@@ -342,20 +400,38 @@
             // mode, batteryLevel, heat, isCharging, temperature
             NSLog(@"RESPONSE <- current SHIELD STATE %@", rawData);
             
-            self.connectedShield.mode = (int)incomingBytes[1] == 0? ShieldModeManual : ShieldModeAuto;
-            self.connectedShield.batteryLevel = (int)incomingBytes[2];
-            self.connectedShield.heat = (int)incomingBytes[3];
-            self.connectedShield.isCharging = (int)incomingBytes[4] == 0? NO : YES;
-            self.connectedShield.temperature = (CGFloat)incomingBytes[5] - 50.;
+            NSInteger lastPhoneCommandByte = (int)incomingBytes[1];
+            
+            self.connectedShield.mode = (int)incomingBytes[2] == 0? ShieldModeManual : ShieldModeAuto;
+            self.connectedShield.batteryLevel = (int)incomingBytes[3];
+            self.connectedShield.heat = (int)incomingBytes[4];
+            self.connectedShield.isCharging = (int)incomingBytes[5] == 0? NO : YES;
+            self.connectedShield.temperature = (CGFloat)incomingBytes[6] - 50.;
             
             if ([self.connectedShield.delegate respondsToSelector:@selector(shieldDidUpdate:)]) {
                 [self.connectedShield.delegate shieldDidUpdate:self.connectedShield];
             }
             
-            if (self.getStateCompletionBlock) {
-                [self.stateTimeoutTimer invalidate];
-                self.getStateCompletionBlock(YES);
-                self.getStateCompletionBlock = nil;
+            if (lastPhoneCommandByte == COMMAND_GET_STATE) { // response to requesting state
+                if (self.getStateCompletionBlock) {
+                    [self.stateTimeoutTimer invalidate];
+                    self.getStateCompletionBlock(YES);
+                    self.getStateCompletionBlock = nil;
+                }
+            }
+            else if (lastPhoneCommandByte == COMMAND_SET_MODE) { // response to setting mode
+                if (self.setModeCompletionBlock) {
+                    [self.modeTimeoutTimer invalidate];
+                    self.setModeCompletionBlock(YES);
+                    self.setModeCompletionBlock = nil;
+                }
+            }
+            else if (lastPhoneCommandByte == COMMAND_SET_HEAT) { // response to setting heat
+                if (self.setHeatCompletionBlock) {
+                    [self.heatTimeoutTimer invalidate];
+                    self.setHeatCompletionBlock(YES);
+                    self.setHeatCompletionBlock = nil;
+                }
             }
         }
         else if (firstByte == AT_RESPONSE_START) {
@@ -364,9 +440,10 @@
             NSLog(@"RESPONSE <- AT response %@", ATCommandResponse);
             
             if (self.ATCommandCompletionBlock) {
-                [self.ATCommandTimeoutTimer invalidate];
+                
                 void (^localBlock)(BOOL successful, NSString *response) = self.ATCommandCompletionBlock;
                 self.ATCommandCompletionBlock = nil;
+                [self.ATCommandTimeoutTimer invalidate];
                 localBlock(YES, ATCommandResponse);
             }
         }

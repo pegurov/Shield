@@ -74,16 +74,12 @@
 // ----------------------------------------------------------------------
 #pragma mark - SHield delegete
 
-- (void)shieldDidUpdateASCIILog:(Shield *)shield
+- (void)shieldDidUpdateLog:(Shield *)shield
 {
     if (self.segmentedControlMode.selectedSegmentIndex == 0) {
         [self.textViewLog setText:shield.ASCIIlog];
     }
-}
-
-- (void)shieldDidUpdateHEXLog:(Shield *)shield
-{
-    if (self.segmentedControlMode.selectedSegmentIndex == 1) {
+    else if (self.segmentedControlMode.selectedSegmentIndex == 1) {
         [self.textViewLog setText:shield.HEXlog];
     }
 }

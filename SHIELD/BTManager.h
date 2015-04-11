@@ -47,8 +47,8 @@
 - (void)disconnectFromConnectedShield;
 
 // setting and requesting values with conected shield
-- (void)setHeat:(NSInteger)heat;
-- (void)setMode:(ShieldMode)mode;
+- (void)setHeat:(NSInteger)heat сompletionBlock:(void (^)(BOOL successful))completionBlock;
+- (void)setMode:(ShieldMode)mode сompletionBlock:(void (^)(BOOL successful))completionBlock;
 - (void)getStateWithCompletionBlock:(void (^)(BOOL successful))completionBlock;
 
 // command must be shorter than 20 bytes

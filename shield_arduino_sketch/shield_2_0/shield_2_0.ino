@@ -4,6 +4,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <SoftwareSerial.h>
+#include <EEPROM.h>
 
 /* ------------------------------------ API DEFINES ------------------------------------ */
 #define COMMAND_SET_HEAT 0x01 // 01
@@ -15,11 +16,14 @@
 #define COMMAND_STATE_IS 0x65 // 101
 
 // ARDUINO PROPERTIES
-int currentHeat = 0;                 // Range is [0..100]
-int currentMode = 0;                 // 0 - manual, 1 - auto
+#define modeMemoryLocation 0x00
+#define heatMemoryLocation 0x01
+byte lastPhoneCommandByte = 0;
+int currentMode = 0;
+int currentHeat = 0;
 int isCharging = 0;                  // 0 - not charging, 1 - charging
 float currentTemperature = 0;        // last scanned temperature from //sensor
-int currentBatteryLevel = 0;        // среднее арифметическое от 10 значений в секунду
+int currentBatteryLevel = 0;         // среднее арифметическое от 10 значений в секунду
 int batteryLevels[20];
 
 // PIN DEFINES
@@ -38,7 +42,7 @@ OneWire oneWire(temperaturePin);
 DallasTemperature sensor(&oneWire);
 
 // Shields UART is connected through SoftwareSerial
-SoftwareSerial HM11(ARDUINO_SOFT_Rx,ARDUINO_SOFT_Tx);
+SoftwareSerial HM11(ARDUINO_SOFT_Rx, ARDUINO_SOFT_Tx);
 
 // OTHERS
 int AUTO_MODE_HEAT_LEVEL = 50;
@@ -55,12 +59,30 @@ void setup() {
   pinMode(ARDUINO_SOFT_Rx, INPUT);
   pinMode(ARDUINO_SOFT_Tx, OUTPUT);
   
+  // see if there were heat and mode values in memory
+  byte modeInMemory = EEPROM.read(modeMemoryLocation);
+  byte heatInMemory = EEPROM.read(heatMemoryLocation);
+  if (modeInMemory<=1) { 
+    setMode(modeInMemory);
+  }
+  else {
+    setMode(0);
+  }
+  
+  if (heatInMemory<=100) {
+    setHeat(heatInMemory);
+  }
+  else {
+    setHeat(0);
+  }
+  
   // setup sensors and UARTs
   sensor.begin(); // start the temperature //sensor
   Serial.begin(BAUD_RATE);
   HM11.begin(BAUD_RATE);
   
   currentBatteryLevel = -1;
+  lastPhoneCommandByte = COMMAND_GET_STATE;
 }
 
 
@@ -72,31 +94,31 @@ void loop() {
  // we have 100 beats
   if (loopCounter == 100) {
     loopCounter = 0; // LOOP COUNTER IS ZEROED HERE
-    
   }
-  else if (loopCounter == 0) {
-
+  
+  if (loopCounter == 0) {
   // temperature
     sensor.requestTemperatures();
     float scannedTemperature = sensor.getTempCByIndex(0);
     if (scannedTemperature != currentTemperature) {
       currentTemperature = scannedTemperature;
       needToSendState = true;
-    }
+    } 
     
   // battery level
     if (currentBatteryLevel == -1) {
       // first ever loop
       currentBatteryLevel = analogRead(batteryPin);
       needToSendState = true;
+      
     }
     else {
       // calculate now battery level
       int nowBatteryLevel = 0;
-      for (int i=0; i<30; i++) {
+      for (int i=0; i<20; i++) {
         nowBatteryLevel += batteryLevels[i];
       }
-      nowBatteryLevel = (int)((float)nowBatteryLevel/30.);
+      nowBatteryLevel = (int)((float)nowBatteryLevel/20.);
       
       // see if we need to send it to the phone
       if (currentBatteryLevel != nowBatteryLevel) {
@@ -141,13 +163,16 @@ void loop() {
     if (receivedBytes[0] == COMMAND_SET_HEAT && receivedBytesCount == 2) {
       setHeat((int)receivedBytes[1]);
       needToSendState = true;
+      lastPhoneCommandByte = COMMAND_SET_HEAT;
     }
     else if (receivedBytes[0] == COMMAND_SET_MODE && receivedBytesCount == 2) {
       setMode((int)receivedBytes[1]);
       needToSendState = true;
+      lastPhoneCommandByte = COMMAND_SET_MODE;
     }
     else if (receivedBytes[0] == COMMAND_GET_STATE && receivedBytesCount == 1) {
       needToSendState = true;
+      lastPhoneCommandByte = COMMAND_GET_STATE;
     }
   } 
   
@@ -169,12 +194,14 @@ void loop() {
 // ACTIONS ------------------------------------------------
 void setHeat(int heat) {
   currentHeat = heat;
+  EEPROM.write(heatMemoryLocation, heat);
   analogWrite(heatPin, map(heat, 0, 100, 0, 255));
   analogWrite(logoPin, map(heat, 0, 100, 0, 255));
 }
 
 void setMode(int mode) {
   currentMode = mode;
+  EEPROM.write(modeMemoryLocation, mode);
   if (mode == 1) { // auto
     setHeat(AUTO_MODE_HEAT_LEVEL); 
   }
@@ -182,12 +209,14 @@ void setMode(int mode) {
 
 void sendStateToPhone() {
   HM11.write((byte)COMMAND_STATE_IS);
+  HM11.write((byte)lastPhoneCommandByte);
   HM11.write((byte)currentMode);
   
   int batteryLevelToSend = currentBatteryLevel;
   if (currentBatteryLevel < 470) { batteryLevelToSend = 470; }
-  if (currentBatteryLevel > 552) { batteryLevelToSend = 552; }
-  HM11.write((byte) map(batteryLevelToSend, 470, 552, 0, 100));
+  if (currentBatteryLevel > 800) { batteryLevelToSend = 800; }
+  HM11.write((byte) map(batteryLevelToSend, 470, 800, 0, 100));
+//  HM11.write((byte) map(currentBatteryLevel, 0, 1023, 0, 255));
   
   HM11.write((byte)currentHeat);
   HM11.write((byte)isCharging);
