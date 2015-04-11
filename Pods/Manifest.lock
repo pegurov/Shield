@@ -1,10 +1,13 @@
 PODS:
   - GoogleAnalytics-iOS-SDK (3.0.9)
+  - MBProgressHUD (0.9.1)
 
 DEPENDENCIES:
   - GoogleAnalytics-iOS-SDK
+  - MBProgressHUD
 
 SPEC CHECKSUMS:
   GoogleAnalytics-iOS-SDK: 3b0994bef22ed2e176a9e2a4d1660c7c2542eb47
+  MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
 
 COCOAPODS: 0.35.0

@@ -6,6 +6,59 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
+        <!--Paired Shield Connecting View Controller-->
+        <scene sceneID="lfK-wl-Oxe">
+            <objects>
+                <viewController storyboardIdentifier="PairedShieldConnectingViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Bfn-VO-udo" customClass="PairedShieldConnectingViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="MW2-fm-ckk"/>
+                        <viewControllerLayoutGuide type="bottom" id="gkZ-cq-lGN"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="oHx-f9-uPJ">
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="500"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4GY-GX-jST">
+                                <rect key="frame" x="179" y="229" width="142" height="41"/>
+                                <string key="text">Could not connect
+to paired shield</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BR1-Tt-SgD">
+                                <rect key="frame" x="170" y="290" width="160" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="iUc-xb-zqM"/>
+                                    <constraint firstAttribute="width" constant="160" id="tnI-pM-rdy"/>
+                                </constraints>
+                                <state key="normal" title="Try again">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="tryAgainTap:" destination="Bfn-VO-udo" eventType="touchUpInside" id="pAH-Uf-jC6"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="BR1-Tt-SgD" firstAttribute="top" secondItem="4GY-GX-jST" secondAttribute="bottom" constant="20" id="AYr-tV-7DS"/>
+                            <constraint firstAttribute="centerX" secondItem="4GY-GX-jST" secondAttribute="centerX" id="CI8-o9-t4t"/>
+                            <constraint firstAttribute="centerX" secondItem="BR1-Tt-SgD" secondAttribute="centerX" id="TK9-gm-a7r"/>
+                            <constraint firstAttribute="centerY" secondItem="4GY-GX-jST" secondAttribute="centerY" id="kYh-LT-jfu"/>
+                        </constraints>
+                    </view>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="500" height="500"/>
+                    <connections>
+                        <outlet property="buttonTryAgain" destination="BR1-Tt-SgD" id="Pp8-D3-OhX"/>
+                        <outlet property="labelTitle" destination="4GY-GX-jST" id="buN-Xl-KW5"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Vzc-3s-lKM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="568" y="-672"/>
+        </scene>
         <!--Devices View Controller-->
         <scene sceneID="J9H-vt-cER">
             <objects>
@@ -491,7 +544,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f8h-S0-Cbj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1212" y="-79"/>
+            <point key="canvasLocation" x="1202" y="-79"/>
         </scene>
         <!--Old Shield View Controller-->
         <scene sceneID="ufC-wZ-h7g">
@@ -714,7 +767,7 @@
                     </connections>
                 </panGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="277" y="587"/>
+            <point key="canvasLocation" x="-95" y="572"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="lSH-oe-e9V">
@@ -730,7 +783,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xl3-ld-eHL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-686" y="-72"/>
+            <point key="canvasLocation" x="-682" y="-79"/>
         </scene>
     </scenes>
     <resources>

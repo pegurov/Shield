@@ -7,8 +7,9 @@
 //
 
 #import "ShieldViewController.h"
+#import "PairedShieldConnectingViewController.h"
 
-@interface ShieldViewController () <BTManagerDelegate, ShieldDelegate>
+@interface ShieldViewController () <BTManagerDelegate, ShieldDelegate, PairedShieldVCDelegate>
 
 @property (weak, nonatomic) IBOutlet UISwitch *switchIsWorking;
 @property (weak, nonatomic) IBOutlet UIView *viewContainer;
@@ -31,6 +32,7 @@
 
 //
 @property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) PairedShieldConnectingViewController *pairedVC;
 
 // user actions
 - (IBAction)segmentedControlValueChanged:(UISegmentedControl *)sender;
@@ -61,13 +63,24 @@
     [super viewDidAppear:animated];
     [BTManager sharedInstance].delegate = self;
     Shield *connectedShield = [BTManager sharedInstance].connectedShield;
-    [connectedShield setDelegate:self];
+    if (connectedShield) {
+        [connectedShield setDelegate:self];
+    }
+    else {
+        self.pairedVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PairedShieldConnectingViewController"];
+        self.pairedVC.delegate = self;
+        [self addChildViewController:self.pairedVC];
+        [self.view addSubview:self.pairedVC.view];
+        [self.pairedVC viewDidAppear:NO];
+    }
     
     self.timer = [NSTimer scheduledTimerWithTimeInterval:2.
                                                   target:self
                                                 selector:@selector(timerHandler)
                                                 userInfo:nil
                                                  repeats:YES];
+
+    [self refreshViewSettingShieldValuesToControls:YES];
 }
 
 - (void)timerHandler {
@@ -77,11 +90,13 @@
             // wrong mode
             ShieldMode selectedMode = self.segmentedControlMode.selectedSegmentIndex == 0 ? ShieldModeManual : ShieldModeAuto;
             [[BTManager sharedInstance] setMode:selectedMode сompletionBlock:^(BOOL successful) {
-                [self refreshViewSettingShieldValuesToControls:YES];
+                [self refreshViewSettingShieldValuesToControls:NO];
             }];
         }
         if (connectedShield.heat != (int)(self.sliderManualHeat.value*100)) {
-            [[BTManager sharedInstance] setHeat:(int)(100*self.sliderManualHeat.value) сompletionBlock:^(BOOL successful) { }];
+            [[BTManager sharedInstance] setHeat:(int)(100*self.sliderManualHeat.value) сompletionBlock:^(BOOL successful) {
+                [self refreshViewSettingShieldValuesToControls:NO];
+            }];
         }
     }
 }
@@ -90,12 +105,31 @@
     [super viewDidDisappear:animated];
     [self.timer invalidate];
 }
+// -----------------------------------------------------------------
+#pragma mark - PairedShieldVCDelegate
+
+- (void)didFinish {
+    [self.pairedVC removeFromParentViewController];
+    [self.pairedVC.view removeFromSuperview];
+    [self viewDidAppear:NO];
+}
 
 // -----------------------------------------------------------------
 #pragma mark - BTManagerDelegate
 
 - (void)btManagerDidDisconnectFromShield:(BTManager *)manager {
-    [self.navigationController popToRootViewControllerAnimated:YES];
+
+    NSString *pairedUUID = [[NSUserDefaults standardUserDefaults] objectForKey:DEF_KEY_PAIRED_SHIELD_UUID];
+    if (pairedUUID) {
+        self.pairedVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PairedShieldConnectingViewController"];
+        self.pairedVC.delegate = self;
+        [self addChildViewController:self.pairedVC];
+        [self.view addSubview:self.pairedVC.view];
+        [self.pairedVC viewDidAppear:NO];
+    }
+    else {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }
 }
 
 // -----------------------------------------------------------------
@@ -111,6 +145,12 @@
 - (void)refreshViewSettingShieldValuesToControls:(BOOL)setting {
     
     Shield *connectedShield = [BTManager sharedInstance].connectedShield;
+    if (connectedShield) {
+        self.title = connectedShield.peripheral.name;
+    }
+    else {
+        self.title = [[NSUserDefaults standardUserDefaults] objectForKey:DEF_KEY_PAIRED_SHIELD_NAME];
+    }
     
     if (connectedShield.isOn) {
         [self.viewContainer setHidden:NO];

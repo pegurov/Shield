@@ -15,6 +15,7 @@
 		C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9A919C62E5000126086 /* CommonTableViewCell.m */; };
 		C46CE9AD19C62E6100126086 /* DeviceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9AC19C62E6100126086 /* DeviceCell.m */; };
 		C49EEDA21AD9BCC600970739 /* NoAnimationSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = C49EEDA11AD9BCC600970739 /* NoAnimationSegue.m */; };
+		C49EEDA61AD9C55300970739 /* PairedShieldConnectingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C49EEDA51AD9C55300970739 /* PairedShieldConnectingViewController.m */; };
 		C4C616071ACFFDC000F45A11 /* ShieldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C616061ACFFDC000F45A11 /* ShieldViewController.m */; };
 		C4C7060F1AD3016D008BD0C1 /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C7060E1AD3016D008BD0C1 /* LogViewController.m */; };
 		C4C706161AD5BB6A008BD0C1 /* Shield.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C706151AD5BB6A008BD0C1 /* Shield.m */; };
@@ -58,6 +59,8 @@
 		C46CE9AE19C62F2600126086 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		C49EEDA01AD9BCC600970739 /* NoAnimationSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoAnimationSegue.h; sourceTree = "<group>"; };
 		C49EEDA11AD9BCC600970739 /* NoAnimationSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoAnimationSegue.m; sourceTree = "<group>"; };
+		C49EEDA41AD9C55300970739 /* PairedShieldConnectingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PairedShieldConnectingViewController.h; sourceTree = "<group>"; };
+		C49EEDA51AD9C55300970739 /* PairedShieldConnectingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PairedShieldConnectingViewController.m; sourceTree = "<group>"; };
 		C4C616051ACFFDC000F45A11 /* ShieldViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShieldViewController.h; sourceTree = "<group>"; };
 		C4C616061ACFFDC000F45A11 /* ShieldViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShieldViewController.m; sourceTree = "<group>"; };
 		C4C7060D1AD3016D008BD0C1 /* LogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogViewController.h; sourceTree = "<group>"; };
@@ -139,6 +142,7 @@
 		C41EB75819A2463B00641436 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				C49EEDA31AD9C51D00970739 /* PairedShieldConnecting */,
 				C4C7060C1AD3015F008BD0C1 /* Log */,
 				C41EB75D19A246E000641436 /* Common */,
 				C41EB75C19A246B600641436 /* Shield */,
@@ -256,6 +260,15 @@
 				C49EEDA11AD9BCC600970739 /* NoAnimationSegue.m */,
 			);
 			name = NoAnimationSegue;
+			sourceTree = "<group>";
+		};
+		C49EEDA31AD9C51D00970739 /* PairedShieldConnecting */ = {
+			isa = PBXGroup;
+			children = (
+				C49EEDA41AD9C55300970739 /* PairedShieldConnectingViewController.h */,
+				C49EEDA51AD9C55300970739 /* PairedShieldConnectingViewController.m */,
+			);
+			name = PairedShieldConnecting;
 			sourceTree = "<group>";
 		};
 		C4C616041ACFFD8F00F45A11 /* Old */ = {
@@ -497,6 +510,7 @@
 				F0A6F10919A2384D00D976BA /* BTDevicesViewController.m in Sources */,
 				C49EEDA21AD9BCC600970739 /* NoAnimationSegue.m in Sources */,
 				C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */,
+				C49EEDA61AD9C55300970739 /* PairedShieldConnectingViewController.m in Sources */,
 				F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */,
 				C41EB76319A2475000641436 /* OldShieldViewController.m in Sources */,
 				F0D7E2E919A1F99200F78ED1 /* AppDelegate.m in Sources */,

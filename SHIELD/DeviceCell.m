@@ -27,8 +27,8 @@
     if (device.peripheral.state == CBPeripheralStateConnected) {
         // CONNECTED
         self.selectionStyle = UITableViewCellSelectionStyleDefault;
-        if (device.password && !device.passwordValidated) {
-            [self.labelStatus setText:@"connected, need passcode"];
+        if (!device.passwordValidated) {
+            [self.labelStatus setText:@"pairing"];
         }
         else {
             [self.labelStatus setText:@"paired"];

@@ -118,7 +118,14 @@
             [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
         }
         else {
-            [self validatePasswordForShield:[BTManager sharedInstance].connectedShield];
+            [[BTManager sharedInstance] validatePasswordWithCompletionBlock:^(BOOL successful) {
+                if (successful) {
+                    [self proceed];
+                }
+                else {
+#warning TODO - show alert
+                }
+            }];
         }
     }
     else if (indexPath.section == 1) {
@@ -128,7 +135,15 @@
         [[BTManager sharedInstance] connectToShield:selectedShield completionBlock:^(BOOL successful) {
             [self.tableView reloadData];
             if (successful) {
-                [self validatePasswordForShield:[BTManager sharedInstance].connectedShield];
+                [[BTManager sharedInstance] validatePasswordWithCompletionBlock:^(BOOL successful) {
+                    [self.tableView reloadData];
+                    if (successful) {
+                        [self proceed];
+                    }
+                    else {
+#warning TODO - show alert
+                    }
+                }];
             }
             else {
 #warning TODO - show alert
@@ -138,62 +153,14 @@
     [self.tableView reloadData];
 }
 
-- (void)validatePasswordForShield:(Shield *)shield {
-    [[BTManager sharedInstance] sendATCommandToHM11:@"AT+PASS?" timeout:2 completionBlock:^(BOOL successful, NSString *response) {
-        
-        if ([response isEqualToString:@"OK+Get:000000"]) { // there is no password
-            [self proceedToShield:shield];
-        }
-        else { // need to enter password
-            shield.password = [response substringFromIndex:7.];
-            [self presentPasswordAlert];
-        }
-        [self.tableView reloadData];
-    }];
-}
-
-- (void)presentPasswordAlert {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Password confirmation" message:@"To connect to this Shield, you need to eneter password" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-    alertView.tag = 1234;
-    alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
-    UITextField *passwordTextField = [alertView textFieldAtIndex:0];
-    passwordTextField.keyboardType = UIKeyboardTypeNumberPad;
-    
-    [alertView show];
-}
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (alertView.tag == 1234) {
-        // password
-        switch (buttonIndex) {
-            case 0: { // cancel
-                break;
-            }
-            case 1: { // confirmed
-                
-                UITextField *passwordTextField = [alertView textFieldAtIndex:0];
-                if (passwordTextField.text && [passwordTextField.text isEqualToString:[BTManager sharedInstance].connectedShield.password]) {
-                    [self proceedToShield:[BTManager sharedInstance].connectedShield];
-                }
-                else {
-                    // show alert that password is wrong
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Wrong passcode" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                    [alert show];
-                }
-                break;
-            }
-            default: { }
-                break;
-        }
-    }
-}
-
-- (void)proceedToShield:(Shield *)shield {
-    shield.passwordValidated = YES;
+- (void)proceed {
+    [BTManager sharedInstance].connectedShield.passwordValidated = YES;
     [[BTManager sharedInstance] performActionsBeforeShowingShieldWithCompletionBlock:^(BOOL successful) {
         if (successful) {
             NSString *UUID = [[BTManager sharedInstance].connectedShield.peripheral identifier].UUIDString;
             [[NSUserDefaults standardUserDefaults] setObject:UUID forKey:DEF_KEY_PAIRED_SHIELD_UUID];
+            [[NSUserDefaults standardUserDefaults] setObject:[BTManager sharedInstance].connectedShield.peripheral.name forKey:DEF_KEY_PAIRED_SHIELD_NAME];
+            [[NSUserDefaults standardUserDefaults] synchronize];
             [self performSegueWithIdentifier:SEGUE_ID_DEVICE_DETAIL sender:self];
         }
         else {

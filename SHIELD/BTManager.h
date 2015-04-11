@@ -47,6 +47,7 @@
 - (void)disconnectFromConnectedShield;
 
 // setting and requesting values with conected shield
+- (void)validatePasswordWithCompletionBlock:(void (^)(BOOL successful))completionBlock;
 - (void)setHeat:(NSInteger)heat сompletionBlock:(void (^)(BOOL successful))completionBlock;
 - (void)setMode:(ShieldMode)mode сompletionBlock:(void (^)(BOOL successful))completionBlock;
 - (void)getStateWithCompletionBlock:(void (^)(BOOL successful))completionBlock;

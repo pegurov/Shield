@@ -17,6 +17,7 @@
 @property (nonatomic, copy) void (^getStateCompletionBlock)(BOOL successful);
 @property (nonatomic, copy) void (^setModeCompletionBlock)(BOOL successful);
 @property (nonatomic, copy) void (^setHeatCompletionBlock)(BOOL successful);
+@property (nonatomic, copy) void (^passwordCompletionBlock)(BOOL successful);
 
 // flags
 @property (nonatomic) BOOL isScanning;
@@ -83,10 +84,12 @@
 }
 
 - (void)stopScanningForShields {
-    self.isScanning = NO;
-    [self.centralBTManager stopScan];
-    if ([self.delegate respondsToSelector:@selector(btManagerDidEndScanningForShields:)]) {
-        [self.delegate btManagerDidEndScanningForShields:self];
+    if (self.isScanning) {
+        self.isScanning = NO;
+        [self.centralBTManager stopScan];
+        if ([self.delegate respondsToSelector:@selector(btManagerDidEndScanningForShields:)]) {
+            [self.delegate btManagerDidEndScanningForShields:self];
+        }
     }
 }
 
@@ -120,10 +123,14 @@
     if (self.connectedShield) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEF_KEY_PAIRED_SHIELD_UUID];
         [self.centralBTManager cancelPeripheralConnection:self.connectedShield.peripheral];
-        self.connectedShield = nil;
+
         if ([self.delegate respondsToSelector:@selector(btManagerUpdatedDiscoveredShields:)]) {
             [self.delegate btManagerUpdatedDiscoveredShields:self];
         }
+        if ([self.delegate respondsToSelector:@selector(btManagerDidDisconnectFromShield:)]) {
+            [self.delegate btManagerDidDisconnectFromShield:self];
+        }
+        self.connectedShield = nil;
     }
 }
 
@@ -165,9 +172,10 @@
         Shield *newDevice = [[Shield alloc] init];
         newDevice.peripheral = peripheral;
         [self.discoveredShields addObject:newDevice];
-        if ([self.delegate respondsToSelector:@selector(btManagerUpdatedDiscoveredShields:)]) {
-            [self.delegate btManagerUpdatedDiscoveredShields:self];
-        }
+    }
+
+    if ([self.delegate respondsToSelector:@selector(btManagerUpdatedDiscoveredShields:)]) {
+        [self.delegate btManagerUpdatedDiscoveredShields:self];
     }
 }
 
@@ -242,6 +250,58 @@
 
 //----------------------------------------------------------------------------------------
 #pragma mark - Setting / Requesting values from connected shield
+
+- (void)validatePasswordWithCompletionBlock:(void (^)(BOOL successful))completionBlock {
+    
+    [[BTManager sharedInstance] sendATCommandToHM11:@"AT+PASS?" timeout:2 completionBlock:^(BOOL successful, NSString *response) {
+        
+        if ([response isEqualToString:@"OK+Get:000000"]) { // there is no password
+            completionBlock(YES);
+        }
+        else { // need to enter password
+            self.passwordCompletionBlock = completionBlock;
+            self.connectedShield.password = [response substringFromIndex:7.];
+            [self presentPasswordAlert];
+        }
+    }];
+}
+
+- (void)presentPasswordAlert {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Password confirmation" message:@"To connect to this Shield, you need to eneter password" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    alertView.tag = 1234;
+    alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    UITextField *passwordTextField = [alertView textFieldAtIndex:0];
+    passwordTextField.keyboardType = UIKeyboardTypeNumberPad;
+    
+    [alertView show];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == 1234) {
+        // password
+        switch (buttonIndex) {
+            case 0: { // cancel
+                break;
+            }
+            case 1: { // confirmed
+                
+                UITextField *passwordTextField = [alertView textFieldAtIndex:0];
+                if (passwordTextField.text && [passwordTextField.text isEqualToString:[BTManager sharedInstance].connectedShield.password]) {
+                    self.passwordCompletionBlock(YES);
+                }
+                else {
+                    self.passwordCompletionBlock(NO);
+                    // show alert that password is wrong
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Wrong passcode" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [alert show];
+                }
+                break;
+            }
+            default: { }
+                break;
+        }
+    }
+}
 
 // set heat
 - (void)setHeat:(NSInteger)heat сompletionBlock:(void (^)(BOOL successful))completionBlock {
@@ -345,15 +405,14 @@
 - (void)sendATCommandToHM11:(NSString *)command
                     timeout:(NSInteger)timeout
             completionBlock:(void (^)(BOOL successful, NSString *response))completionBlock {
-    if (!self.ATCommandCompletionBlock) {
-        self.ATCommandCompletionBlock = completionBlock;
-        [self writeToConecttedShield:[command dataUsingEncoding:NSASCIIStringEncoding]];
-        self.ATCommandTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:timeout
-                                                                      target:self
-                                                                    selector:@selector(ATCommandTimeoutHandler)
-                                                                    userInfo:nil
-                                                                     repeats:NO];
-    }
+
+    self.ATCommandCompletionBlock = completionBlock;
+    [self writeToConecttedShield:[command dataUsingEncoding:NSASCIIStringEncoding]];
+    self.ATCommandTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:timeout
+                                                                  target:self
+                                                                selector:@selector(ATCommandTimeoutHandler)
+                                                                userInfo:nil
+                                                                 repeats:NO];
 }
 
 - (void)ATCommandTimeoutHandler {
