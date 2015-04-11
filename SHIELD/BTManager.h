@@ -50,6 +50,7 @@
 - (void)setHeat:(NSInteger)heat сompletionBlock:(void (^)(BOOL successful))completionBlock;
 - (void)setMode:(ShieldMode)mode сompletionBlock:(void (^)(BOOL successful))completionBlock;
 - (void)getStateWithCompletionBlock:(void (^)(BOOL successful))completionBlock;
+- (void)performActionsBeforeShowingShieldWithCompletionBlock:(void (^)(BOOL successful))completionBlock;
 
 // command must be shorter than 20 bytes
 - (void)sendATCommandToHM11:(NSString *)command

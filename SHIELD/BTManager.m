@@ -118,6 +118,7 @@
 
 - (void)disconnectFromConnectedShield {
     if (self.connectedShield) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEF_KEY_PAIRED_SHIELD_UUID];
         [self.centralBTManager cancelPeripheralConnection:self.connectedShield.peripheral];
         self.connectedShield = nil;
         if ([self.delegate respondsToSelector:@selector(btManagerUpdatedDiscoveredShields:)]) {
@@ -150,7 +151,6 @@
 
     BOOL discoveredPeripheralIsConnectedOrIsAlreadyInDiscoveredList = NO;
     
-    
     for (Shield *someShield in self.discoveredShields) {
         if ([someShield.peripheral isEqual:peripheral]) {
             discoveredPeripheralIsConnectedOrIsAlreadyInDiscoveredList = YES;
@@ -159,7 +159,6 @@
     if ([self.connectedShield.peripheral isEqual:peripheral]) {
         discoveredPeripheralIsConnectedOrIsAlreadyInDiscoveredList = YES;
     }
-    
     
     if (!discoveredPeripheralIsConnectedOrIsAlreadyInDiscoveredList) {
         
@@ -294,22 +293,45 @@
 
 // get state
 - (void)getStateWithCompletionBlock:(void (^)(BOOL successful))completionBlock {
-    if (!self.getStateCompletionBlock) {
-        self.getStateCompletionBlock = completionBlock;
-        self.stateTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:4
-                                                                  target:self
-                                                                selector:@selector(stateTimeoutHandler)
-                                                                userInfo:nil
-                                                                 repeats:NO];
-        
-        unsigned char commandByte = COMMAND_GET_STATE;
-        unsigned char bytesToSend[1] = {commandByte};
-        [self writeToConecttedShield:[NSMutableData dataWithBytes:&bytesToSend length:sizeof(bytesToSend)]];
-    }
-    else {
-#warning TODO - make this possible
-        NSLog(@"WARNING: cannot get heat from shield, waiting for a response!");
-    }
+    self.getStateCompletionBlock = completionBlock;
+    self.stateTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:4
+                                                              target:self
+                                                            selector:@selector(stateTimeoutHandler)
+                                                            userInfo:nil
+                                                             repeats:NO];
+    
+    unsigned char commandByte = COMMAND_GET_STATE;
+    unsigned char bytesToSend[1] = {commandByte};
+    [self writeToConecttedShield:[NSMutableData dataWithBytes:&bytesToSend length:sizeof(bytesToSend)]];
+}
+
+- (void)performActionsBeforeShowingShieldWithCompletionBlock:(void (^)(BOOL successful))completionBlock {
+    
+    [[BTManager sharedInstance] sendATCommandToHM11:@"AT+PIO2?" timeout:2 completionBlock:^(BOOL successful, NSString *response) {
+        if (successful) {
+            if ([response isEqualToString:@"OK+PIO2:0"]) {
+                self.connectedShield.isOn = NO;
+                completionBlock(YES);
+            }
+            else if ([response isEqualToString:@"OK+PIO2:1"]) {
+                self.connectedShield.isOn = YES;
+                [[BTManager sharedInstance] getStateWithCompletionBlock:^(BOOL successful) {
+                    if (successful) {
+                        completionBlock(YES);
+                    }
+                    else {
+                        completionBlock(NO);
+                    }
+                }];
+            }
+            else {
+                completionBlock(NO);
+            }
+        }
+        else {
+            completionBlock(NO);
+        }
+    }];
 }
 
 - (void)stateTimeoutHandler {

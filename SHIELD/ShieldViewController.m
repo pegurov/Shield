@@ -43,7 +43,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    UIBarButtonItem *disconnectButton = [[UIBarButtonItem alloc] initWithTitle:@"Disconnect" style:UIBarButtonItemStylePlain target:self action:@selector(disconnectTap)];
+    UIBarButtonItem *disconnectButton = [[UIBarButtonItem alloc] initWithTitle:@"Unpair" style:UIBarButtonItemStylePlain target:self action:@selector(disconnectTap)];
     [self.navigationItem setRightBarButtonItem:disconnectButton];
 }
 

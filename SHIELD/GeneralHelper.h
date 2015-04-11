@@ -9,9 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+// DEFAULTS
+#define DEF_KEY_PAIRED_SHIELD_UUID @"DEF_KEY_PAIRED_SHIELD_UUID"
+
 // SEGUE IDS
 #define SEGUE_ID_DEVICE_DETAIL @"SEGUE_ID_DEVICE_DETAIL"
-
+#define SEGUE_ID_DEVICE_DETAIL_NO_ANIMATION @"SEGUE_ID_DEVICE_DETAIL_NO_ANIMATION"
 
 @interface GeneralHelper : NSObject
 

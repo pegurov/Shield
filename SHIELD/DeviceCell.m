@@ -27,13 +27,17 @@
     if (device.peripheral.state == CBPeripheralStateConnected) {
         // CONNECTED
         self.selectionStyle = UITableViewCellSelectionStyleDefault;
-        [self.labelStatus setText:@"connected"];
-        
+        if (device.password && !device.passwordValidated) {
+            [self.labelStatus setText:@"connected, need passcode"];
+        }
+        else {
+            [self.labelStatus setText:@"paired"];
+        }
     }
     else if (device.peripheral.state == CBPeripheralStateConnecting) {
         // CONNECTING
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        [self.labelStatus setText:@"connecting"];
+        [self.labelStatus setText:@"pairing"];
     }
     else {
         // CONNECTABLE

@@ -14,6 +14,7 @@
 		C41EB76919A3ABCC00641436 /* GeneralHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C41EB76819A3ABCC00641436 /* GeneralHelper.m */; };
 		C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9A919C62E5000126086 /* CommonTableViewCell.m */; };
 		C46CE9AD19C62E6100126086 /* DeviceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C46CE9AC19C62E6100126086 /* DeviceCell.m */; };
+		C49EEDA21AD9BCC600970739 /* NoAnimationSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = C49EEDA11AD9BCC600970739 /* NoAnimationSegue.m */; };
 		C4C616071ACFFDC000F45A11 /* ShieldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C616061ACFFDC000F45A11 /* ShieldViewController.m */; };
 		C4C7060F1AD3016D008BD0C1 /* LogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C7060E1AD3016D008BD0C1 /* LogViewController.m */; };
 		C4C706161AD5BB6A008BD0C1 /* Shield.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C706151AD5BB6A008BD0C1 /* Shield.m */; };
@@ -55,6 +56,8 @@
 		C46CE9AB19C62E6100126086 /* DeviceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceCell.h; sourceTree = "<group>"; };
 		C46CE9AC19C62E6100126086 /* DeviceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceCell.m; sourceTree = "<group>"; };
 		C46CE9AE19C62F2600126086 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		C49EEDA01AD9BCC600970739 /* NoAnimationSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoAnimationSegue.h; sourceTree = "<group>"; };
+		C49EEDA11AD9BCC600970739 /* NoAnimationSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoAnimationSegue.m; sourceTree = "<group>"; };
 		C4C616051ACFFDC000F45A11 /* ShieldViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShieldViewController.h; sourceTree = "<group>"; };
 		C4C616061ACFFDC000F45A11 /* ShieldViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShieldViewController.m; sourceTree = "<group>"; };
 		C4C7060D1AD3016D008BD0C1 /* LogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogViewController.h; sourceTree = "<group>"; };
@@ -157,6 +160,7 @@
 		C41EB75A19A2464600641436 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				C49EED9F1AD9BCAA00970739 /* NoAnimationSegue */,
 				C46CE9A219C6256E00126086 /* BTManager */,
 				C46CE9A319C6258300126086 /* UIImage+ImageEffects */,
 				C46CE9A419C6258A00126086 /* GeneralHelper */,
@@ -243,6 +247,15 @@
 				C46CE9AC19C62E6100126086 /* DeviceCell.m */,
 			);
 			name = Device;
+			sourceTree = "<group>";
+		};
+		C49EED9F1AD9BCAA00970739 /* NoAnimationSegue */ = {
+			isa = PBXGroup;
+			children = (
+				C49EEDA01AD9BCC600970739 /* NoAnimationSegue.h */,
+				C49EEDA11AD9BCC600970739 /* NoAnimationSegue.m */,
+			);
+			name = NoAnimationSegue;
 			sourceTree = "<group>";
 		};
 		C4C616041ACFFD8F00F45A11 /* Old */ = {
@@ -482,6 +495,7 @@
 				C41EB76619A392D000641436 /* UIImage+ImageEffects.m in Sources */,
 				C4C706161AD5BB6A008BD0C1 /* Shield.m in Sources */,
 				F0A6F10919A2384D00D976BA /* BTDevicesViewController.m in Sources */,
+				C49EEDA21AD9BCC600970739 /* NoAnimationSegue.m in Sources */,
 				C46CE9AA19C62E5000126086 /* CommonTableViewCell.m in Sources */,
 				F0D7E2EC19A1F99200F78ED1 /* SHIELD.xcdatamodeld in Sources */,
 				C41EB76319A2475000641436 /* OldShieldViewController.m in Sources */,
