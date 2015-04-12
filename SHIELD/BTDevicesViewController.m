@@ -49,6 +49,11 @@
     [BTManager sharedInstance].delegate = self;
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [[BTManager sharedInstance] stopScanningForShields];
+}
+
 //------------------------------------------------------------------------------------
 #pragma mark - BTManagerDelegate
 

@@ -10,8 +10,4 @@
 
 @interface CommonViewController : UIViewController
 
-// navigation activity indicator
-@property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorNavigation;
-- (void)addActivityIndicatorToNavigationBar;
-
 @end

@@ -421,6 +421,11 @@
 					F0D7E2DF19A1F99200F78ED1 = {
 						CreatedOnToolsVersion = 6.0;
 						DevelopmentTeam = 5HMWD4A8B3;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					F0D7E2F819A1F99200F78ED1 = {
 						CreatedOnToolsVersion = 6.0;

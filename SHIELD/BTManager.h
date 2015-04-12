@@ -43,6 +43,7 @@
 @property (strong, nonatomic) Shield *connectedShield;
 
 - (void)scanForShieldsForSeconds:(NSInteger)seconds;
+- (void)stopScanningForShields;
 - (void)connectToShield:(Shield *)shield completionBlock:(void (^)(BOOL successful))completionBlock;
 - (void)disconnectFromConnectedShield;
 

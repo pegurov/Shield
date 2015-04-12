@@ -96,7 +96,7 @@
 - (void)connectToShield:(Shield *)shield completionBlock:(void (^)(BOOL successful))completionBlock {
     if (shield.peripheral.state == CBPeripheralStateDisconnected) {
         self.connectToShieldCompletionBlock = completionBlock;
-        [self.centralBTManager connectPeripheral:shield.peripheral options:nil];
+        [self.centralBTManager connectPeripheral:shield.peripheral options:@{CBConnectPeripheralOptionNotifyOnDisconnectionKey:@(YES)}];
         self.connectTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:5 // 5 secs timeout
                                                                     target:self
                                                                   selector:@selector(connectTimeoutHandler)
@@ -121,7 +121,6 @@
 
 - (void)disconnectFromConnectedShield {
     if (self.connectedShield) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEF_KEY_PAIRED_SHIELD_UUID];
         [self.centralBTManager cancelPeripheralConnection:self.connectedShield.peripheral];
 
         if ([self.delegate respondsToSelector:@selector(btManagerUpdatedDiscoveredShields:)]) {
@@ -183,7 +182,7 @@
     // we consider a device connected only ahen all
     // charachteristics for its MAIN SERVICE have been found
     [peripheral setDelegate:self];
-    [peripheral discoverServices:nil];
+    [peripheral discoverServices:@[[CBUUID UUIDWithString:SHIELD_MAIN_SERVICE_UUID]]];
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
@@ -216,7 +215,7 @@
     for (CBService *service in peripheral.services)
     {
         if ([service.UUID.UUIDString isEqualToString:SHIELD_MAIN_SERVICE_UUID]) {
-            [peripheral discoverCharacteristics:nil forService:service];
+            [peripheral discoverCharacteristics:@[[CBUUID UUIDWithString:SHIELD_CHAR_RX_UUID]] forService:service];
         }
     }
 }
@@ -484,7 +483,14 @@
             NSInteger lastPhoneCommandByte = (int)incomingBytes[1];
             
             self.connectedShield.mode = (int)incomingBytes[2] == 0? ShieldModeManual : ShieldModeAuto;
-            self.connectedShield.batteryLevel = (int)incomingBytes[3];
+            if (self.connectedShield.batteryLevel != (int)incomingBytes[3]) {
+                self.connectedShield.batteryLevel = (int)incomingBytes[3];
+                UILocalNotification *batteryNotification = [[UILocalNotification alloc] init];
+                batteryNotification.fireDate = [NSDate date];
+                batteryNotification.alertTitle = @"Shield updated";
+                batteryNotification.alertBody = [NSString stringWithFormat:@"Battery: %@", @(self.connectedShield.batteryLevel)];
+                [[UIApplication sharedApplication] scheduleLocalNotification:batteryNotification];
+            }
             self.connectedShield.heat = (int)incomingBytes[4];
             self.connectedShield.isCharging = (int)incomingBytes[5] == 0? NO : YES;
             self.connectedShield.temperature = (CGFloat)incomingBytes[6] - 50.;

@@ -22,13 +22,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [BTManager sharedInstance].delegate = self;
-    [[BTManager sharedInstance] scanForShieldsForSeconds:10.];
     [self showControls:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [BTManager sharedInstance].delegate = self;
+    [[BTManager sharedInstance] scanForShieldsForSeconds:10.];
 }
 
 - (void)showControls:(BOOL)show {
@@ -67,6 +67,7 @@
     [BTManager sharedInstance].connectedShield.passwordValidated = YES;
     [[BTManager sharedInstance] performActionsBeforeShowingShieldWithCompletionBlock:^(BOOL successful) {
         if (successful) {
+            [[BTManager sharedInstance] stopScanningForShields];
             [MBProgressHUD hideAllHUDsForView:self.navigationController.view animated:YES];
             if ([self.delegate respondsToSelector:@selector(didFinish)]) {
                 [self.delegate didFinish];
@@ -79,7 +80,7 @@
 }
 
 - (void)btManagerDidStartScanningForShields:(BTManager *)manager {
-
+    [self showControls:NO];
     self.hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
     self.hud.mode = MBProgressHUDModeIndeterminate;
     self.hud.dimBackground = YES;
@@ -87,8 +88,8 @@
 }
 
 - (void)btManagerDidEndScanningForShields:(BTManager *)manager {
-    [self showControls:YES];
     [MBProgressHUD hideAllHUDsForView:self.navigationController.view animated:YES];
+    [self showControls:YES];
 }
 
 @end

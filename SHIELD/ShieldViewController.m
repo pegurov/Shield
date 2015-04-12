@@ -31,7 +31,6 @@
 @property (weak, nonatomic) IBOutlet UIView *viewAuto;
 
 //
-@property (strong, nonatomic) NSTimer *timer;
 @property (strong, nonatomic) PairedShieldConnectingViewController *pairedVC;
 
 // user actions
@@ -47,6 +46,7 @@
     [super viewDidLoad];
     UIBarButtonItem *disconnectButton = [[UIBarButtonItem alloc] initWithTitle:@"Unpair" style:UIBarButtonItemStylePlain target:self action:@selector(disconnectTap)];
     [self.navigationItem setRightBarButtonItem:disconnectButton];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkToShowPairedVC) name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -62,7 +62,18 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [BTManager sharedInstance].delegate = self;
+    
+    [self checkToShowPairedVC];
+    [self refreshViewSettingShieldValuesToControls:YES];
+}
+
+- (void)checkToShowPairedVC {
     Shield *connectedShield = [BTManager sharedInstance].connectedShield;
+    
+    [self.pairedVC.view removeFromSuperview];
+    [self.pairedVC removeFromParentViewController];
+    self.pairedVC = nil;
+    
     if (connectedShield) {
         [connectedShield setDelegate:self];
     }
@@ -72,45 +83,18 @@
         [self addChildViewController:self.pairedVC];
         [self.view addSubview:self.pairedVC.view];
         [self.pairedVC viewDidAppear:NO];
-    }
-    
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:2.
-                                                  target:self
-                                                selector:@selector(timerHandler)
-                                                userInfo:nil
-                                                 repeats:YES];
-
-    [self refreshViewSettingShieldValuesToControls:YES];
-}
-
-- (void)timerHandler {
-    Shield *connectedShield = [BTManager sharedInstance].connectedShield;
-    if (connectedShield.isOn) {
-        if (connectedShield.mode != self.segmentedControlMode.selectedSegmentIndex) {
-            // wrong mode
-            ShieldMode selectedMode = self.segmentedControlMode.selectedSegmentIndex == 0 ? ShieldModeManual : ShieldModeAuto;
-            [[BTManager sharedInstance] setMode:selectedMode сompletionBlock:^(BOOL successful) {
-                [self refreshViewSettingShieldValuesToControls:NO];
-            }];
-        }
-        if (connectedShield.heat != (int)(self.sliderManualHeat.value*100)) {
-            [[BTManager sharedInstance] setHeat:(int)(100*self.sliderManualHeat.value) сompletionBlock:^(BOOL successful) {
-                [self refreshViewSettingShieldValuesToControls:NO];
-            }];
-        }
+        
     }
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    [self.timer invalidate];
 }
+
 // -----------------------------------------------------------------
 #pragma mark - PairedShieldVCDelegate
 
 - (void)didFinish {
-    [self.pairedVC removeFromParentViewController];
-    [self.pairedVC.view removeFromSuperview];
     [self viewDidAppear:NO];
 }
 
@@ -269,6 +253,7 @@
 - (void)disconnectTap {
     self.viewContainer.alpha = 0.5;
     [self.view setUserInteractionEnabled:NO];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:DEF_KEY_PAIRED_SHIELD_UUID];
     [[BTManager sharedInstance] disconnectFromConnectedShield];
 }
 
